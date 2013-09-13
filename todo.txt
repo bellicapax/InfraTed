@@ -1,0 +1,19 @@
+QUESTIONS:
+
+Do human and/or robot guards communicate where they last saw the player?
+	Within a certain area (sphere collider).
+
+Can you cool a hot object below room temperature?
+	Yes.
+
+Does cooling it to room temp tell the guard to stop checking the item (because it's no longer hot and they are set to check anything outside the range) or to check the item (because they knew it was hot and now it is not)?
+	Robots use the first (stop checking) and humans could use the second (check).
+
+
+
+
+LATER POSSIBILITIES:
+
+Possible trapped heat sources later.
+
+Possible switch of hot/cold (only give off heat and less heat is better).
