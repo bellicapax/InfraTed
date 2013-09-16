@@ -5,6 +5,8 @@ Project("{ED35EF6C-3FFE-E890-6908-354A80C0B1EE}") = "InfraTed", "Assembly-CSharp
 EndProject
 Project("{ED35EF6C-3FFE-E890-6908-354A80C0B1EE}") = "InfraTed", "Assembly-CSharp.csproj", "{91DDC38A-6CFF-DCE3-E5A6-064C2B445D7A}"
 EndProject
+Project("{ED35EF6C-3FFE-E890-6908-354A80C0B1EE}") = "InfraTed", "Assembly-CSharp-Editor.csproj", "{0AF39E89-6755-14ED-E419-571F27D25FCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,11 +21,15 @@ Global
 		{91DDC38A-6CFF-DCE3-E5A6-064C2B445D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91DDC38A-6CFF-DCE3-E5A6-064C2B445D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91DDC38A-6CFF-DCE3-E5A6-064C2B445D7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AF39E89-6755-14ED-E419-571F27D25FCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AF39E89-6755-14ED-E419-571F27D25FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AF39E89-6755-14ED-E419-571F27D25FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AF39E89-6755-14ED-E419-571F27D25FCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
+																				GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -41,4 +47,5 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
+
 EndGlobal

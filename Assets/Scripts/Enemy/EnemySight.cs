@@ -7,12 +7,13 @@ public class EnemySight : MonoBehaviour {
     public float angle;
     public bool playerInSight;
     public bool useFOV;
+    public bool playerIsTouching = false;
+    public bool playerHasTouched = false;
     public bool useSphereCollider;
     public Vector3 personalLastSighting;
     public Vector3 direction;
     public GameObject goRoomThermostat;
 
-    private bool inTrigger = false;
     private Vector3 previousSighting;
     private GameObject goCharacter;
     private CharacterEnergy scriptCharEnergy;
@@ -44,22 +45,25 @@ public class EnemySight : MonoBehaviour {
         {
             FieldOfView();
         }
+        if (playerHasTouched)
+        {
+            if (FieldOfView())
+            {
+                playerHasTouched = false;
+            }
+        }
 	}
 
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject == goCharacter)
-        {
-            inTrigger = true;
-        }
-    }
 
     void OnTriggerStay(Collider other)
     {
         if (useSphereCollider)
         {
-            playerInSight = false;
+            if (!playerIsTouching)
+            {
+                playerInSight = false;
+            }
 
             if (scriptCharEnergy.currentEnergy >= 0)
             {
@@ -72,19 +76,15 @@ public class EnemySight : MonoBehaviour {
         }
     }
 
-    void OnTriggerExit(Collider other)
+
+    public bool FieldOfView()
     {
-        if (other.collider.gameObject == goCharacter)
-        {
-            inTrigger = false;
+        if (!playerIsTouching)
+        {        
+            //if the other conditions are not met, playerInSight should be false
             playerInSight = false;
         }
-    }
 
-    void FieldOfView()
-    {
-        //if the other conditions are not met, playerInSight should be false
-        playerInSight = false;
         if (scriptCharEnergy.currentEnergy >= 0)
         {
             direction = goCharacter.transform.position - myTransform.position;
@@ -100,10 +100,12 @@ public class EnemySight : MonoBehaviour {
                     {
                         playerInSight = true;
                         personalLastSighting = goCharacter.transform.position;   //Update this so that one script has the position for all to reference
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
     bool IsOutOfTemperatureThreshold(float temp)

@@ -56,6 +56,7 @@ public class CharacterInput : MonoBehaviour {
                 if (newScene)
                 {
                     aryLukewarmGO =  GameObject.FindGameObjectsWithTag("Lukewarm");
+                    aryOriginalMaterial = new Material[aryLukewarmGO.Length];
                     for (int i = 0; i < aryLukewarmGO.Length; i++)
                     {
                         aryOriginalMaterial[i] = aryLukewarmGO[i].transform.renderer.material;
@@ -79,7 +80,7 @@ public class CharacterInput : MonoBehaviour {
                 if (newScene)
                 {
                     aryLukewarmGO = GameObject.FindGameObjectsWithTag("Lukewarm");
-
+                    aryOriginalMaterial = new Material[aryLukewarmGO.Length];
                     for (int i = 0; i < aryLukewarmGO.Length; i++)
                     {
                         aryOriginalMaterial[i] = aryLukewarmGO[i].transform.renderer.material;
@@ -119,13 +120,17 @@ public class CharacterInput : MonoBehaviour {
                     {
                         itsTransform.tag = "Cold";
                     }
+                    else if (tempHSB.h >= HSBColor.FromColor(ambientInfra).h)
+                    {
+                        itsTransform.tag = "Lukewarm";
+                    }
                     else
                     {
                         //tempHSB.h += (1 / (tempHeatControl.heatEnergy + tempHeatControl.massEnergy)) * Time.deltaTime * offsetDeltaTime;
                         tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
 
                         tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
-                        transferEnergy = energyIncrement * Time.deltaTime;  
+                        transferEnergy = energyIncrement * Time.deltaTime;
 
                     }
                 }

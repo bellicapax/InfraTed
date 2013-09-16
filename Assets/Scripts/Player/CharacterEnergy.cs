@@ -7,7 +7,7 @@ public class CharacterEnergy : MonoBehaviour {
     public float energyDecrement = 1.0f;
 
     private CharacterInput scriptCharInput;
-
+    private CharacterMotor scriptCharMotor;
 
 	// Use this for initialization
 	void Start () 
