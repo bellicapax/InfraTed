@@ -10,7 +10,7 @@ public class EnemyTouch : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-        scriptSight = transform.parent.GetComponent<EnemySight>();
+        scriptSight = transform.parent.GetComponentInChildren<EnemySight>();
         scriptMovement = transform.parent.GetComponent<EnemyMovement>();
 	}
 

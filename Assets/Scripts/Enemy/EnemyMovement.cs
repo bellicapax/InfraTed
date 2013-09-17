@@ -13,6 +13,7 @@ public class EnemyMovement : MonoBehaviour {
     public float fastRotateSpeed = 4.0f;
     public float nextWaypointDistance = 3.0f;
     public Transform[] aryTransPatrol;
+    public List<Transform> listTransPatrol = new List<Transform>();
 
     private bool calculatingPath = false;
     private int currentWaypoint = 0;
@@ -20,10 +21,9 @@ public class EnemyMovement : MonoBehaviour {
     private string hot = "Hot";
     private string cold = "Cold";
     private GameObject goCharacter;
-    private List<GameObject> lisHotColdObjects = new List<GameObject>();
-    private EnemySight scriptSight;
+    private List<GameObject> listHotColdObjects = new List<GameObject>();
     private EnemyState scriptState;
-    private Rigidbody myRigidbody;
+    private CharacterController myCharContro;
     private Transform myTransform;
     private Transform currentHotColdTrans;
     private Seeker scriptSeeker;
@@ -34,10 +34,9 @@ public class EnemyMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-        myRigidbody = this.rigidbody;
+        myCharContro = this.GetComponent<CharacterController>();
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
-        scriptSight = GetComponent<EnemySight>();
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
 	}
@@ -83,18 +82,18 @@ public class EnemyMovement : MonoBehaviour {
 
     void MoveTowards(Vector3 parTarget, float parMoveSpeed)
     {
-        myRigidbody.MovePosition(rigidbody.position + new Vector3(parTarget.x, 0.0f, parTarget.z) * Time.fixedDeltaTime * parMoveSpeed);
+        myCharContro.SimpleMove(new Vector3(parTarget.x, 0.0f, parTarget.z) * Time.fixedDeltaTime * parMoveSpeed);
     }
 
     Transform FindNearestHotOrColdObject()
     {
-        lisHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(hot));     //Put all the hot objects in the list
-        lisHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(cold));    //Put all the cold objects in the list
+        listHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(hot));     //Put all the hot objects in the list
+        listHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(cold));    //Put all the cold objects in the list
 
         float nearestSqr = Mathf.Infinity;
         Transform nearestTran = null;
 
-        foreach (GameObject aGO in lisHotColdObjects)
+        foreach (GameObject aGO in listHotColdObjects)
         {
             float distanceSqr = (aGO.transform.position - myTransform.position).sqrMagnitude;
             //print("Name: " + aGO.name + " Magnitude Squared: " + distanceSqr);
@@ -130,7 +129,34 @@ public class EnemyMovement : MonoBehaviour {
         {
             return;
         }
-        if (myPath == null)
+        for (int i = 0; i < listTransPatrol.Count; i++)
+        {
+            if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold)
+            {
+                if (listTransPatrol[i] == currentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
+                {
+                    listTransPatrol.RemoveAt(i);
+                    if (patrolCounter >= listTransPatrol.Count)     // If the counter is now greater than the number of items, set it back to zero
+                    {
+                        patrolCounter = 0;
+                    }
+                    else if(patrolCounter != 0)         // If it's not zero (e.g., if the last in the sequence got removed, so the counter would already be at zero)
+                    {
+                        patrolCounter--;                // Decrement by one to get it to target the "next" transform
+                    }
+                    GetANewPath();
+                }
+                else
+                {
+                    listTransPatrol.RemoveAt(i);
+                    if (patrolCounter >= listTransPatrol.Count)
+                    {
+                        patrolCounter = 0;
+                    }
+                }
+            }
+        }
+        if (myPath == null)             // If we have no path, get one
         {
             GetANewPath();
             print("myPath is null!");
@@ -139,6 +165,9 @@ public class EnemyMovement : MonoBehaviour {
         }
         else if (currentHotColdTrans.tag != hot && currentHotColdTrans.tag != cold)     //If the object is no longer hot or cold, get a new path to a hot or cold object.  (The non-hot or cold object will not be included in the new list)
         {
+            print("Original Count " + listTransPatrol.Count);
+            listTransPatrol.RemoveAt(patrolCounter);
+            print("After removeat " + listTransPatrol.Count);
             GetANewPath();
             print("Current object no longer hot or cold!");
             calculatingPath = true;
@@ -151,7 +180,7 @@ public class EnemyMovement : MonoBehaviour {
             calculatingPath = true;
             return;
         }
-        else if (newPatrolPath)
+        else if (newPatrolPath)                                                         //If we have touched the object we are trying to reach (but can't get close enough to the waypoint to have reached the end of the path)
         {
             GetANewPath();
             print("Touching objective in the path.");
@@ -159,9 +188,11 @@ public class EnemyMovement : MonoBehaviour {
             newPatrolPath = false;
             return;
         }
+
         FaceTarget(myPath.vectorPath[currentWaypoint], normalRotateSpeed, true);
         Vector3 dir = (myPath.vectorPath[currentWaypoint] - myTransform.position).normalized;   //Get the normalized direction to the next waypoint
         MoveTowards(dir, normalSpeed);                                                          //Move towards that waypoint
+        
         if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance)  //If we are close enough to the current waypoint, start moving towards the next waypoint.
         {
             currentWaypoint++;
@@ -172,12 +203,14 @@ public class EnemyMovement : MonoBehaviour {
 
     void GetANewPath()
     {
-        if (patrolCounter + 1 >= aryTransPatrol.Length)
+        currentHotColdTrans = listTransPatrol[patrolCounter]; // Assign the current target to the item in the array equal to the patrolCounter
+
+        patrolCounter++;                                    // Increment the patrolCounter
+        
+        if (patrolCounter >= listTransPatrol.Count)         // If the patrolCounter is greater than or equal to the count, reset it to zero (since the counter and the array start at zero)
         {
             patrolCounter = 0;
         }
-            currentHotColdTrans = aryTransPatrol[patrolCounter];
-            patrolCounter++;
         if (currentHotColdTrans != null)
         {
             scriptSeeker.StartPath(myTransform.position, currentHotColdTrans.position, OnPathComplete);

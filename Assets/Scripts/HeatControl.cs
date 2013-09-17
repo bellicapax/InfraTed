@@ -10,10 +10,15 @@ public class HeatControl : MonoBehaviour {
     public Material matInfra;
 
     private float heatMultiplier;
+    private string lukewarm = "Lukewarm";
+    private string hot = "Hot";
+    private string cold = "Cold";
     private HSBColor coldHSB;
     private GameObject goCharacter;
+    private GameObject goRoomThermo;
     private CharacterInput scriptCharInput;
     private MeshVolume scriptMesh;
+    private RoomHeatVariables scriptThermo;
     private Transform myTransform;
     private bool infraOn = false;
     
@@ -35,10 +40,19 @@ public class HeatControl : MonoBehaviour {
         }
 
         goCharacter = GameObject.Find("Character");
+
+        goRoomThermo = GameObject.FindGameObjectWithTag("Thermometer");
+
         scriptCharInput = goCharacter.GetComponent<CharacterInput>();
+        
         scriptMesh = GetComponent<MeshVolume>();
+
+        scriptThermo = goRoomThermo.GetComponent<RoomHeatVariables>();
+
         coldHSB = HSBColor.FromColor(scriptCharInput.coldColor);
+
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
+ 
         heatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
 	}
 	
@@ -47,6 +61,7 @@ public class HeatControl : MonoBehaviour {
     {
         MaterialSwap();
         EnergyAndColor();
+        RefreshTag();
 	}
 
     private void EnergyAndColor()
@@ -81,6 +96,26 @@ public class HeatControl : MonoBehaviour {
                 myTransform.renderer.material = matInfra;
                 infraOn = true;
             }
+        }
+    }
+
+    private void RefreshTag()
+    {
+        HSBColor tempHSB = HSBColor.FromColor(heatColor);
+
+        if (tempHSB.h < scriptThermo.minStealthHue)             // Since our hotter hues are smaller than our cooler ones, we must be below the min to be hot
+        {
+            this.tag = hot;
+        }
+
+        else if(tempHSB.h > scriptThermo.maxStealthHue)         // Since our colder hues are larger than our hotter ones, we must be above the max to be cold
+        {
+            this.tag = cold;
+        }
+
+        else if (tempHSB.h <= scriptThermo.maxStealthHue && tempHSB.h >= scriptThermo.minStealthHue)
+        {
+            this.tag = lukewarm;
         }
     }
 }

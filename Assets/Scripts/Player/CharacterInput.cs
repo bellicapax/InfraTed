@@ -112,27 +112,14 @@ public class CharacterInput : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, touchDistance))
             {
                 Transform itsTransform = hit.transform;
-                if (itsTransform.tag == "Hot" && scriptCharEnergy.currentEnergy < 100.0f)
+                HeatControl tempHeatControl;
+                if ((tempHeatControl = itsTransform.GetComponent<HeatControl>()) != null && scriptCharEnergy.currentEnergy < 100.0f)
                 {
-                    HeatControl tempHeatControl = itsTransform.GetComponent<HeatControl>();
                     HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                    if (tempHSB.h >= coldH)
-                    {
-                        itsTransform.tag = "Cold";
-                    }
-                    else if (tempHSB.h >= HSBColor.FromColor(ambientInfra).h)
-                    {
-                        itsTransform.tag = "Lukewarm";
-                    }
-                    else
-                    {
-                        //tempHSB.h += (1 / (tempHeatControl.heatEnergy + tempHeatControl.massEnergy)) * Time.deltaTime * offsetDeltaTime;
-                        tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
 
-                        tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
-                        transferEnergy = energyIncrement * Time.deltaTime;
-
-                    }
+                    tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                    tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
+                    transferEnergy = energyIncrement * Time.deltaTime;
                 }
             }
         }

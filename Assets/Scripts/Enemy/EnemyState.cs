@@ -20,7 +20,7 @@ public class EnemyState : MonoBehaviour {
 	void Start () 
     {
         nmeCurrentState = CurrentState.Stationary;
-        scriptSight = transform.parent.GetComponent<EnemySight>();
+        scriptSight = transform.parent.GetComponentInChildren<EnemySight>();
 	}
 	
 	// Update is called once per frame

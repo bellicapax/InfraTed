@@ -8,6 +8,8 @@ public class RoomHeatVariables : MonoBehaviour {
     public float temperatureMultiplier;
     public float maxStealthTemp;
     public float minStealthTemp;
+    public float maxStealthHue;
+    public float minStealthHue;
     public Color roomInfraTemp;
 
     private float hueCold = 255.0f / 360.0f;
@@ -31,6 +33,10 @@ public class RoomHeatVariables : MonoBehaviour {
                 {
                     maxStealthTemp = ((hueCold - (HSBColor.FromColor(roomInfraTemp).h)) / hueCold) * temperatureMultiplier + allowedPlayerTempVariance;
                     minStealthTemp = ((hueCold - (HSBColor.FromColor(roomInfraTemp).h)) / hueCold) * temperatureMultiplier - allowedPlayerTempVariance;
+                    minStealthHue = (hueCold * (temperatureMultiplier - maxStealthTemp)) / temperatureMultiplier;           // Since the hues go up as temperature goes down, we must subtract from the temp multiplier to be on the same scale and we must use the opposite min/max
+                    maxStealthHue = (hueCold * (temperatureMultiplier - minStealthTemp)) / temperatureMultiplier;
+
+                    print("Max: " + maxStealthTemp + " Min: " + minStealthTemp + " HueMax: " + maxStealthHue + " HueMin: " + minStealthHue);
                 }
                 else
                     Debug.LogError("Temperature multiplier not assigned!");
