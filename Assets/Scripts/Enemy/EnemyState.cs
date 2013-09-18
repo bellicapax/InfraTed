@@ -10,17 +10,20 @@ public class EnemyState : MonoBehaviour {
         Patroling = 1,
         Chasing = 2,
         Firing = 3,
-        Turning = 4
+        Turning = 4,
+        Padding = 5
     }
 
     private bool inTrigger;
     private EnemySight scriptSight;
-    
+    private EnemyMovement scriptMovement;
+
     // Use this for initialization
 	void Start () 
     {
         nmeCurrentState = CurrentState.Stationary;
         scriptSight = transform.parent.GetComponentInChildren<EnemySight>();
+        scriptMovement = transform.parent.GetComponent<EnemyMovement>();
 	}
 	
 	// Update is called once per frame
@@ -48,9 +51,13 @@ public class EnemyState : MonoBehaviour {
         {
             nmeCurrentState = CurrentState.Turning;
         }
-        else if (GameObject.FindGameObjectsWithTag("Hot").Length != 0)
+        else if (scriptMovement.listTransPatrol.Count > 1)
         {
             nmeCurrentState = CurrentState.Patroling;
+        }
+        else if (scriptMovement.listTransPatrol.Count == 1)
+        {
+            nmeCurrentState = CurrentState.Padding;
         }
         else
         {

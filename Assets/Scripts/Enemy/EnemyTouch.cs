@@ -16,6 +16,10 @@ public class EnemyTouch : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        if (scriptMovement.changedStates)
+        {
+            lastGO = null;
+        }
         if (other.gameObject.name == "Character")
         {
             scriptSight.playerIsTouching = true;

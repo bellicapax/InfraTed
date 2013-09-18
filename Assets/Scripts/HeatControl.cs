@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HeatControl : MonoBehaviour {
 
-
+    public bool inHeatSensorRange = false;
     public Color heatColor;
     public float heatEnergy;
     public Material matNormal;

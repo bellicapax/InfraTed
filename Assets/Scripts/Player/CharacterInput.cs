@@ -14,7 +14,6 @@ public class CharacterInput : MonoBehaviour {
     public Color coldColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public Material defaultDiffuse;
 
-    private float coldH;
     private string objectDrain = "ObjectDrain";
     private Material[] aryOriginalMaterial;
     private GameObject[] aryLukewarmGO;
@@ -29,7 +28,6 @@ public class CharacterInput : MonoBehaviour {
         transMainCam = Camera.main.transform;
         ambientVisible = RenderSettings.ambientLight;
         scriptCharEnergy = GetComponent<CharacterEnergy>();
-        coldH = HSBColor.FromColor(coldColor).h;
         if (!defaultDiffuse)
         {
             Debug.LogError("Assign default material in Inspector, please!");

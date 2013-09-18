@@ -280,6 +280,18 @@ Prefab:
       propertyPath: listTransPatrol.Array.data[2]
       value: 
       objectReference: {fileID: 1143899539}
+    - target: {fileID: 11400000, guid: c13cd038b8651c64da5018736f6e2812, type: 2}
+      propertyPath: useSphericalHeatSensor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: c13cd038b8651c64da5018736f6e2812, type: 2}
+      propertyPath: alertedSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: c13cd038b8651c64da5018736f6e2812, type: 2}
+      propertyPath: normalSpeed
+      value: 75
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c13cd038b8651c64da5018736f6e2812, type: 2}
   m_RootGameObject: {fileID: 920292002}
@@ -598,6 +610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inHeatSensorRange: 0
   heatColor: {r: 0, g: 0, b: 0, a: 0}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -823,17 +836,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba9b7e3b1d996ad49812cb5f05e5f7ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changedStates: 0
   newPatrolPath: 0
-  normalSpeed: 50
-  alertedSpeed: 4
+  normalSpeed: 75
+  alertedSpeed: 100
   normalRotateSpeed: 2
   fastRotateSpeed: 4
   nextWaypointDistance: .75
-  aryTransPatrol:
-  - {fileID: 992846240}
-  - {fileID: 1255627439}
-  - {fileID: 1143899539}
-  - {fileID: 764201297}
   listTransPatrol:
   - {fileID: 764201297}
   - {fileID: 1255627439}
@@ -1020,6 +1029,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inHeatSensorRange: 0
   heatColor: {r: 0, g: 0, b: 0, a: 0}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -1330,6 +1340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inHeatSensorRange: 0
   heatColor: {r: 0, g: 0, b: 0, a: 0}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -1450,6 +1461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inHeatSensorRange: 0
   heatColor: {r: 0, g: 0, b: 0, a: 0}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -1793,6 +1805,7 @@ GameObject:
   - 4: {fileID: 1560817760}
   - 135: {fileID: 1560817761}
   - 114: {fileID: 1560817762}
+  - 54: {fileID: 1560817763}
   m_Layer: 0
   m_Name: Vision
   m_TagString: Untagged
@@ -1839,13 +1852,28 @@ MonoBehaviour:
   fieldOfViewAngle: 110
   angle: 0
   playerInSight: 0
-  useFOV: 0
+  useFieldOfVision: 0
   playerIsTouching: 0
   playerHasTouched: 0
-  useSphereCollider: 0
+  useSphericalHeatSensor: 1
   personalLastSighting: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
   goRoomThermostat: {fileID: 2127693427}
+--- !u!54 &1560817763
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1560817759}
+  serializedVersion: 2
+  m_Mass: 1.00000001e-07
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1634864103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,13 +1980,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   astarData:
     hasBeenReverted: 0
-    data: 504b0304140000080800a95c30436ea6dab0c3010000780300000b0024006772617068302e6a736f6e0a0020000000000001001800e802d202fbb2ce01e802d202fbb2ce01e802d202fbb2ce017552cb6edb3010fc958267a79064abb07d4bedc62d903641dca2678a5c59842852e0a3b11cf8dfbba42c3932908b40cd2c776667f9460e5e70b27e23ffa8f440d6e4cb7c556429671c9690b0f9e20e9279be2c385bf16cc9977946ce33426d0bccbd50273459a73362b40b67151a1dc93a99912e7e4ff8c57206ca81f980f48a49dab4c0f7e204979abc2fca03af34879e4a3ee7d84b4b29ec45cb756df0bca1adf512c88c70411b885ad98c54200e958bc7f1d653595a7051dfd06e2b0cce119b91afda55d8a1a1b67e97479a648bf3d0eae794cbd30ca9d2e8e6fb45294db0afab04ab5f68c7a845c8190f536cfbdea36f27b1a4d7cc06c79b0a583df4e97d4c20af5ea9ac6921e16f05ea97de19ed15efd97398e7b891a229427c8bebeffd51d82887c05eea10e30a2d80c1b47fa0b9b84e1b6d21167cfcb1f09b1e102aa9b430c20fc25887446c46bdd38f42d53b23f8b57240b7c2ba47d18818142e36cc52686fb0927c8b01e2d8de6db45110c07ebe161495ae7b4635375de00d33eadde00f94396da2bf0b73af0ef85a6eca2338d686450a85f7a97ceef9288941a9c198c235a2f330eba79da16d783ddcd0d79d38357ab42f54a9f7cc00a8a778378a9eff03504b0304140000080800a95c3043287e18aa4300000048000000120024006772617068305f656469746f722e6a736f6e0a0020000000000001001800f829d202fbb2ce01f829d202fbb2ce01f829d202fbb2ce01ab56cac94fce4e4d51b22a292a4dd5512acec82f77ad28294a54b24a4bcc29068a94a456949416a58665166726e5a4c2d4156496e59728592939a7e695a41629d50200504b0304140000080800a95c30437b1c09c77600000085000000090024006d6574612e6a736f6e0a0020000000000001001800f829d202fbb2ce01f829d202fbb2ce01f829d202fbb2ce011d8c3d0f82301400ffcb9bb1e9873585d5818db81b86d2f7840ebe92524c8cf1bf4bdd6eb8bb0fbc286f31317460841656286860ce7e5d36e8d4817bc483ee7031eda4150624473298f389a4b16ec2d0a276e8ac86b181f25e69f04ffa17375f9647648c3c8b3e47ecebb55a9c90ae69e75235397e7f504b01022d00140000080800a95c30436ea6dab0c3010000780300000b00240000000000000000000000000000006772617068302e6a736f6e0a0020000000000001001800e802d202fbb2ce01e802d202fbb2ce01e802d202fbb2ce01504b01022d00140000080800a95c3043287e18aa43000000480000001200240000000000000000000000100200006772617068305f656469746f722e6a736f6e0a0020000000000001001800f829d202fbb2ce01f829d202fbb2ce01f829d202fbb2ce01504b01022d00140000080800a95c30437b1c09c776000000850000000900240000000000000000000000a70200006d6574612e6a736f6e0a0020000000000001001800f829d202fbb2ce01f829d202fbb2ce01f829d202fbb2ce01504b050600000000030003001c010000680300000000
+    data: 504b03041400000808002c4132436461c68dd5010000960300000b0024006772617068302e6a736f6e0a0020000000000001001800a3a1f44b70b4ce01a3a1f44b70b4ce01a3a1f44b70b4ce015d52d1729b3010fc958e9eed0c60d3d87e4bedc4c94cda64e276fa2ca4c36810122389c638e37fef49806dfcc2c0eedddede1e5f64df084e565fe41f950d9015f93e5b6649cc198705446c369f42344b1719674b9e2cf8224dc86942a8ad81b90fea8426ab78428c76fe5d79a103594513d286e7119f58ce4039303d394defd2c5fd7296ced3c769747f557ac36063a398a4550d7c278ed0f7a79d7aea8595e6d051d15d8a73b494c2f63e5c5bfb7dd6b4b68d0432215cd00a828fc4171720f685c38fabbeb73cb7e0821f43db8d30b86590233fb42b50a3a2b6bc4a2b8e92f96990fa39e6d238412a37ba7aee27c511eaba42b0f283b68c5a849c69608c6d2e2e71ff7a94687c497470bc2e8095834ee7630435ea93ca926612fe16a07ee9add18de21d7bf2fb1cd65254990f707ef97c38081bc621b093da07b9440b6030ef1734178e6d832dc4bc8f3f167ed33d42399516cef09330d62111c468e3f4ab50e5d6087ea91cd08db0ee5554220485a7f5bb64ba3158491e4380b876e3d6da28f060b75f0d8a4ad7bee334373ee00d739e77833f51e6b409fe7ae641edf17fb9290fe0b9d61f5228eca7f2bde3c3480c4a0dc6149e119dfb5dbf6d0dadfddfc30dfddc8a63a5cff685caf58e1900f5167ac3d0d37f504b03041400000808002c413243287e18aa4300000048000000120024006772617068305f656469746f722e6a736f6e0a0020000000000001001800b4c8f44b70b4ce01b4c8f44b70b4ce01b4c8f44b70b4ce01ab56cac94fce4e4d51b22a292a4dd5512acec82f77ad28294a54b24a4bcc29068a94a456949416a58665166726e5a4c2d4156496e59728592939a7e695a41629d50200504b03041400000808002c4132437b1c09c77600000085000000090024006d6574612e6a736f6e0a0020000000000001001800b4c8f44b70b4ce01b4c8f44b70b4ce01b4c8f44b70b4ce011d8c3d0f82301400ffcb9bb1e9873585d5818db81b86d2f7840ebe92524c8cf1bf4bdd6eb8bb0fbc286f31317460841656286860ce7e5d36e8d4817bc483ee7031eda4150624473298f389a4b16ec2d0a276e8ac86b181f25e69f04ffa17375f9647648c3c8b3e47ecebb55a9c90ae69e75235397e7f504b01022d001400000808002c4132436461c68dd5010000960300000b00240000000000000000000000000000006772617068302e6a736f6e0a0020000000000001001800a3a1f44b70b4ce01a3a1f44b70b4ce01a3a1f44b70b4ce01504b01022d001400000808002c413243287e18aa43000000480000001200240000000000000000000000220200006772617068305f656469746f722e6a736f6e0a0020000000000001001800b4c8f44b70b4ce01b4c8f44b70b4ce01b4c8f44b70b4ce01504b01022d001400000808002c4132437b1c09c776000000850000000900240000000000000000000000b90200006d6574612e6a736f6e0a0020000000000001001800b4c8f44b70b4ce01b4c8f44b70b4ce01b4c8f44b70b4ce01504b050600000000030003001c0100007a0300000000
     data_backup: 
     data_cachedStartup: 
     revertData: 
     cacheStartup: 0
     compress: 0
-  showNavGraphs: 0
+  showNavGraphs: 1
   showUnwalkableNodes: 1
   debugMode: 0
   debugFloor: 0
@@ -2022,7 +2050,7 @@ MonoBehaviour:
   minAreaSize: 10
   limitGraphUpdates: 1
   maxGraphUpdateFreq: .200000003
-  lastScanTime: .173009902
+  lastScanTime: .1690097
   inGameDebugPath: 
   isScanning: 0
   showGraphs: 1
@@ -2056,7 +2084,7 @@ Transform:
   m_PrefabInternal: {fileID: 1864521418}
   m_GameObject: {fileID: 1726425885}
   m_LocalRotation: {x: 0, y: -.864635289, z: 0, w: .50240016}
-  m_LocalPosition: {x: 15.9391413, y: .858465433, z: 11.2801218}
+  m_LocalPosition: {x: 14.3498125, y: 1, z: -13.1326008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 31253242}
@@ -2263,15 +2291,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 15.9391413
+      value: 14.3498125
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
       propertyPath: m_LocalPosition.y
-      value: .858465433
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 11.2801218
+      value: -13.1326008
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 2}
       propertyPath: m_LocalRotation.x

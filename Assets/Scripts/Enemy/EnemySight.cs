@@ -6,10 +6,10 @@ public class EnemySight : MonoBehaviour {
     public float fieldOfViewAngle = 110.0f;
     public float angle;
     public bool playerInSight;
-    public bool useFOV;
+    public bool useFieldOfVision;
     public bool playerIsTouching = false;
     public bool playerHasTouched = false;
-    public bool useSphereCollider;
+    public bool useSphericalHeatSensor;
     public Vector3 personalLastSighting;
     public Vector3 direction;
     public GameObject goRoomThermostat;
@@ -41,7 +41,7 @@ public class EnemySight : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if (useFOV)
+        if (useFieldOfVision)
         {
             FieldOfView();
         }
@@ -54,11 +54,18 @@ public class EnemySight : MonoBehaviour {
         }
 	}
 
-
+    void OnTriggerEnter(Collider other)
+    {
+        HeatControl itsHeat;
+        if (useSphericalHeatSensor && (itsHeat = other.GetComponent<HeatControl>()))
+        {
+            itsHeat.inHeatSensorRange = true;
+        }
+    }
 
     void OnTriggerStay(Collider other)
     {
-        if (useSphereCollider)
+        if (useSphericalHeatSensor)
         {
             if (!playerIsTouching)
             {
@@ -73,6 +80,15 @@ public class EnemySight : MonoBehaviour {
                     personalLastSighting = goCharacter.transform.position;
                 }
             }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        HeatControl itsHeat;
+        if (useSphericalHeatSensor && (itsHeat = other.GetComponent<HeatControl>()))
+        {
+            itsHeat.inHeatSensorRange = false;
         }
     }
 
