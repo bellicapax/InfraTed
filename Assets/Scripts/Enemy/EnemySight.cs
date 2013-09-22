@@ -61,23 +61,26 @@ public class EnemySight : MonoBehaviour {
         {
             itsHeat.inHeatSensorRange = true;
         }
+
     }
 
     void OnTriggerStay(Collider other)
     {
         if (useSphericalHeatSensor)
         {
-            if (!playerIsTouching)
-            {
-                playerInSight = false;
-            }
-
             if (scriptCharEnergy.currentEnergy >= 0)
             {
-                if (other.gameObject == goCharacter && IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))
+                if (other.name == "Character")
                 {
-                    playerInSight = true;
-                    personalLastSighting = goCharacter.transform.position;
+                    if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))
+                    {
+                        playerInSight = true;
+                        personalLastSighting = goCharacter.transform.position;
+                    }
+                    else if (!playerIsTouching)
+                    {
+                        playerInSight = false;
+                    }
                 }
             }
         }
@@ -127,6 +130,17 @@ public class EnemySight : MonoBehaviour {
     bool IsOutOfTemperatureThreshold(float temp)
     {
         if (temp < scriptRoomHeat.minStealthTemp || temp > scriptRoomHeat.maxStealthTemp)
+            return true;
+        else
+            return false;
+    }
+
+    public bool JustFOVAngle()
+    {
+        direction = goCharacter.transform.position - myTransform.position;
+        angle = Vector3.Angle(direction, myTransform.forward);
+
+        if (angle < fieldOfViewAngle * 0.5f)
             return true;
         else
             return false;

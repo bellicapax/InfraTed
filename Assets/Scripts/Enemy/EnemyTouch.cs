@@ -29,6 +29,7 @@ public class EnemyTouch : MonoBehaviour {
         else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
         {
             scriptMovement.newPatrolPath = true;
+            scriptMovement.nameTouch = other.name;
             lastGO = other.gameObject;
         }
     }
@@ -38,6 +39,10 @@ public class EnemyTouch : MonoBehaviour {
         if (other.gameObject.name == "Character")
         {
             scriptSight.playerIsTouching = false;
+        }
+        else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
+        {
+            scriptMovement.nameTouch = "";
         }
     }
 

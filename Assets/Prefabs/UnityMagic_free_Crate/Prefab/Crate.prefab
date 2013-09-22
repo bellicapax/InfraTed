@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inHeatSensorRange: 0
   heatColor: {r: 0, g: 0, b: 0, a: 0}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}

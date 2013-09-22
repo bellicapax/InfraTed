@@ -105,6 +105,9 @@
      <Compile Include="Assets\AstarPathfindingProject\Utilities\SizeProfiler.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
      <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
+     <Compile Include="Assets\Scripts\Enemy\CameraMovement.cs" />
+     <Compile Include="Assets\Scripts\Enemy\CameraSight.cs" />
+     <Compile Include="Assets\Scripts\Enemy\EnemyBump.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemySight.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyState.cs" />

@@ -8,19 +8,24 @@ public class EnemyMovement : MonoBehaviour {
 
     public bool changedStates = false;
     public bool newPatrolPath = false;
+    public int decimalRounding = 2;
+    public int framesAllowedStationary = 10;
     public float normalSpeed = 1.0f;
     public float alertedSpeed = 2.0f;
     public float normalRotateSpeed = 1.0f;
     public float fastRotateSpeed = 4.0f;
     public float nextWaypointDistance = 3.0f;
+    public string nameTouch;
+    public string nameBump;
     public List<Transform> listTransPatrol = new List<Transform>();
 
     private bool calculatingPath = false;
     private int currentWaypoint = 0;
     private int patrolCounter = 0;
+    private int stuckCounter;
     private string hot = "Hot";
     private string cold = "Cold";
-    private Vector3 lastCharPosition;
+    private Vector3 lastMyPosition;
     private GameObject goCharacter;
     private List<GameObject> listHotColdObjects = new List<GameObject>();
     private CharacterController myCharContro;
@@ -30,6 +35,7 @@ public class EnemyMovement : MonoBehaviour {
     private Seeker scriptSeeker;
     private EnemyState scriptState;
     private EnemySight scriptSight;
+    private EnemyBump scriptBump;
     private Path myPath;
     private EnemyState.CurrentState lastState;
 
@@ -37,14 +43,15 @@ public class EnemyMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
+        stuckCounter = framesAllowedStationary;
         myCharContro = this.GetComponent<CharacterController>();
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<EnemySight>();
+        scriptBump = GetComponentInChildren<EnemyBump>();
         lastState = scriptState.nmeCurrentState;
-        lastCharPosition = goCharacter.transform.position;
 	}
 	
 	void FixedUpdate () 
@@ -54,7 +61,6 @@ public class EnemyMovement : MonoBehaviour {
             changedStates = true;
             print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
         }
-
         switch (scriptState.nmeCurrentState)
         {
             case EnemyState.CurrentState.Patroling:
@@ -62,11 +68,11 @@ public class EnemyMovement : MonoBehaviour {
                 break;
 
             case EnemyState.CurrentState.Chasing:
-                Chasing();
+                Chasing(alertedSpeed);
                 break;
 
             case EnemyState.CurrentState.Firing:
-                FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
+                Chasing(normalSpeed);
                 break;
 
             case EnemyState.CurrentState.Turning:
@@ -82,7 +88,7 @@ public class EnemyMovement : MonoBehaviour {
                 break;
         }
         lastState = scriptState.nmeCurrentState;
-        lastCharPosition = goCharacter.transform.position;
+        lastMyPosition = myTransform.position;
 	}
 
     void FaceTarget(Vector3 parTarget, float parRotateSpeed, bool parConstrainXZAxes)
@@ -160,7 +166,10 @@ public class EnemyMovement : MonoBehaviour {
         FaceTarget(myPath.vectorPath[currentWaypoint], normalRotateSpeed, true);                //Face the waypoint as we are going there
         Vector3 dir = (myPath.vectorPath[currentWaypoint] - myTransform.position).normalized;   //Get the normalized direction to the next waypoint
         MoveTowards(dir, normalSpeed);                                                          //Move towards that waypoint
-        
+
+        if (IHaveBeenStuck(false))
+            return;
+
         if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance)  //If we are close enough to the current waypoint, start moving towards the next waypoint.
         {
             currentWaypoint++;
@@ -169,22 +178,29 @@ public class EnemyMovement : MonoBehaviour {
 
     }
 
-    void Chasing()
+    void Chasing(float parChaseSpeed)
     {
         if (PathIsClear())
         {
+            print("Path is clear.");
+            Vector3 direction = goCharacter.transform.position - myTransform.position;
             FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
-            MoveTowards(goCharacter.transform.position, alertedSpeed);
+            MoveTowards(direction.normalized, parChaseSpeed);
         }
         else if (GettingAPathToCharacter())
         {
+            print("Finding a path to character.");
             return;
         }
         else
         {
+            print("Moving along path.");
             FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
-            MoveTowards(myPath.vectorPath[currentWaypoint], alertedSpeed);
-
+            Vector3 dir = (myPath.vectorPath[currentWaypoint] - myTransform.position).normalized;
+            MoveTowards(dir, parChaseSpeed);
+            if (IHaveBeenStuck(true))
+                return;
+            print("Last position: " + lastMyPosition + " Current position: " + myTransform.position);
             if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance)  //If we are close enough to the current waypoint, start moving towards the next waypoint.
             {
                 currentWaypoint++;
@@ -271,6 +287,18 @@ public class EnemyMovement : MonoBehaviour {
             newPatrolPath = false;
             return true;
         }
+        else if (scriptBump.isBumping)
+        {
+            if (nameBump != nameTouch)
+            {
+                scriptSeeker.StartPath(myTransform.position, currentHotColdTrans.position, OnPathComplete);     // We don't want a new path based on the new, incremented patrol counter.  Just use the current objective.
+                print("Bumped into obstacle while patroling.");
+                scriptBump.isBumping = false;
+                return false;                                                                                   // So it doesn't hiccup when we change paths, don't return and don't set calculating path to true
+            }
+            else
+                return false;
+        }
         else
             return false;
     }
@@ -314,9 +342,55 @@ public class EnemyMovement : MonoBehaviour {
         }
         else if (currentWaypoint >= myPath.vectorPath.Count)                            //If we have reached the end of the path
         {
-            GetANewPatrolPath();
+            FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
+            scriptSeeker.StartPath(myTransform.position, goCharacter.transform.position, OnPathComplete);
             calculatingPath = true;
             return true;
+        }
+        else if (scriptBump.isBumping)
+        {
+            print("Bumped into obstacle while chasing.");
+            FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
+            scriptSeeker.StartPath(myTransform.position, goCharacter.transform.position, OnPathComplete);
+            calculatingPath = true;
+            scriptBump.isBumping = false;
+            return true;
+        }
+        return false;
+    }
+
+    public static float Round(float value, int digits)
+    {
+        float mult = Mathf.Pow(10.0f, (float)digits);
+        return Mathf.Round(value * mult) / mult;
+    }
+
+    bool IHaveBeenStuck(bool parChasing)
+    {
+        if (new Vector3(Round(myTransform.position.x, decimalRounding), Round(myTransform.position.y, decimalRounding), Round(myTransform.position.z, decimalRounding)) == new Vector3(Round(lastMyPosition.x, decimalRounding), Round(lastMyPosition.y, decimalRounding), Round(lastMyPosition.z, decimalRounding)))   //If we aren't moving, get a new path
+        {
+            stuckCounter--;
+            if (stuckCounter <= 0)
+            {
+                if (parChasing)
+                {
+                    FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
+                    scriptSeeker.StartPath(myTransform.position, goCharacter.transform.position, OnPathComplete);
+                    calculatingPath = true;
+                    stuckCounter = framesAllowedStationary;
+                }
+                else
+                {
+                    GetANewPatrolPath();
+                    calculatingPath = true;
+                    stuckCounter = framesAllowedStationary;
+                }
+                return true;
+            }
+        }
+        else
+        {
+            stuckCounter = framesAllowedStationary;
         }
         return false;
     }

@@ -33,7 +33,7 @@ public class EnemyState : MonoBehaviour {
         {
             if (inTrigger)
             {
-                if (scriptSight.FieldOfView())
+                if (scriptSight.JustFOVAngle())
                 {
                     nmeCurrentState = CurrentState.Firing;
                 }
