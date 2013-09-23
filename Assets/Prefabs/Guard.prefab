@@ -30,7 +30,7 @@ GameObject:
   - 114: {fileID: 11400006}
   - 143: {fileID: 14300000}
   m_Layer: 0
-  m_Name: NME
+  m_Name: Guard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,10 +201,10 @@ MonoBehaviour:
   fieldOfViewAngle: 110
   angle: 0
   playerInSight: 0
-  useFOV: 0
+  useFieldOfVision: 0
   playerIsTouching: 0
   playerHasTouched: 0
-  useSphereCollider: 0
+  useSphericalHeatSensor: 0
   personalLastSighting: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
   goRoomThermostat: {fileID: 0}
@@ -219,17 +219,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba9b7e3b1d996ad49812cb5f05e5f7ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changedStates: 0
   newPatrolPath: 0
+  decimalRounding: 2
+  framesAllowedStationary: 10
   normalSpeed: 50
   alertedSpeed: 4
   normalRotateSpeed: 2
   fastRotateSpeed: 4
   nextWaypointDistance: .75
-  aryTransPatrol:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  nameTouch: 
+  nameBump: 
   listTransPatrol:
   - {fileID: 0}
   - {fileID: 0}

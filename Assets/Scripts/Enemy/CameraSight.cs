@@ -38,9 +38,17 @@ public class CameraSight : MonoBehaviour {
         if (angle < maxVertAngle && angle > minVertAngle)
         {
             angle = Vector3.Angle(direction, myTransform.forward);
-            if (angle < halfSpotAngle)
+            if (angle < halfSpotAngle)                                  // If it's within the camera's circle view (both vertically and horizontally)
             {
-                canSeePlayer = true;
+                RaycastHit hit;
+
+                if (Physics.Raycast(myTransform.position, direction.normalized, out hit, Mathf.Infinity))
+                {
+                    if (hit.collider.gameObject == goCharacter)         // If we don't hit anything besides the character.
+                    {
+                        canSeePlayer = true;
+                    }
+                }
             }
         }
         else
