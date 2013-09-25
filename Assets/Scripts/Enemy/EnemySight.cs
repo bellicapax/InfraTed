@@ -4,12 +4,13 @@ using System.Collections;
 public class EnemySight : MonoBehaviour {
 
     public float fieldOfViewAngle = 110.0f;
+    public bool useSphericalHeatSensor;
+    public bool useFieldOfVision;
     public float angle;
     public bool playerInSight;
-    public bool useFieldOfVision;
     public bool playerIsTouching = false;
     public bool playerHasTouched = false;
-    public bool useSphericalHeatSensor;
+    
     public Vector3 personalLastSighting;
     public Vector3 direction;
     public GameObject goRoomThermostat;
