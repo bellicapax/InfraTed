@@ -108,6 +108,8 @@ public class CameraMovement : MonoBehaviour {
         for (int i = 0; i < numberOfGuardsToSpawn; i++)
         {
             GameObject clone = GameObject.Instantiate(goGuard, transGuardEntrance.position, transGuardEntrance.rotation) as GameObject;
+            EnemyState scriptState = clone.GetComponentInChildren<EnemyState>();
+            scriptState.justLostEm = true;
             yield return new WaitForSeconds(guardSpawnWaitTime);
         }
     }

@@ -14,10 +14,12 @@ public class EnemyMovement : MonoBehaviour {
     public float alertedSpeed = 2.0f;
     public float normalRotateSpeed = 1.0f;
     public float fastRotateSpeed = 4.0f;
-    public float nextWaypointDistance = 3.0f;
+    public float nextWaypointDistance = 1.0f;
+    public float percentOfFOVToContinuePath = 0.3f;
     public string nameTouch;
     public string nameBump;
     public List<Transform> listTransPatrol = new List<Transform>();
+    public GameObject goSharedVariables;
 
     private bool calculatingPath = false;
     private int currentWaypoint = 0;
@@ -36,6 +38,7 @@ public class EnemyMovement : MonoBehaviour {
     private EnemyState scriptState;
     private EnemySight scriptSight;
     private EnemyBump scriptBump;
+    private EnemyShared scriptShared;
     private Path myPath;
     private EnemyState.CurrentState lastState;
 
@@ -47,10 +50,13 @@ public class EnemyMovement : MonoBehaviour {
         myCharContro = this.GetComponent<CharacterController>();
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
+        if (!goSharedVariables)
+            Debug.Log("Please assign the Enemy Shared Variables game object to the Enemy Movement script.");
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<EnemySight>();
         scriptBump = GetComponentInChildren<EnemyBump>();
+        scriptShared = goSharedVariables.GetComponent<EnemyShared>();
         lastState = scriptState.nmeCurrentState;
 	}
 	
@@ -83,12 +89,17 @@ public class EnemyMovement : MonoBehaviour {
 
                 break;
 
+            case EnemyState.CurrentState.Searching:
+                Searching();
+                break;
+
             case EnemyState.CurrentState.Stationary:
 
                 break;
         }
         lastState = scriptState.nmeCurrentState;
         lastMyPosition = myTransform.position;
+
 	}
 
     void FaceTarget(Vector3 parTarget, float parRotateSpeed, bool parConstrainXZAxes)
@@ -182,30 +193,27 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (PathIsClear())
         {
-            print("Path is clear.");
             Vector3 direction = goCharacter.transform.position - myTransform.position;
             FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
             MoveTowards(direction.normalized, parChaseSpeed);
         }
         else if (GettingAPathToCharacter())
         {
-            print("Finding a path to character.");
             return;
         }
         else
         {
-            print("Moving along path.");
+            if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance && ((currentWaypoint + 1) < myPath.vectorPath.Count))  // If we are close enough to the current waypoint and there is another waypoint left, start moving towards the next waypoint.
+            {                                                                                                       // I decided to put this before moving so that we don't move towards a waypoint unnecessarily 
+                currentWaypoint++;
+                //print("New Waypoint: " + currentWaypoint);
+            }
             FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
             Vector3 dir = (myPath.vectorPath[currentWaypoint] - myTransform.position).normalized;
             MoveTowards(dir, parChaseSpeed);
             if (IHaveBeenStuck(true))
                 return;
-            print("Last position: " + lastMyPosition + " Current position: " + myTransform.position);
-            if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance)  //If we are close enough to the current waypoint, start moving towards the next waypoint.
-            {
-                currentWaypoint++;
-                //print("New Waypoint: " + currentWaypoint);
-            }
+
         }
     }
 
@@ -354,6 +362,14 @@ public class EnemyMovement : MonoBehaviour {
             scriptSeeker.StartPath(myTransform.position, goCharacter.transform.position, OnPathComplete);
             calculatingPath = true;
             scriptBump.isBumping = false;
+           return true;
+        }
+        else if (WaypointPlayerAngle())
+        {
+            print("Path end no longer leads to player.");
+            FaceTarget(goCharacter.transform.position, fastRotateSpeed, true);
+            scriptSeeker.StartPath(myTransform.position, goCharacter.transform.position, OnPathComplete);
+            calculatingPath = true;
             return true;
         }
         return false;
@@ -394,4 +410,32 @@ public class EnemyMovement : MonoBehaviour {
         }
         return false;
     }
+
+    bool WaypointPlayerAngle()
+    {
+        Vector3 pathDir = myPath.vectorPath[myPath.vectorPath.Count - 1] - myTransform.position;            // Get a vector direction between myself and the final point of the path
+        Vector3 playerDir = goCharacter.transform.position - myTransform.position;
+        float pathPlayerAngle = Vector3.Angle(pathDir, playerDir);
+        //print("Way X: " + pathDir.x + " Way Y: " + pathDir.y + " Way Z: " + pathDir.z + " Player X: " + playerDir.x + " Player Y: " + playerDir.y + " Player Z: " + playerDir.z + " Angle: " + pathPlayerAngle);
+        if (pathPlayerAngle > scriptSight.fieldOfViewAngle * percentOfFOVToContinuePath)
+            return true;
+        else
+            return false;
+    }
+
+    void Searching()
+    {
+        if (Vector3.Distance(myTransform.position, new Vector3(scriptShared.sharedLastKnownLocation.x, myTransform.position.y, scriptShared.sharedLastKnownLocation.z)) > nextWaypointDistance)  // We don't want to check the difference in y's because the player might be above the enemy where it can't get.
+        {
+            FaceTarget(scriptShared.sharedLastKnownLocation, fastRotateSpeed, true);
+            Vector3 direction = scriptShared.sharedLastKnownLocation - myTransform.position;
+            MoveTowards(direction.normalized, alertedSpeed);
+        }
+        else
+        {
+
+        }
+    }
+
+
 }

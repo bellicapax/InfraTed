@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 135: {fileID: 13500000}
   - 114: {fileID: 11400000}
+  - 54: {fileID: 5400004}
   m_Layer: 0
   m_Name: Vision
   m_TagString: Untagged
@@ -81,6 +82,9 @@ GameObject:
   - 4: {fileID: 400008}
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
+  - 54: {fileID: 5400002}
+  - 135: {fileID: 13500006}
+  - 114: {fileID: 11400012}
   m_Layer: 0
   m_Name: Graphics
   m_TagString: Untagged
@@ -94,7 +98,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0, y: -.645784736, z: 0, w: -.763519585}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -106,7 +110,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: .645784736, z: 0, w: -.763519585}
-  m_LocalPosition: {x: 9.62463093, y: .683231592, z: 8.51813221}
+  m_LocalPosition: {x: 9.62463093, y: .300000012, z: 8.51813221}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400000}
@@ -179,9 +183,39 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   serializedVersion: 2
-  m_Mass: 1.00000001e-07
+  m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!54 &5400002
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100008}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!54 &5400004
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -204,7 +238,7 @@ MonoBehaviour:
   useFieldOfVision: 0
   playerIsTouching: 0
   playerHasTouched: 0
-  useSphericalHeatSensor: 0
+  useSphericalHeatSensor: 1
   personalLastSighting: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
   goRoomThermostat: {fileID: 0}
@@ -224,15 +258,18 @@ MonoBehaviour:
   decimalRounding: 2
   framesAllowedStationary: 10
   normalSpeed: 50
-  alertedSpeed: 4
+  alertedSpeed: 75
   normalRotateSpeed: 2
   fastRotateSpeed: 4
-  nextWaypointDistance: .75
+  nextWaypointDistance: 1
   nameTouch: 
   nameBump: 
   listTransPatrol:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  goSharedVariables: {fileID: 0}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -305,6 +342,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nmeCurrentState: 0
+  justLostEm: 0
+--- !u!114 &11400012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e49051727a9b94bba893cf110944c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isBumping: 0
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -327,7 +377,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: .75
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &13500004
 SphereCollider:
@@ -340,6 +390,18 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &13500006
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100008}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: .600000024
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &14300000
 CharacterController:

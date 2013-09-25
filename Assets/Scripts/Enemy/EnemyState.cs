@@ -11,8 +11,10 @@ public class EnemyState : MonoBehaviour {
         Chasing = 2,
         Firing = 3,
         Turning = 4,
-        Padding = 5
+        Padding = 5,
+        Searching = 6
     }
+    public bool justLostEm;
 
     private bool inTrigger;
     private EnemySight scriptSight;
@@ -31,6 +33,7 @@ public class EnemyState : MonoBehaviour {
     {
         if (scriptSight.playerInSight)
         {
+            justLostEm = false;                             // If we can see the player, we don't need to search anymore.
             if (inTrigger)
             {
                 if (scriptSight.JustFOVAngle())
@@ -51,6 +54,10 @@ public class EnemyState : MonoBehaviour {
         {
             nmeCurrentState = CurrentState.Turning;
         }
+        else if (justLostEm)
+        {
+            nmeCurrentState = CurrentState.Searching;
+        } 
         else if (scriptMovement.listTransPatrol.Count > 1)
         {
             nmeCurrentState = CurrentState.Patroling;
