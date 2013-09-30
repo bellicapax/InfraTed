@@ -22,12 +22,19 @@ public class EnemyMovement : MonoBehaviour {
     public GameObject goSharedVariables;
 
     private bool calculatingPath = false;
+    private bool setSearchRotation = false;
+    private bool doneSearching = false;
     private int currentWaypoint = 0;
     private int patrolCounter = 0;
     private int stuckCounter;
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
+    private Vector3 firstDirection;
+    private Vector3 secondDirection;
+    private Quaternion endFirstDirection;
+    private Quaternion endSecondDirection;
+    private Quaternion targetSearchRotation;
     private GameObject goCharacter;
     private List<GameObject> listHotColdObjects = new List<GameObject>();
     private CharacterController myCharContro;
@@ -58,6 +65,17 @@ public class EnemyMovement : MonoBehaviour {
         scriptBump = GetComponentInChildren<EnemyBump>();
         scriptShared = goSharedVariables.GetComponent<EnemyShared>();
         lastState = scriptState.nmeCurrentState;
+
+        if (Random.Range(0, 1) == 0)
+        {
+            firstDirection = Vector3.right;
+            secondDirection = Vector3.left;
+        }
+        else
+        {
+            firstDirection = Vector3.left;
+            secondDirection = Vector3.right;
+        }
 	}
 	
 	void FixedUpdate () 
@@ -433,9 +451,43 @@ public class EnemyMovement : MonoBehaviour {
         }
         else
         {
+            if (scriptSight.useFieldOfVision)
+            {
+                LookRightLeft();
+            }
+            else if (scriptSight.useSphericalHeatSensor)
+            {
+
+            }
 
         }
     }
+
+    void LookRightLeft()
+    {
+        if (!setSearchRotation)
+        {
+            endFirstDirection = Quaternion.LookRotation(firstDirection - myTransform.position);
+            endSecondDirection = Quaternion.LookRotation(secondDirection - myTransform.position);
+            targetSearchRotation = endFirstDirection;
+            setSearchRotation = true;
+        }
+        if (myTransform.rotation == endFirstDirection && targetSearchRotation == endFirstDirection)
+        {
+            if (!doneSearching)
+                targetSearchRotation = endSecondDirection;
+            else
+                scriptState.justLostEm = false;
+        }
+        else if (myTransform.rotation == endSecondDirection && targetSearchRotation == endSecondDirection)
+        {
+            targetSearchRotation = endFirstDirection;
+            doneSearching = true;
+        }
+
+        myTransform.rotation = Quaternion.Slerp(myTransform.rotation, targetSearchRotation, normalRotateSpeed);
+    }
+
 
 
 }
