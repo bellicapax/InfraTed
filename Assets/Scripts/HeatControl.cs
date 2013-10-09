@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof (MeshVolume))]
+
 public class HeatControl : MonoBehaviour {
 
     public bool inHeatSensorRange = false;
