@@ -223,7 +223,7 @@ public class EnemyMovement : MonoBehaviour {
             }
             else if (scriptSight.useSphericalHeatSensor)
             {
-
+                scriptState.justLostEm = false;
             }
         }
     }
@@ -366,7 +366,12 @@ public class EnemyMovement : MonoBehaviour {
         }
         else
         {
+            if (myPath != null)
+                myPath.Release(this);
+
             myPath = parPath;
+            myPath.Claim(this);
+
             currentWaypoint = 0;
             calculatingPath = false;
         }
