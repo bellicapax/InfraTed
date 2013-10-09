@@ -52,7 +52,7 @@ GameObject:
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400012}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: -.864635289, z: 0, w: .50240016}
-  m_LocalPosition: {x: -1.89579391, y: 1, z: -36.6100349}
+  m_LocalPosition: {x: -14.3384161, y: 1, z: -24.6546135}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400000}
@@ -215,6 +215,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentEnergy: 21
   energyDecrement: .100000001
+  normalDecrement: .100000001
+  sprintDecrement: 2
+  absoluteMaxSpeed: 6
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1

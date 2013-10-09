@@ -4,9 +4,12 @@ using System.Collections;
 public class CharacterEnergy : MonoBehaviour {
 
     public float currentEnergy = 21.0f;
-    public float energyDecrement = 1.0f;
+    public float energyDecrement = 0.1f;
+    public float normalDecrement = 0.1f;
+    public float sprintDecrement = 2.0f;
     public float absoluteMaxSpeed = 6.0f;
 
+    private bool sprinting = false;
     private CharacterInput scriptCharInput;
     private CharacterMotor scriptCharMotor;
 
@@ -30,6 +33,16 @@ public class CharacterEnergy : MonoBehaviour {
 
     private void LoseHeat()
     {
+        if(Input.GetButton("Sprint"))
+        {
+            energyDecrement = sprintDecrement;
+            sprinting = true;
+        }
+        else
+        {
+            energyDecrement = normalDecrement;
+            sprinting = false;
+        }
         currentEnergy -= energyDecrement * Time.deltaTime;
     }
 
@@ -53,7 +66,10 @@ public class CharacterEnergy : MonoBehaviour {
 
     private void HeatAndSpeed()
     {
-        scriptCharMotor.movement.maxForwardSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
+        if (sprinting)
+            scriptCharMotor.movement.maxForwardSpeed = absoluteMaxSpeed;
+        else
+            scriptCharMotor.movement.maxForwardSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
     }
 
 
