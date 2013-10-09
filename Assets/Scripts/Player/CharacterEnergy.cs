@@ -5,6 +5,7 @@ public class CharacterEnergy : MonoBehaviour {
 
     public float currentEnergy = 21.0f;
     public float energyDecrement = 1.0f;
+    public float absoluteMaxSpeed = 6.0f;
 
     private CharacterInput scriptCharInput;
     private CharacterMotor scriptCharMotor;
@@ -13,6 +14,7 @@ public class CharacterEnergy : MonoBehaviour {
 	void Start () 
     {
         scriptCharInput = GetComponent<CharacterInput>();
+        scriptCharMotor = GetComponent<CharacterMotor>();
 	}
 	
 	// Update is called once per frame
@@ -20,13 +22,11 @@ public class CharacterEnergy : MonoBehaviour {
     {
         LoseHeat();
         GainHeat();
-        AssessHealth();
-	}
-
-    void LateUpdate()
-    {
         Mathf.Clamp(currentEnergy, 0.0f, 100.0f);
-    }
+        HeatAndSpeed();
+        AssessHealth();
+        
+	}
 
     private void LoseHeat()
     {
@@ -48,7 +48,12 @@ public class CharacterEnergy : MonoBehaviour {
 
     private void GameOver()
     {
+        Application.LoadLevel(Application.loadedLevel);
+    }
 
+    private void HeatAndSpeed()
+    {
+        scriptCharMotor.movement.maxForwardSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
     }
 
 
