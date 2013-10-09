@@ -102,25 +102,34 @@ public class CharacterInput : MonoBehaviour {
 
     private void TouchDrain()
     {
-        transferEnergy = 0.0f;
-        if (Input.GetButton(objectDrain))
+        transferEnergy = 0.0f;                  // Reset transferEnergy
+        if (Input.GetButton(objectDrain))       // If we're trying to drain energy
         {
             Ray ray = new Ray(transMainCam.position, transMainCam.forward);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, touchDistance))
+            if (Physics.Raycast(ray, out hit, touchDistance)) // and If we hit something with our raycast
             {
                 Transform itsTransform = hit.transform;
                 HeatControl tempHeatControl;
-                if ((tempHeatControl = itsTransform.GetComponent<HeatControl>()) != null && scriptCharEnergy.currentEnergy < 100.0f)
+                if ((tempHeatControl = itsTransform.GetComponent<HeatControl>()) != null) // and if it has a HeatControl script
                 {
-                    HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
 
-                    tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
-                    tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
-                    transferEnergy = energyIncrement * Time.deltaTime;
+                    if (itsTransform.tag == "Hot" && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
+                    {
+                        HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
+                        tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        transferEnergy = energyIncrement * Time.deltaTime;
+                        tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
+                    }
+                    else if(itsTransform.tag == "Cold" && scriptCharEnergy.currentEnergy > 0.0f) // else if it is a cold object and we are not already at min temperature
+                    {
+                        HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
+                        tempHSB.h -= (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        transferEnergy = -energyIncrement * Time.deltaTime;
+                        tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
+                    }
                 }
             }
         }
-        
     }
 }

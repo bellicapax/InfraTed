@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inHeatSensorRange: 0
-  heatColor: {r: 0, g: 0, b: 0, a: 0}
+  heatColor: {r: 1, g: 0, b: 0, a: 1}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}

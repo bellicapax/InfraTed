@@ -28,11 +28,7 @@ public class HeatControl : MonoBehaviour {
 	void Start () 
     {
         myTransform = this.transform;
-        if (matInfra)
-        {
-            heatColor = matInfra.color;
-        }
-        else
+        if (!matInfra)
         {
             Debug.LogError("Infrared material not assigned in the Inspector!");
         }
@@ -56,6 +52,8 @@ public class HeatControl : MonoBehaviour {
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
  
         heatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
+
+        StartCoroutine(AssignColor());
 	}
 	
 	// Update is called once per frame
@@ -68,18 +66,33 @@ public class HeatControl : MonoBehaviour {
 
     private void EnergyAndColor()
     {
-        if (HSBColor.FromColor(myTransform.renderer.material.color).h <= coldHSB.h)
+        if (infraOn)
         {
-            if (infraOn)
+            if (myTransform.tag == "Lukewarm")  // If the tag changed to lukewarm, we don't need to check if it's in range of our heat spectrum
             {
                 myTransform.renderer.material.color = heatColor;
             }
-        }
-        else
-        {
-            if (infraOn)
+            else if (myTransform.tag == "Hot")
             {
-                myTransform.renderer.material.color = scriptCharInput.coldColor;
+                if (HSBColor.FromColor(heatColor).h <= coldHSB.h)
+                {
+                    myTransform.renderer.material.color = heatColor;
+                }
+                else
+                {
+                    myTransform.renderer.material.color = scriptCharInput.coldColor;
+                }
+            }
+            else if (myTransform.tag == "Cold")
+            {
+                if (HSBColor.FromColor(heatColor).h > 0.0f)
+                {
+                    myTransform.renderer.material.color = heatColor;
+                }
+                else
+                {
+                    myTransform.renderer.material.color = Color.red;
+                }
             }
         }
     }
@@ -119,5 +132,13 @@ public class HeatControl : MonoBehaviour {
         {
             this.tag = lukewarm;
         }
+    }
+
+    private IEnumerator AssignColor()
+    {
+        while (!infraOn)
+            yield return null;
+
+        myTransform.renderer.material.color = heatColor;
     }
 }
