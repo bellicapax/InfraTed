@@ -13,10 +13,12 @@ public class CameraMovement : MonoBehaviour {
     public GameObject goSharedVariables;
     public GameObject goGuard;
 
+    private float detectionCounter;
     private Quaternion endingQuat;
     private Quaternion startingQuat;
     private Quaternion targetRotation;
     private Transform myTransform;
+    private Transform transCharacter;
     private GameObject goCharacter;
     private CameraSight scriptCamSight;
     private EnemyShared scriptShared;
@@ -53,6 +55,9 @@ public class CameraMovement : MonoBehaviour {
         startingQuat = myTransform.rotation;
         scriptCamSight = GetComponent<CameraSight>();
         goCharacter = GameObject.Find("Character");
+        transCharacter = goCharacter.transform;
+
+        InvokeRepeating("CharacterPositionUpdate", 0.0f, 0.1f);
 
 	}
 	
@@ -66,7 +71,7 @@ public class CameraMovement : MonoBehaviour {
         else
         {
             TrackPlayer();
-            StartCoroutine(DetectionCountdown());
+            DetectionCountdown();
         }
 	}
 
@@ -81,25 +86,28 @@ public class CameraMovement : MonoBehaviour {
             targetRotation = startingQuat;
         }
         myTransform.rotation = Quaternion.RotateTowards(myTransform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+        detectionCounter = 0;
     }
 
     void TrackPlayer()
     {
-        scriptShared.sharedLastKnownLocation = goCharacter.transform.position;      // Update the enemySharedVariables
 
-        Quaternion target = Quaternion.LookRotation(goCharacter.transform.position - myTransform.position);
+        Quaternion target = Quaternion.LookRotation(transCharacter.position - myTransform.position);
         target = Quaternion.Euler(myTransform.rotation.eulerAngles.x, target.eulerAngles.y, myTransform.rotation.eulerAngles.z); // Keep the X & Z rotation the same (in Euler Angles)
         myTransform.rotation = Quaternion.Slerp(myTransform.rotation, target, Time.deltaTime * alertedRotateSpeed);
     }
 
-    IEnumerator DetectionCountdown()
+    void DetectionCountdown()
     {
-        yield return new WaitForSeconds(secondsTillDetection);
         if (!scriptShared.cameraSummonedGuards)
         {
-            StartCoroutine(SpawnGuards());
+            detectionCounter += Time.deltaTime;
+
+            if (detectionCounter >= secondsTillDetection)
+            {
+                StartCoroutine(SpawnGuards());
+            }
         }
-        
     }
 
     IEnumerator SpawnGuards()
@@ -112,6 +120,12 @@ public class CameraMovement : MonoBehaviour {
             scriptState.justLostEm = true;
             yield return new WaitForSeconds(guardSpawnWaitTime);
         }
+    }
+
+    void CharacterPositionUpdate()
+    {
+        if(scriptCamSight.canSeePlayer)
+            scriptShared.sharedLastKnownLocation = transCharacter.position;      // Update the enemySharedVariables
     }
 
 }

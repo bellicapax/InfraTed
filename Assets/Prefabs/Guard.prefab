@@ -13,7 +13,7 @@ GameObject:
   - 54: {fileID: 5400004}
   m_Layer: 0
   m_Name: Vision
-  m_TagString: Untagged
+  m_TagString: Guard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +32,7 @@ GameObject:
   - 143: {fileID: 14300000}
   m_Layer: 0
   m_Name: Guard
-  m_TagString: Untagged
+  m_TagString: Guard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,7 +50,7 @@ GameObject:
   - 54: {fileID: 5400000}
   m_Layer: 0
   m_Name: TouchTrigger
-  m_TagString: Untagged
+  m_TagString: Guard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,7 +67,7 @@ GameObject:
   - 135: {fileID: 13500004}
   m_Layer: 0
   m_Name: StateControl
-  m_TagString: Untagged
+  m_TagString: Guard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87,7 +87,7 @@ GameObject:
   - 114: {fileID: 11400012}
   m_Layer: 0
   m_Name: Graphics
-  m_TagString: Untagged
+  m_TagString: Guard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,7 +110,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: .645784736, z: 0, w: -.763519585}
-  m_LocalPosition: {x: 9.62463093, y: .300000012, z: 8.51813221}
+  m_LocalPosition: {x: -10.9295645, y: .300000012, z: -28.1699486}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400000}
@@ -233,12 +233,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldOfViewAngle: 110
+  useSphericalHeatSensor: 0
+  useFieldOfVision: 1
   angle: 0
   playerInSight: 0
-  useFieldOfVision: 0
   playerIsTouching: 0
   playerHasTouched: 0
-  useSphericalHeatSensor: 1
   personalLastSighting: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
   goRoomThermostat: {fileID: 0}
@@ -255,13 +255,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   changedStates: 0
   newPatrolPath: 0
-  decimalRounding: 2
-  framesAllowedStationary: 10
+  decimalRounding: 1
+  secondsAllowedStationary: 1
   normalSpeed: 50
   alertedSpeed: 75
   normalRotateSpeed: 2
   fastRotateSpeed: 4
   nextWaypointDistance: 1
+  percentOfFOVToContinuePath: .300000012
   nameTouch: 
   nameBump: 
   listTransPatrol:
@@ -270,6 +271,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   goSharedVariables: {fileID: 0}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 3072
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -343,6 +347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nmeCurrentState: 0
   justLostEm: 0
+  sensingRobotsSearch: 0
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1

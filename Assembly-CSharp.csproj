@@ -105,6 +105,7 @@
      <Compile Include="Assets\AstarPathfindingProject\Utilities\SizeProfiler.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
      <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
+     <Compile Include="Assets\Scripts\CodeProfiler.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraSight.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyBump.cs" />
@@ -115,6 +116,7 @@
      <Compile Include="Assets\Scripts\Enemy\EnemyThermostat.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyTouch.cs" />
      <Compile Include="Assets\Scripts\GUIScript.cs" />
+     <Compile Include="Assets\Scripts\HUDFPS.cs" />
      <Compile Include="Assets\Scripts\HeatControl.cs" />
      <Compile Include="Assets\Scripts\MeshVolume.cs" />
      <Compile Include="Assets\Scripts\Player\CharacterEnergy.cs" />

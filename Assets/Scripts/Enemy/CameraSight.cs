@@ -11,6 +11,7 @@ public class CameraSight : MonoBehaviour {
     private float angle;
     private Vector3 direction;
     private Transform myTransform;
+    private Transform transCharacter;
     private GameObject goCharacter;
     private Light myLight;
 
@@ -20,6 +21,7 @@ public class CameraSight : MonoBehaviour {
         myLight = GetComponent<Light>();
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
+        transCharacter = goCharacter.transform;
         halfSpotAngle = myLight.spotAngle / 2;
         maxVertAngle = myTransform.localEulerAngles.x + 90.0f + halfSpotAngle;  // X at 0 is 90 degrees from Vector3.up.  We need to add the Euler x and 90 to half of the spotangle.
         minVertAngle = myTransform.localEulerAngles.x + 90.0f - halfSpotAngle;
@@ -33,7 +35,7 @@ public class CameraSight : MonoBehaviour {
 
     void FieldOfView()
     {
-        direction =  goCharacter.transform.position - myTransform.position;
+        direction =  transCharacter.position - myTransform.position;
         angle = Vector3.Angle(direction, Vector3.up);
         if (angle < maxVertAngle && angle > minVertAngle)
         {

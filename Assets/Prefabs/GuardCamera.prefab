@@ -143,11 +143,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endingEuler: {x: 45, y: 81, z: 0}
-  numberOfGuardsToSpawn: 3
+  numberOfGuardsToSpawn: 1
   rotateSpeed: 10
   alertedRotateSpeed: 3
-  secondsTillDetection: 3
-  guardSpawnWaitTime: 1
+  secondsTillDetection: 5
+  guardSpawnWaitTime: 2
   transGuardEntrance: {fileID: 0}
   goSharedVariables: {fileID: 0}
   goGuard: {fileID: 0}

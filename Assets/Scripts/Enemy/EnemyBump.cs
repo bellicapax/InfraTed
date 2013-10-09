@@ -21,7 +21,7 @@ public class EnemyBump : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == obstacles)
+        if (other.gameObject.layer == obstacles  && other.tag != "Guard")  // If the object is an obstacle and it's not another guard
         {
             isBumping = true;
             scriptMove.nameBump = other.name;

@@ -15,6 +15,7 @@ public class EnemyState : MonoBehaviour {
         Searching = 6
     }
     public bool justLostEm;
+    public bool sensingRobotsSearch;
 
     private bool inTrigger;
     private EnemySight scriptSight;
@@ -31,6 +32,11 @@ public class EnemyState : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
+        if ((nmeCurrentState == CurrentState.Chasing || nmeCurrentState == CurrentState.Firing) && !scriptSight.playerInSight) // If our last state was with the player in sight and now the player is not in sight, we need to search
+        {
+            if(!scriptSight.useSphericalHeatSensor || sensingRobotsSearch) // If we aren't using the sphere collider OR we are letting the heat sensors search
+                justLostEm = true;
+        }
         if (scriptSight.playerInSight)
         {
             justLostEm = false;                             // If we can see the player, we don't need to search anymore.

@@ -17,9 +17,12 @@ public class EnemySight : MonoBehaviour {
 
     private Vector3 previousSighting;
     private GameObject goCharacter;
+    private GameObject goEnemySharedVars;
     private CharacterEnergy scriptCharEnergy;
     private RoomHeatVariables scriptRoomHeat;
+    private EnemyShared scriptShared;
     private Transform myTransform;
+    private Transform transCharacter;
 
 
 	// Use this for initialization
@@ -36,7 +39,12 @@ public class EnemySight : MonoBehaviour {
             Debug.LogError("Room thermostat not assigned in Inspector.");
         }
         goCharacter = GameObject.Find("Character");
+        transCharacter = goCharacter.transform;
+        goEnemySharedVars = GameObject.Find("EnemySharedVariables");
         scriptCharEnergy = goCharacter.GetComponent<CharacterEnergy>();
+        scriptShared = goEnemySharedVars.GetComponent<EnemyShared>();
+        if (!scriptShared)
+            Debug.Log("Unable to access EnemyShared script from EnemySight script");
 	}
 	
 	// Update is called once per frame
@@ -76,7 +84,7 @@ public class EnemySight : MonoBehaviour {
                     if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))
                     {
                         playerInSight = true;
-                        personalLastSighting = goCharacter.transform.position;
+                        personalLastSighting = transCharacter.position;  // Sensing robots don't share locations
                     }
                     else if (!playerIsTouching)
                     {
@@ -107,7 +115,7 @@ public class EnemySight : MonoBehaviour {
 
         if (scriptCharEnergy.currentEnergy >= 0)
         {
-            direction = goCharacter.transform.position - myTransform.position;
+            direction = transCharacter.position - myTransform.position;
             angle = Vector3.Angle(direction, myTransform.forward);
 
             if (angle < fieldOfViewAngle * 0.5f)
@@ -119,7 +127,8 @@ public class EnemySight : MonoBehaviour {
                     if (hit.collider.gameObject == goCharacter)
                     {
                         playerInSight = true;
-                        personalLastSighting = goCharacter.transform.position;   //Update this so that one script has the position for all to reference
+                        personalLastSighting = transCharacter.position;   //Update this so that one script has the position for all to reference
+                        scriptShared.sharedLastKnownLocation = transCharacter.position;
                         return true;
                     }
                 }
@@ -138,7 +147,7 @@ public class EnemySight : MonoBehaviour {
 
     public bool JustFOVAngle()
     {
-        direction = goCharacter.transform.position - myTransform.position;
+        direction = transCharacter.position - myTransform.position;
         angle = Vector3.Angle(direction, myTransform.forward);
 
         if (angle < fieldOfViewAngle * 0.5f)
