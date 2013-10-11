@@ -382,7 +382,7 @@ public class EnemyMovement : MonoBehaviour {
         for (int i = 0; i < listTransPatrol.Count; i++)
         {
             scriptHeat = listTransPatrol[i].GetComponent<HeatControl>();
-            if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.inHeatSensorRange)
+            if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.xInHeatSensorRange)
             {
                 if (listTransPatrol[i] == currentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
                 {

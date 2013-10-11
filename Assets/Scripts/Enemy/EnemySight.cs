@@ -68,7 +68,7 @@ public class EnemySight : MonoBehaviour {
         HeatControl itsHeat;
         if (useSphericalHeatSensor && (itsHeat = other.GetComponent<HeatControl>()))
         {
-            itsHeat.inHeatSensorRange = true;
+            itsHeat.xInHeatSensorRange = true;
         }
 
     }
@@ -100,7 +100,7 @@ public class EnemySight : MonoBehaviour {
         HeatControl itsHeat;
         if (useSphericalHeatSensor && (itsHeat = other.GetComponent<HeatControl>()))
         {
-            itsHeat.inHeatSensorRange = false;
+            itsHeat.xInHeatSensorRange = false;
         }
     }
 

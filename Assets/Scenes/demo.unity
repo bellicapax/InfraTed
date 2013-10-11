@@ -152,7 +152,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400004, guid: 1df2ec5d3d8af6244b33f59b06bcb8fb, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -14.3384161
+      value: -8.63035583
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1df2ec5d3d8af6244b33f59b06bcb8fb, type: 2}
       propertyPath: m_LocalPosition.y
@@ -160,7 +160,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1df2ec5d3d8af6244b33f59b06bcb8fb, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -24.6546135
+      value: -25.129509
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1df2ec5d3d8af6244b33f59b06bcb8fb, type: 2}
       propertyPath: m_LocalRotation.x
@@ -829,7 +829,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inHeatSensorRange: 0
+  xInHeatSensorRange: 0
+  CanRegainHeat: 0
   heatColor: {r: 1, g: 0, b: 0, a: 1}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -1312,8 +1313,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inHeatSensorRange: 0
-  heatColor: {r: 1, g: 0, b: 0, a: 1}
+  xInHeatSensorRange: 0
+  CanRegainHeat: 0
+  heatColor: {r: .763231158, g: 1, b: 0, a: 1}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
@@ -1694,7 +1696,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inHeatSensorRange: 0
+  xInHeatSensorRange: 0
+  CanRegainHeat: 0
   heatColor: {r: 1, g: 0, b: 0, a: 1}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -1883,7 +1886,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inHeatSensorRange: 0
+  xInHeatSensorRange: 0
+  CanRegainHeat: 0
   heatColor: {r: 1, g: 0, b: 0, a: 1}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
@@ -2225,6 +2229,18 @@ Prefab:
       propertyPath: m_Name
       value: Crate4
       objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: c24718bda3ed5054e8f7a97cec5692bc, type: 2}
+      propertyPath: heatColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: c24718bda3ed5054e8f7a97cec5692bc, type: 2}
+      propertyPath: heatColor.r
+      value: .763231158
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: c24718bda3ed5054e8f7a97cec5692bc, type: 2}
+      propertyPath: heatColor.b
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c24718bda3ed5054e8f7a97cec5692bc, type: 2}
   m_RootGameObject: {fileID: 992846233}
@@ -2477,6 +2493,7 @@ GameObject:
   - 33: {fileID: 1634864106}
   - 65: {fileID: 1634864105}
   - 23: {fileID: 1634864104}
+  - 114: {fileID: 1634864108}
   m_Layer: 9
   m_Name: Ground
   m_TagString: Lukewarm
@@ -2532,6 +2549,17 @@ Transform:
   m_LocalScale: {x: 51.9954529, y: 112.783585, z: 1}
   m_Children: []
   m_Father: {fileID: 588817172}
+--- !u!114 &1634864108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1634864103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a4fc0c1967bd4448734cf574bd45a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1675070071
 GameObject:
   m_ObjectHideFlags: 0
@@ -2675,7 +2703,7 @@ Transform:
   m_PrefabInternal: {fileID: 47697716}
   m_GameObject: {fileID: 1726425885}
   m_LocalRotation: {x: 0, y: -.864635289, z: 0, w: .50240016}
-  m_LocalPosition: {x: -14.3384161, y: 1, z: -24.6546135}
+  m_LocalPosition: {x: -8.63035583, y: 1, z: -25.129509}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 31253242}
@@ -2950,7 +2978,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inHeatSensorRange: 0
+  xInHeatSensorRange: 0
+  CanRegainHeat: 0
   heatColor: {r: 0, g: .239554405, b: 1, a: 1}
   heatEnergy: 0
   matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}

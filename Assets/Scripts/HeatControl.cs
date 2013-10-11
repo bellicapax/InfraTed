@@ -5,7 +5,8 @@ using System.Collections;
 
 public class HeatControl : MonoBehaviour {
 
-    public bool inHeatSensorRange = false;
+    public bool xInHeatSensorRange = false;
+    public bool CanRegainHeat = false;
     public Color heatColor;
     public float heatEnergy;
     public Material matNormal;
@@ -36,23 +37,14 @@ public class HeatControl : MonoBehaviour {
         {
             Debug.LogError("Normal material not assigned in the Inspector!");
         }
-
         goCharacter = GameObject.Find("Character");
-
         goRoomThermo = GameObject.FindGameObjectWithTag("Thermometer");
-
         scriptCharInput = goCharacter.GetComponent<CharacterInput>();
-        
         scriptMesh = GetComponent<MeshVolume>();
-
         scriptThermo = goRoomThermo.GetComponent<RoomHeatVariables>();
-
         coldHSB = HSBColor.FromColor(scriptCharInput.coldColor);
-
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
- 
         heatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
-
         StartCoroutine(AssignColor());
 	}
 	

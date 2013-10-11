@@ -106,6 +106,7 @@
      <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
      <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
      <Compile Include="Assets\Scripts\CodeProfiler.cs" />
+     <Compile Include="Assets\Scripts\ColorTest.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraSight.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyBump.cs" />
@@ -126,6 +127,7 @@
      <Compile Include="Assets\Scripts\Player\MouseLook.cs" />
      <Compile Include="Assets\Scripts\Player\PlatformInputController.cs" />
      <Compile Include="Assets\Scripts\RoomHeatVariables.cs" />
+     <Compile Include="Assets\Test.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
      <None Include="Assets\Shaders\FlatColor.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />

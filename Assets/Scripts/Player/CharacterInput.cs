@@ -116,17 +116,19 @@ public class CharacterInput : MonoBehaviour {
 
                     if (itsTransform.tag == "Hot" && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
                     {
-                        HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                        tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h + (1 / tempHeatControl.heatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
+                        //HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
+                        //tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        //tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
                         transferEnergy = energyIncrement * Time.deltaTime;
-                        tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
                     }
                     else if(itsTransform.tag == "Cold" && scriptCharEnergy.currentEnergy > 0.0f) // else if it is a cold object and we are not already at min temperature
                     {
-                        HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                        tempHSB.h -= (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h - (1 / tempHeatControl.heatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
+                        //HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
+                        //tempHSB.h -= (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        //tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
                         transferEnergy = -energyIncrement * Time.deltaTime;
-                        tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
                     }
                 }
             }
