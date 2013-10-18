@@ -48,7 +48,7 @@ public class CharacterEnergy : MonoBehaviour {
 
     private void GainHeat()
     {
-        currentEnergy += scriptCharInput.transferEnergy;        //Add the energy to ours
+        currentEnergy += scriptCharInput.xTransferEnergy;        //Add the energy to ours
     }
 
     private void AssessHealth()

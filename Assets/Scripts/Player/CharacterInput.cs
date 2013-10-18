@@ -5,7 +5,6 @@ public class CharacterInput : MonoBehaviour {
 
     public float touchDistance = 5.0f;
     public float offsetDeltaTime = 100.0f;
-    public float transferEnergy = 0.0f;
     public float energyIncrement = 10.0f;
     public bool infraOn = false;
     public bool newScene = true;
@@ -13,6 +12,8 @@ public class CharacterInput : MonoBehaviour {
     public Color ambientInfra;
     public Color coldColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public Material defaultDiffuse;
+    public float xTransferEnergy = 0.0f;
+
 
     private string objectDrain = "ObjectDrain";
     private Material[] aryOriginalMaterial;
@@ -102,7 +103,7 @@ public class CharacterInput : MonoBehaviour {
 
     private void TouchDrain()
     {
-        transferEnergy = 0.0f;                  // Reset transferEnergy
+        xTransferEnergy = 0.0f;                  // Reset xTransferEnergy
         if (Input.GetButton(objectDrain))       // If we're trying to drain energy
         {
             Ray ray = new Ray(transMainCam.position, transMainCam.forward);
@@ -114,21 +115,26 @@ public class CharacterInput : MonoBehaviour {
                 if ((tempHeatControl = itsTransform.GetComponent<HeatControl>()) != null) // and if it has a HeatControl script
                 {
 
-                    if (itsTransform.tag == "Hot" && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
+                    if ((itsTransform.tag == "Hot") && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
                     {
-                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h + (1 / tempHeatControl.heatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
+                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h + (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
                         //HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                        //tempHSB.h += (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        //tempHSB.h += (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime;
                         //tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
-                        transferEnergy = energyIncrement * Time.deltaTime;
+                        xTransferEnergy = energyIncrement * Time.deltaTime;
                     }
                     else if(itsTransform.tag == "Cold" && scriptCharEnergy.currentEnergy > 0.0f) // else if it is a cold object and we are not already at min temperature
                     {
-                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h - (1 / tempHeatControl.heatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
+                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h - (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
                         //HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                        //tempHSB.h -= (1 / tempHeatControl.heatEnergy) * Time.deltaTime;
+                        //tempHSB.h -= (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime;
                         //tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
-                        transferEnergy = -energyIncrement * Time.deltaTime;
+                        xTransferEnergy = -energyIncrement * Time.deltaTime;
+                    }
+                    else if (tempHeatControl.xGuard && HSBColor.FromColor(tempHeatControl.heatColor).h < HSBColor.FromColor(coldColor).h) // If it's a guard and they aren't already as cold as can be
+                    {
+                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h + (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
+                        xTransferEnergy = energyIncrement * Time.deltaTime;
                     }
                 }
             }

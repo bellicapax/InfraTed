@@ -8,21 +8,11 @@ public static class ColorExtensions
         return (HSBColor.Lerp(HSBColor.FromColor(a), HSBColor.FromColor(b), t)).ToColor();
     }
 
-    public static void H(this Color c, int hue0to360)
+    public static void H(this Color c, int hue0to360, ref Color thisColor)
     {
         HSBColor temp = HSBColor.FromColor(c);
         temp.h = (hue0to360 / 360.0f);
         c = HSBColor.ToColor(temp);
-    }
-
-    public static void Foo(this Color c, ref Color col)
-    {
-        col.b = 1.0f;
-    }
-    public static Color Bar(this Color c)
-    {
-        c.b = 1.0f;
-        return c;
     }
 
     public static void H(this Color c, float hue0to1, ref Color thisColor)

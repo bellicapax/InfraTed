@@ -17,7 +17,9 @@ public class EnemyState : MonoBehaviour {
     public bool justLostEm;
     public bool sensingRobotsSearch;
 
-    private bool inTrigger;
+    public bool inTrigger;
+    private Transform myTransform;
+    private EnemyBump scriptBump;
     private EnemySight scriptSight;
     private EnemyMovement scriptMovement;
 
@@ -25,8 +27,10 @@ public class EnemyState : MonoBehaviour {
 	void Start () 
     {
         nmeCurrentState = CurrentState.Stationary;
-        scriptSight = transform.parent.GetComponentInChildren<EnemySight>();
-        scriptMovement = transform.parent.GetComponent<EnemyMovement>();
+        myTransform = this.transform;
+        scriptBump = myTransform.parent.GetComponentInChildren<EnemyBump>();
+        scriptSight = myTransform.parent.GetComponentInChildren<EnemySight>();
+        scriptMovement = myTransform.parent.GetComponent<EnemyMovement>();
 	}
 	
 	// Update is called once per frame
@@ -46,7 +50,7 @@ public class EnemyState : MonoBehaviour {
                 {
                     nmeCurrentState = CurrentState.Firing;
                 }
-                else
+                else if(scriptBump.isBumping)
                 {
                     nmeCurrentState = CurrentState.Turning;
                 }

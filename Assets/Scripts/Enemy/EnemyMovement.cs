@@ -22,6 +22,8 @@ public class EnemyMovement : MonoBehaviour {
     public string nameBump;
     public List<Transform> listTransPatrol = new List<Transform>();
     public GameObject goSharedVariables;
+    public LayerMask groundMask;
+
 
     private bool saidIt = false;
     private bool calculatingPath = false;
@@ -29,6 +31,7 @@ public class EnemyMovement : MonoBehaviour {
     private bool doneSearching = false;
     private bool iAmStuck = false;
     private bool clearPath = true;
+    private bool sprayingCoolant = false;
     private int currentWaypoint = 0;
     private int patrolCounter = 0;
     private float stuckCounter;
@@ -36,17 +39,16 @@ public class EnemyMovement : MonoBehaviour {
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
-
     private Quaternion endFirstDirection;
     private Quaternion endSecondDirection;
     private Quaternion targetSearchRotation;
-    public LayerMask groundMask;
     private GameObject goCharacter;
     private List<GameObject> listHotColdObjects = new List<GameObject>();
     private CharacterController myCharContro;
     private Transform myTransform;
     private Transform currentHotColdTrans;
     private Transform transCharacter;
+    private ParticleSystem prtSystems = new ParticleSystem();
     private HeatControl scriptHeat;
     private Seeker scriptSeeker;
     private EnemyState scriptState;
@@ -69,11 +71,14 @@ public class EnemyMovement : MonoBehaviour {
         transCharacter = goCharacter.transform;
         if (!goSharedVariables)
             Debug.Log("Please assign the Enemy Shared Variables game object to the Enemy Movement script.");
+
+        prtSystems = GetComponentInChildren<ParticleSystem>();
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<EnemySight>();
         scriptBump = GetComponentInChildren<EnemyBump>();
         scriptShared = goSharedVariables.GetComponent<EnemyShared>();
+
         lastState = scriptState.nmeCurrentState;
         lastMyPosition = myTransform.position;
 
@@ -102,18 +107,22 @@ public class EnemyMovement : MonoBehaviour {
         switch (scriptState.nmeCurrentState)
         {
             case EnemyState.CurrentState.Patroling:
+                StopCoolant();
                 Patrol();
                 break;
 
             case EnemyState.CurrentState.Chasing:
+                StopCoolant();
                 Chasing(alertedSpeed);
                 break;
 
             case EnemyState.CurrentState.Firing:
                 Chasing(normalSpeed);
+                SprayCoolant();
                 break;
 
             case EnemyState.CurrentState.Turning:
+                StopCoolant();
                 FaceTarget(transCharacter.position, fastRotateSpeed, true);
                 break;
 
@@ -122,11 +131,12 @@ public class EnemyMovement : MonoBehaviour {
                 break;
 
             case EnemyState.CurrentState.Searching:
+                StopCoolant();
                 Searching();
                 break;
 
             case EnemyState.CurrentState.Stationary:
-
+                StopCoolant();
                 break;
         }
         lastState = scriptState.nmeCurrentState;
@@ -183,6 +193,24 @@ public class EnemyMovement : MonoBehaviour {
             Vector3 dir = (myPath.vectorPath[currentWaypoint] - myTransform.position).normalized;
             MoveTowards(dir, parChaseSpeed);
 
+        }
+    }
+
+    void SprayCoolant()
+    {
+        if (!sprayingCoolant)
+        {
+            prtSystems.Play();
+            sprayingCoolant = true;
+        }
+    }        
+    
+    void StopCoolant()
+    {
+        if (sprayingCoolant)
+        {
+            prtSystems.Stop();
+            sprayingCoolant = false;
         }
     }
 

@@ -5,8 +5,15 @@ public class MeshVolume : MonoBehaviour
     public float volume;
     void Awake()
     {
-        Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
-        volume = VolumeOfMesh(mesh);
+        MeshFilter[] filters;
+        filters = GetComponentsInChildren<MeshFilter>();
+        Mesh[] meshes = new Mesh[filters.Length];
+        for (int i = 0; i < filters.Length; i++)
+        {
+            meshes[i] = filters[i].mesh;
+            volume += VolumeOfMesh(meshes[i]);
+        }
+
         //string msg = "The volume of the mesh is " + volume + " cube units.";
         //Debug.Log(msg);
     }
