@@ -127,6 +127,7 @@
      <Compile Include="Assets\Scripts\Player\CharacterMotor.cs" />
      <Compile Include="Assets\Scripts\Player\FPSInputController.cs" />
      <Compile Include="Assets\Scripts\Player\MouseLook.cs" />
+     <Compile Include="Assets\Scripts\Player\ParticleHit.cs" />
      <Compile Include="Assets\Scripts\Player\PlatformInputController.cs" />
      <Compile Include="Assets\Scripts\RoomHeatVariables.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
