@@ -27,6 +27,7 @@ public class HeatControl : MonoBehaviour {
     private Color originalColor;
     private HSBColor coldHSB;
     private Renderer myRenderer;
+    private Renderer[] sensorRenderers = new Renderer[2];
     private GameObject goCharacter;
     public GameObject goRoomThermo;
     private CharacterInput scriptCharInput;
@@ -40,7 +41,6 @@ public class HeatControl : MonoBehaviour {
     {
         originalColor = heatColor;
         myTransform = this.transform;
-        myRenderer = myTransform.renderer;
 
         if (myTransform.tag == hot)
             hotObject = true;
@@ -48,11 +48,15 @@ public class HeatControl : MonoBehaviour {
             hotObject = false;
 
         if (myTransform.parent == null || myTransform.parent.GetComponent<EnemyMovement>() == null)
+        {
             xGuard = false;
+            myRenderer = myTransform.renderer;
+        }
         else
         {
             xGuard = true;
             canRegainTemp = true;
+            sensorRenderers = myTransform.GetComponentsInChildren<Renderer>();
         }
 
         if (!matInfra && !xGuard)
@@ -82,20 +86,17 @@ public class HeatControl : MonoBehaviour {
 
     private void MaterialSwap()
     {
-        if (!xGuard)  // xGuards don't need to switch their material
+        if (Input.GetButtonDown("Infrared"))
         {
-            if (Input.GetButtonDown("Infrared"))
+            if (infraOn)
             {
-                if (infraOn)
-                {
-                    myRenderer.material = matNormal;
-                    infraOn = false;
-                }
-                else
-                {
-                    myRenderer.material = matInfra;
-                    infraOn = true;
-                }
+                myRenderer.material = matNormal;
+                infraOn = false;
+            }
+            else
+            {
+                myRenderer.material = matInfra;
+                infraOn = true;
             }
         }
     }

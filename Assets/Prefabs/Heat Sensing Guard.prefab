@@ -58,9 +58,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 400006}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
   - 136: {fileID: 13600000}
+  - 114: {fileID: 11400002}
   m_Layer: 0
   m_Name: SensoryBotMesh
   m_TagString: Untagged
@@ -408,20 +408,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 100006}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fa143bcfd586da4f854ca9c3600b424, type: 3}
+  m_Script: {fileID: 11500000, guid: dcf0b3be657ebe4488c6fd014929a759, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canRegainTemp: 0
-  heatColor: {r: .278551459, g: 1, b: 0, a: 1}
-  matNormal: {fileID: 0}
-  matInfra: {fileID: 0}
+  heatColor: {r: 0, g: 1, b: .172701836, a: 1}
   secondsTillThaw: 5
-  xInHeatSensorRange: 0
   xBeingTouched: 0
-  xGuard: 0
   xHeatEnergy: 0
   xfrozenColor: {r: 0, g: 0, b: 0, a: 0}
   goRoomThermo: {fileID: 0}
+  infraOn: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -445,7 +441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a368a5b5523b1ae4080cad5dec29876a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeDecrement: 10
+  freezeDecrement: 100
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -586,7 +582,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: .600000024
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &13500002
 SphereCollider:
@@ -1699,14 +1695,14 @@ ParticleSystemRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_RenderMode: 3
-  m_MaxParticleSize: 50
+  m_RenderMode: 0
+  m_MaxParticleSize: 1
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
   m_SortingFudge: 0
-  m_NormalDirection: 0
-  m_SortMode: 0
+  m_NormalDirection: 1
+  m_SortMode: 1
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}

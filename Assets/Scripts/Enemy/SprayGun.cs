@@ -21,7 +21,12 @@ public class SprayGun : MonoBehaviour {
         int numCollisionEvents = prtSys.GetCollisionEvents(other, colEvents);
         for (int i = 0; i < numCollisionEvents; i++)
         {
-            scriptCharInput.xTransferEnergy -= freezeDecrement * Time.deltaTime;
+            if (colEvents[i].collider.name == "Character")
+            {
+                scriptCharInput.xTransferEnergy -= freezeDecrement * Time.deltaTime;
+                print("BOOM");
+            }
+            //print(colEvents[i].collider.name);
         }
     }
 }

@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Fipps
-  m_Shader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: Lukewarm
+  m_Shader: {fileID: 4800000, guid: e169c0e291ab1a740a9a52397a04fd7e, type: 3}
   m_ShaderKeywords: []
   m_SavedProperties:
     serializedVersion: 2
@@ -28,4 +28,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0, g: 1, b: .990379333, a: 1}
+        second: {r: 0, g: 1, b: 1, a: 1}

@@ -8,10 +8,8 @@ public class CharacterInput : MonoBehaviour {
     public float energyIncrement = 10.0f;
     public bool infraOn = false;
     public bool newScene = true;
-    public Color ambientVisible;
-    public Color ambientInfra;
     public Color coldColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
-    public Material defaultDiffuse;
+    public Material matLukewarm;
     public float xTransferEnergy = 0.0f;
 
 
@@ -20,6 +18,7 @@ public class CharacterInput : MonoBehaviour {
     private GameObject[] aryLukewarmGO;
     private Transform transMainCam;
     private CharacterEnergy scriptCharEnergy;
+    private RoomHeatVariables scriptThermometer;
     private Light[] aryLights;
 
 
@@ -27,11 +26,15 @@ public class CharacterInput : MonoBehaviour {
 	void Start () 
     {
         transMainCam = Camera.main.transform;
-        ambientVisible = RenderSettings.ambientLight;
         scriptCharEnergy = GetComponent<CharacterEnergy>();
-        if (!defaultDiffuse)
+        scriptThermometer = GameObject.FindGameObjectWithTag("Thermometer").GetComponent<RoomHeatVariables>();
+        if (!matLukewarm)
         {
             Debug.LogError("Assign default material in Inspector, please!");
+        }
+        else
+        {
+            matLukewarm.color = scriptThermometer.roomInfraTemp;
         }
 	}
 	
@@ -51,7 +54,6 @@ public class CharacterInput : MonoBehaviour {
         {
             if (infraOn)
             {
-                RenderSettings.ambientLight = ambientVisible;
                 if (newScene)
                 {
                     aryLukewarmGO =  GameObject.FindGameObjectsWithTag("Lukewarm");
@@ -75,7 +77,6 @@ public class CharacterInput : MonoBehaviour {
             }
             else
             {
-                RenderSettings.ambientLight = ambientInfra;
                 if (newScene)
                 {
                     aryLukewarmGO = GameObject.FindGameObjectsWithTag("Lukewarm");
@@ -90,7 +91,7 @@ public class CharacterInput : MonoBehaviour {
                 foreach (GameObject aGO in aryLukewarmGO)
                 {
 
-                    aGO.renderer.material = defaultDiffuse;
+                    aGO.renderer.material = matLukewarm;
                 }
                 foreach (Light aLight in aryLights)
                 {

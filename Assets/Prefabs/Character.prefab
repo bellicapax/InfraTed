@@ -87,8 +87,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
-  m_LocalRotation: {x: 0, y: -.864635289, z: 0, w: .50240016}
-  m_LocalPosition: {x: -14.3384161, y: 1, z: -24.6546135}
+  m_LocalRotation: {x: 0, y: .36634478, z: 0, w: .930479228}
+  m_LocalPosition: {x: -.340975285, y: 1, z: -33.5870438}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400000}
@@ -102,7 +102,7 @@ Camera:
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 3
   m_BackGroundColor: {r: .19166474, g: .301966369, b: .474509805, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -249,14 +249,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   touchDistance: 2
   offsetDeltaTime: 100
-  transferEnergy: 0
   energyIncrement: 10
   infraOn: 0
   newScene: 1
   ambientVisible: {r: 1, g: 1, b: 1, a: 1}
   ambientInfra: {r: .262745112, g: 0, b: .996078432, a: 0}
   coldColor: {r: .262745112, g: 0, b: 1, a: 1}
-  defaultDiffuse: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  matLukewarm: {fileID: 2100000, guid: d9282adcc67596b40b42af7ee308f8f1, type: 2}
+  xTransferEnergy: 0
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
