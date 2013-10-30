@@ -19,7 +19,7 @@ public class EnemyMovement : MonoBehaviour {
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
     public string nameTouch;
-    public string nameBump;
+    //public string nameBump;
     public List<Transform> listTransPatrol = new List<Transform>();
     public GameObject goSharedVariables;
     public LayerMask groundMask;
@@ -53,7 +53,7 @@ public class EnemyMovement : MonoBehaviour {
     private Seeker scriptSeeker;
     private EnemyState scriptState;
     private EnemySight scriptSight;
-    private EnemyBump scriptBump;
+    //private EnemyBump scriptBump;
     private EnemyShared scriptShared;
     private Path myPath;
     private EnemyState.CurrentState lastState;
@@ -76,7 +76,7 @@ public class EnemyMovement : MonoBehaviour {
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<EnemySight>();
-        scriptBump = GetComponentInChildren<EnemyBump>();
+        //scriptBump = GetComponentInChildren<EnemyBump>();
         scriptShared = goSharedVariables.GetComponent<EnemyShared>();
 
         lastState = scriptState.nmeCurrentState;

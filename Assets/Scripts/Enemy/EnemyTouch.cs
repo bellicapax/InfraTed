@@ -20,7 +20,7 @@ public class EnemyTouch : MonoBehaviour {
         {
             lastGO = null;
         }
-        if (other.gameObject.name == "Character")
+        if (other.tag == "Player")
         {
             scriptSight.playerIsTouching = true;
             scriptSight.playerInSight = true;

@@ -109,13 +109,13 @@
      <Compile Include="Assets\Scripts\ColorTest.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraSight.cs" />
-     <Compile Include="Assets\Scripts\Enemy\EnemyBump.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyShared.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemySight.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyState.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyThermostat.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyTouch.cs" />
+     <Compile Include="Assets\Scripts\Enemy\HeatSensingSight.cs" />
      <Compile Include="Assets\Scripts\Enemy\SensorBotHeatControl.cs" />
      <Compile Include="Assets\Scripts\Enemy\SprayGun.cs" />
      <Compile Include="Assets\Scripts\GUIScript.cs" />

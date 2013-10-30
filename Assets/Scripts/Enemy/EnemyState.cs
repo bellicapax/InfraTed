@@ -19,7 +19,6 @@ public class EnemyState : MonoBehaviour {
 
     public bool inTrigger;
     private Transform myTransform;
-    private EnemyBump scriptBump;
     private EnemySight scriptSight;
     private EnemyMovement scriptMovement;
 
@@ -28,7 +27,6 @@ public class EnemyState : MonoBehaviour {
     {
         nmeCurrentState = CurrentState.Stationary;
         myTransform = this.transform;
-        scriptBump = myTransform.parent.GetComponentInChildren<EnemyBump>();
         scriptSight = myTransform.parent.GetComponentInChildren<EnemySight>();
         scriptMovement = myTransform.parent.GetComponent<EnemyMovement>();
 	}
@@ -50,7 +48,7 @@ public class EnemyState : MonoBehaviour {
                 {
                     nmeCurrentState = CurrentState.Firing;
                 }
-                else if(scriptBump.isBumping)
+                else if(scriptSight.playerHasTouched)
                 {
                     nmeCurrentState = CurrentState.Turning;
                 }

@@ -46,7 +46,7 @@ public class CameraSight : MonoBehaviour {
 
                 if (Physics.Raycast(myTransform.position, direction.normalized, out hit, Mathf.Infinity))
                 {
-                    if (hit.collider.gameObject == goCharacter)         // If we don't hit anything besides the character.
+                    if (hit.transform.tag == "Player")         // If we don't hit anything besides the character.
                     {
                         canSeePlayer = true;
                     }

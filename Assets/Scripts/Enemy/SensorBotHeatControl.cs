@@ -17,7 +17,6 @@ public class SensorBotHeatControl : MonoBehaviour {
     private HSBColor coldHSB;
     private Renderer[] myRenderers = new Renderer[2];
     private GameObject goCharacter;
-    public GameObject goRoomThermo;
     private CharacterInput scriptCharInput;
     private MeshVolume scriptMesh;
     private RoomHeatVariables scriptThermo;
@@ -32,10 +31,11 @@ public class SensorBotHeatControl : MonoBehaviour {
         originalColor = myRenderers[0].material.color;
 
         goCharacter = GameObject.Find("Character");
-        goRoomThermo = GameObject.FindGameObjectWithTag("Thermometer");
         scriptCharInput = goCharacter.GetComponent<CharacterInput>();
         scriptMesh = GetComponent<MeshVolume>();
-        scriptThermo = goRoomThermo.GetComponent<RoomHeatVariables>();
+        scriptThermo = GameObject.FindGameObjectWithTag("Thermometer").GetComponent<RoomHeatVariables>();
+		heatColor = scriptThermo.roomInfraTemp;
+		
         coldHSB = HSBColor.FromColor(scriptCharInput.coldColor);
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
         xHeatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
@@ -47,7 +47,7 @@ public class SensorBotHeatControl : MonoBehaviour {
     {
         CheckForInfra();
         EnergyAndColor();
-        RegainHeat();
+        //RegainHeat();
 	}
 
     private void CheckForInfra()
@@ -79,31 +79,31 @@ public class SensorBotHeatControl : MonoBehaviour {
         }
     }
 
-    private void RegainHeat()
-    {
-        if (infraOn && !xBeingTouched)  // If the infrared vision is on and it's not currently being drained or deposited
-        {
-            if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h && !xBeingTouched)
-            {
-                if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(xfrozenColor).h)  // If the guard is actually frozen and not just colder
-                {
-                    if (thawCounter >= secondsTillThaw)
-                        heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
-                    else
-                        thawCounter += Time.deltaTime;
-                }
-                else
-                    heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
-            }
-            else
-                thawCounter = 0.0f;
-
-            foreach (Renderer r in myRenderers)
-            {
-                r.material.color = heatColor;
-            }
-        }
-    }
+//    private void RegainHeat()
+//    {
+//        if (infraOn && !xBeingTouched)  // If the infrared vision is on and it's not currently being drained or deposited
+//        {
+//            if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h && !xBeingTouched)
+//            {
+//                if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(xfrozenColor).h)  // If the guard is actually frozen and not just colder
+//                {
+//                    if (thawCounter >= secondsTillThaw)
+//                        heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
+//                    else
+//                        thawCounter += Time.deltaTime;
+//                }
+//                else
+//                    heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
+//            }
+//            else
+//                thawCounter = 0.0f;
+//
+//            foreach (Renderer r in myRenderers)
+//            {
+//                r.material.color = heatColor;
+//            }
+//        }
+//    }
 
     private IEnumerator AssignColor()
     {
