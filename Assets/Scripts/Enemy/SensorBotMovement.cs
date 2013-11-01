@@ -76,6 +76,7 @@ public bool changedStates = false;
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<SensorBotSight>();
         scriptShared = goSharedVariables.GetComponent<EnemyShared>();
+		
 
         lastState = scriptState.nmeCurrentState;
         lastMyPosition = myTransform.position;
@@ -89,6 +90,7 @@ public bool changedStates = false;
 	
 	void FixedUpdate () 
     {
+		
         CodeProfiler.Begin("EnemyMovement:FixedUpdate");
         if (lastState != scriptState.nmeCurrentState)
         {

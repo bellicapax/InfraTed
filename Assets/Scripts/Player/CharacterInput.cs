@@ -113,31 +113,30 @@ public class CharacterInput : MonoBehaviour {
             {
                 Transform itsTransform = hit.transform;
                 HeatControl tempHeatControl;
+				SeeingBotHeatControl tempSeeingBotHeat;
                 if ((tempHeatControl = itsTransform.GetComponent<HeatControl>()) != null) // and if it has a HeatControl script
-                {
-
+				{
                     if ((itsTransform.tag == "Hot") && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
                     {
                         tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h + (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
-                        //HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                        //tempHSB.h += (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime;
-                        //tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
+						tempHeatControl.xBeingTouched = true;
                         xTransferEnergy = energyIncrement * Time.deltaTime;
                     }
                     else if(itsTransform.tag == "Cold" && scriptCharEnergy.currentEnergy > 0.0f) // else if it is a cold object and we are not already at min temperature
                     {
                         tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h - (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
-                        //HSBColor tempHSB = HSBColor.FromColor(tempHeatControl.heatColor);
-                        //tempHSB.h -= (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime;
-                        //tempHeatControl.heatColor = HSBColor.ToColor(tempHSB);
+						tempHeatControl.xBeingTouched = true;
                         xTransferEnergy = -energyIncrement * Time.deltaTime;
                     }
-                    else if (tempHeatControl.xGuard && HSBColor.FromColor(tempHeatControl.heatColor).h < HSBColor.FromColor(coldColor).h) // If it's a guard and they aren't already as cold as can be
-                    {
-                        tempHeatControl.heatColor.H(HSBColor.FromColor(tempHeatControl.heatColor).h + (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, ref tempHeatControl.heatColor);
-                        xTransferEnergy = energyIncrement * Time.deltaTime;
-                    }
-                }
+				}
+                else if((tempSeeingBotHeat = itsTransform.GetComponent<SeeingBotHeatControl>()) != null)	// If it's a guard
+				{
+					if (HSBColor.FromColor(tempHeatControl.heatColor).h < HSBColor.FromColor(coldColor).h) 	// If they aren't already as cold as can be
+	                {
+	                    tempSeeingBotHeat.heatColor.H(HSBColor.FromColor(tempSeeingBotHeat.heatColor).h + (1 / tempSeeingBotHeat.xHeatEnergy) * Time.deltaTime, ref tempSeeingBotHeat.heatColor);
+	                    xTransferEnergy = energyIncrement * Time.deltaTime;
+	                }
+				}
             }
         }
     }

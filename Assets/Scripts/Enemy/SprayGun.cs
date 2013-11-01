@@ -4,6 +4,8 @@ using System.Collections;
 public class SprayGun : MonoBehaviour {
 
     public float freezeDecrement = 10.0f;
+	private string walls = "Walls";
+	private string obstacles = "Obstacles";
     private ParticleSystem prtSys;
     private CharacterInput scriptCharInput;
 
@@ -19,14 +21,11 @@ public class SprayGun : MonoBehaviour {
         ParticleSystem.CollisionEvent[] colEvents = new ParticleSystem.CollisionEvent[prtSys.safeCollisionEventSize];
 
         int numCollisionEvents = prtSys.GetCollisionEvents(other, colEvents);
-        for (int i = 0; i < numCollisionEvents; i++)
-        {
-            if (colEvents[i].collider.name == "Character")
-            {
-                scriptCharInput.xTransferEnergy -= freezeDecrement * Time.deltaTime;
-                print("BOOM");
-            }
-            //print(colEvents[i].collider.name);
-        }
+
+//        for (int i = 0; i < numCollisionEvents; i++)
+//        {
+//
+//            //print(colEvents[i].collider.name);
+//        }
     }
 }

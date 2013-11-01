@@ -8,8 +8,11 @@ public class CharacterEnergy : MonoBehaviour {
     public float normalDecrement = 0.1f;
     public float sprintDecrement = 2.0f;
     public float absoluteMaxSpeed = 6.0f;
-
+	
     private bool sprinting = false;
+	private string horizontal = "Horizontal";
+	private string vertical = "Vertical";
+	private string sprint = "Sprint";
     private CharacterInput scriptCharInput;
     private CharacterMotor scriptCharMotor;
 
@@ -26,14 +29,14 @@ public class CharacterEnergy : MonoBehaviour {
         LoseHeat();
         GainHeat();
         Mathf.Clamp(currentEnergy, 0.0f, 100.0f);
-        HeatAndSpeed();
+        HeatToSpeed();
         AssessHealth();
         
 	}
 
     private void LoseHeat()
     {
-        if(Input.GetButton("Sprint"))
+        if(Input.GetButton(sprint) && (Input.GetButton(horizontal) || Input.GetButton(vertical)))	// If we are holding the sprint button AND attempting to move
         {
             energyDecrement = sprintDecrement;
             sprinting = true;
@@ -64,7 +67,7 @@ public class CharacterEnergy : MonoBehaviour {
         Application.LoadLevel(Application.loadedLevel);
     }
 
-    private void HeatAndSpeed()
+    private void HeatToSpeed()
     {
         if (sprinting)
             scriptCharMotor.movement.maxForwardSpeed = absoluteMaxSpeed;

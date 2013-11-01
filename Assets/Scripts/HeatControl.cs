@@ -13,7 +13,6 @@ public class HeatControl : MonoBehaviour {
     public float secondsTillThaw = 5.0f;
     public bool xInHeatSensorRange = false;
     public bool xBeingTouched = false;
-    public bool xGuard;
     public float xHeatEnergy;
     public Color xfrozenColor;
 
@@ -21,6 +20,7 @@ public class HeatControl : MonoBehaviour {
     private float heatMultiplier;
     private float heatHomeostasisRate = 4;
     private float thawCounter;
+	private string objectDrain = "ObjectDrain";
     private string lukewarm = "Lukewarm";
     private string hot = "Hot";
     private string cold = "Cold";
@@ -47,21 +47,11 @@ public class HeatControl : MonoBehaviour {
         else
             hotObject = false;
 
-        if (myTransform.parent == null || myTransform.parent.GetComponent<EnemyMovement>() == null)
-        {
-            xGuard = false;
-            myRenderer = myTransform.renderer;
-        }
-        else
-        {
-            xGuard = true;
-            canRegainTemp = true;
-            sensorRenderers = myTransform.GetComponentsInChildren<Renderer>();
-        }
+        myRenderer = myTransform.renderer;
 
-        if (!matInfra && !xGuard)
+        if (!matInfra)
             Debug.LogError("Infrared material not assigned in the Inspector!");
-        if (!matNormal && !xGuard)
+        if (!matNormal)
             Debug.LogError("Normal material not assigned in the Inspector!");
 
         goCharacter = GameObject.Find("Character");
@@ -78,13 +68,13 @@ public class HeatControl : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        MaterialSwap();
-        EnergyAndColor();
+        CheckForInput();
         RegainHeat();
+		EnergyAndColor();
         RefreshTag();
 	}
 
-    private void MaterialSwap()
+    private void CheckForInput()
     {
         if (Input.GetButtonDown("Infrared"))
         {
@@ -99,13 +89,15 @@ public class HeatControl : MonoBehaviour {
                 infraOn = true;
             }
         }
+		if(Input.GetButtonUp(objectDrain)) 		// If we just released the object drain button, we are no longer being touched
+			xBeingTouched = false;
     }
 
     private void EnergyAndColor()
     {
         if (infraOn)
         {
-            if (myTransform.tag == lukewarm || xGuard)  // If the tag changed to lukewarm or it is a guard, we don't need to check if it's in range of our heat spectrum
+            if (myTransform.tag == lukewarm)  // If the tag changed to lukewarm or it is a guard, we don't need to check if it's in range of our heat spectrum
             {
                 myRenderer.material.color = heatColor;
             }
@@ -138,24 +130,7 @@ public class HeatControl : MonoBehaviour {
     {
         if (infraOn && canRegainTemp && !xBeingTouched)  // If the infrared vision is on and the object is one that regains or loses heat naturally and it's not currently being drained or deposited
         {
-            if (xGuard)
-            {
-                if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h && !xBeingTouched)
-                {
-                    if (HSBColor.FromColor(heatColor).h < HSBColor.FromColor(xfrozenColor).h)  // If the guard is actually frozen and not just colder
-                    {
-                        if (thawCounter >= secondsTillThaw)
-                            heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
-                        else
-                            thawCounter += Time.deltaTime;
-                    }
-                    else
-                        heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
-                }
-                else
-                    thawCounter = 0.0f;
-            }
-            else if (hotObject && HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h)
+            if (hotObject && HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h)
             {
                 heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
             }
@@ -163,30 +138,26 @@ public class HeatControl : MonoBehaviour {
             {
                 heatColor.H(HSBColor.FromColor(heatColor).h + (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
             }
-            myRenderer.material.color = heatColor;
         }
     }
 
     private void RefreshTag()
     {
-        if (!xGuard)
+        HSBColor tempHSB = HSBColor.FromColor(heatColor);
+
+        if (tempHSB.h < scriptThermo.minStealthHue)             // Since our hotter hues are smaller than our cooler ones, we must be below the min to be hot
         {
-            HSBColor tempHSB = HSBColor.FromColor(heatColor);
+            this.tag = hot;
+        }
 
-            if (tempHSB.h < scriptThermo.minStealthHue)             // Since our hotter hues are smaller than our cooler ones, we must be below the min to be hot
-            {
-                this.tag = hot;
-            }
+        else if (tempHSB.h > scriptThermo.maxStealthHue)         // Since our colder hues are larger than our hotter ones, we must be above the max to be cold
+        {
+            this.tag = cold;
+        }
 
-            else if (tempHSB.h > scriptThermo.maxStealthHue)         // Since our colder hues are larger than our hotter ones, we must be above the max to be cold
-            {
-                this.tag = cold;
-            }
-
-            else if (tempHSB.h <= scriptThermo.maxStealthHue && tempHSB.h >= scriptThermo.minStealthHue)
-            {
-                this.tag = lukewarm;
-            }
+        else if (tempHSB.h <= scriptThermo.maxStealthHue && tempHSB.h >= scriptThermo.minStealthHue)
+        {
+            this.tag = lukewarm;
         }
     }
 

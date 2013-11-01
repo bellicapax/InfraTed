@@ -11,8 +11,8 @@ public class EnemyMovement : MonoBehaviour {
     public int decimalRounding = 3;
     public float secondsAllowedStationary = 0.5f;
     public float secondsBetweenSlowerUpdate = 0.2f;
-    public float normalSpeed = 1.0f;
-    public float alertedSpeed = 2.0f;
+    public float normalSpeed = 50.0f;
+    public float alertedSpeed = 75.0f;
     public float normalRotateSpeed = 1.0f;
     public float fastRotateSpeed = 4.0f;
     public float searchLookSpeed = 50.0f;
@@ -50,6 +50,7 @@ public class EnemyMovement : MonoBehaviour {
     private ParticleSystem prtSystems = new ParticleSystem();
     private HeatControl scriptHeat;
     private Seeker scriptSeeker;
+	private SeeingBotHeatControl scriptMyHeat;
     private EnemyState scriptState;
     private EnemySight scriptSight;
     //private EnemyBump scriptBump;
@@ -72,6 +73,7 @@ public class EnemyMovement : MonoBehaviour {
             Debug.Log("Please assign the Enemy Shared Variables game object to the Enemy Movement script.");
 
         prtSystems = GetComponentInChildren<ParticleSystem>();
+		scriptMyHeat = GetComponentInChildren<SeeingBotHeatControl>();
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<EnemySight>();
@@ -90,6 +92,8 @@ public class EnemyMovement : MonoBehaviour {
 	
 	void FixedUpdate () 
     {
+		HeatToSpeed();
+		
         CodeProfiler.Begin("EnemyMovement:FixedUpdate");
         if (lastState != scriptState.nmeCurrentState)
         {
@@ -141,8 +145,13 @@ public class EnemyMovement : MonoBehaviour {
         lastState = scriptState.nmeCurrentState;
         CodeProfiler.End("EnemyMovement:FixedUpdate");
 	}
+	
+	private void HeatToSpeed()
+	{
+		//scriptMyHeat.heatColor
+	}
 
-    void Patrol()
+    private void Patrol()
     {
         if (scriptSight.useSphericalHeatSensor) // If we are only patroling between objects that are currently out of the room temperature range, check to see if they are still in that range
         {
@@ -168,7 +177,7 @@ public class EnemyMovement : MonoBehaviour {
 
     }
 
-    void Chasing(float parChaseSpeed)
+    private void Chasing(float parChaseSpeed)
     {
         if (clearPath)
         {

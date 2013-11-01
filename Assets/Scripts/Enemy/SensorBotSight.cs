@@ -75,7 +75,7 @@ public class SensorBotSight : MonoBehaviour {
     {
             if (scriptCharEnergy.currentEnergy >= 0)
             {
-                if (other.tag == "Player")
+                if (other.tag == playerTag)
                 {
                     if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))	
 					{

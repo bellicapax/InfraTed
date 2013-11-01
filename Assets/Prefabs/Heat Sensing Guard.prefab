@@ -63,7 +63,7 @@ GameObject:
   - 136: {fileID: 13600000}
   - 54: {fileID: 5400000}
   m_Layer: 0
-  m_Name: SensoryBotMesh
+  m_Name: MeshHeat&Touch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -427,8 +427,8 @@ MonoBehaviour:
   decimalRounding: 3
   secondsAllowedStationary: .5
   secondsBetweenSlowerUpdate: .200000003
-  normalSpeed: 1
-  alertedSpeed: 2
+  normalSpeed: 50
+  alertedSpeed: 75
   normalRotateSpeed: 1
   fastRotateSpeed: 4
   searchLookSpeed: 50
@@ -594,7 +594,7 @@ ParticleSystem:
   looping: 1
   prewarm: 0
   playOnAwake: 0
-  moveWithTransform: 1
+  moveWithTransform: 0
   InitialModule:
     enabled: 1
     startLifetime:
