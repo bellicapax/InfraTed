@@ -4,9 +4,9 @@ using System.Collections;
 using Pathfinding;
 using System.Collections.Generic;
 
-public class EnemyMovement : MonoBehaviour {
+public class SensorBotMovement : MonoBehaviour {
 
-    public bool changedStates = false;
+public bool changedStates = false;
     public bool newPatrolPath = false;
     public int decimalRounding = 3;
     public float secondsAllowedStationary = 0.5f;
@@ -50,12 +50,12 @@ public class EnemyMovement : MonoBehaviour {
     private ParticleSystem prtSystems = new ParticleSystem();
     private HeatControl scriptHeat;
     private Seeker scriptSeeker;
-    private EnemyState scriptState;
-    private EnemySight scriptSight;
+    private SensorBotState scriptState;
+    private SensorBotSight scriptSight;
     //private EnemyBump scriptBump;
     private EnemyShared scriptShared;
     private Path myPath;
-    private EnemyState.CurrentState lastState;
+    private SensorBotState.CurrentState lastState;
 
 
 	// Use this for initialization
@@ -72,10 +72,9 @@ public class EnemyMovement : MonoBehaviour {
             Debug.Log("Please assign the Enemy Shared Variables game object to the Enemy Movement script.");
 
         prtSystems = GetComponentInChildren<ParticleSystem>();
-        scriptState = GetComponentInChildren<EnemyState>();
+        scriptState = GetComponentInChildren<SensorBotState>();
         scriptSeeker = GetComponent<Seeker>();
-        scriptSight = GetComponentInChildren<EnemySight>();
-        //scriptBump = GetComponentInChildren<EnemyBump>();
+        scriptSight = GetComponentInChildren<SensorBotSight>();
         scriptShared = goSharedVariables.GetComponent<EnemyShared>();
 
         lastState = scriptState.nmeCurrentState;
@@ -93,7 +92,7 @@ public class EnemyMovement : MonoBehaviour {
         CodeProfiler.Begin("EnemyMovement:FixedUpdate");
         if (lastState != scriptState.nmeCurrentState)
         {
-            if (!((lastState == EnemyState.CurrentState.Chasing && scriptState.nmeCurrentState == EnemyState.CurrentState.Firing) || (lastState == EnemyState.CurrentState.Firing && scriptState.nmeCurrentState == EnemyState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
+            if (!((lastState == SensorBotState.CurrentState.Chasing && scriptState.nmeCurrentState == SensorBotState.CurrentState.Firing) || (lastState == SensorBotState.CurrentState.Firing && scriptState.nmeCurrentState == SensorBotState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
             {
                 changedStates = true;
                 print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
@@ -105,36 +104,36 @@ public class EnemyMovement : MonoBehaviour {
         }
         switch (scriptState.nmeCurrentState)
         {
-            case EnemyState.CurrentState.Patroling:
+            case SensorBotState.CurrentState.Patroling:
                 StopCoolant();
                 Patrol();
                 break;
 
-            case EnemyState.CurrentState.Chasing:
+            case SensorBotState.CurrentState.Chasing:
                 StopCoolant();
                 Chasing(alertedSpeed);
                 break;
 
-            case EnemyState.CurrentState.Firing:
+            case SensorBotState.CurrentState.Firing:
                 Chasing(normalSpeed);
                 SprayCoolant();
                 break;
 
-            case EnemyState.CurrentState.Turning:
+            case SensorBotState.CurrentState.Turning:
                 StopCoolant();
                 FaceTarget(transCharacter.position, fastRotateSpeed, true);
                 break;
 
-            case EnemyState.CurrentState.Padding:
+            case SensorBotState.CurrentState.Padding:
 
                 break;
 
-            case EnemyState.CurrentState.Searching:
+            case SensorBotState.CurrentState.Searching:
                 StopCoolant();
                 Searching();
                 break;
 
-            case EnemyState.CurrentState.Stationary:
+            case SensorBotState.CurrentState.Stationary:
                 StopCoolant();
                 break;
         }
@@ -144,13 +143,12 @@ public class EnemyMovement : MonoBehaviour {
 
     void Patrol()
     {
-        if (scriptSight.useSphericalHeatSensor) // If we are only patroling between objects that are currently out of the room temperature range, check to see if they are still in that range
+
+        if (RemoveLukewarmObjects())    // Since we are only patroling between objects that are currently out of the room temperature range, check to see if they are still in that range
         {
-            if (RemoveLukewarmObjects())    // If removing the objects necessitates creating a new path, return
-            {
-                return;
-            }
+            return;						// If removing the objects necessitates creating a new path, return
         }
+		
         if (WeNeedANewPath(myTransform.forward, true, false))
         {
             return;
@@ -244,14 +242,7 @@ public class EnemyMovement : MonoBehaviour {
         }
         else
         {
-            if (scriptSight.useFieldOfVision)
-            {
-                LookRightLeft();
-            }
-            else if (scriptSight.useSphericalHeatSensor)
-            {
-                scriptState.justLostEm = false;
-            }
+            scriptState.justLostEm = false;
         }
     }
     
@@ -493,15 +484,15 @@ public class EnemyMovement : MonoBehaviour {
         CodeProfiler.Begin("EnemyMovement:LessFrequentUpdate");
         switch (scriptState.nmeCurrentState)
         {
-            case EnemyState.CurrentState.Stationary:
-            case EnemyState.CurrentState.Turning:
-            case EnemyState.CurrentState.Padding:
+            case SensorBotState.CurrentState.Stationary:
+            case SensorBotState.CurrentState.Turning:
+            case SensorBotState.CurrentState.Padding:
                 break;
-            case EnemyState.CurrentState.Patroling:
+            case SensorBotState.CurrentState.Patroling:
                 Invoke("IHaveBeenStuck", secondsAllowedStationary - secondsBetweenSlowerUpdate);
                 break;
-            case EnemyState.CurrentState.Chasing:
-            case EnemyState.CurrentState.Firing:
+            case SensorBotState.CurrentState.Chasing:
+            case SensorBotState.CurrentState.Firing:
                 Invoke("IHaveBeenStuck", secondsAllowedStationary - secondsBetweenSlowerUpdate);
                 PathIsClear(transCharacter.position, true, false);
                 break;
@@ -556,79 +547,5 @@ public class EnemyMovement : MonoBehaviour {
         else
             clearPath = true;
     }
-
-    //Transform FindNearestHotOrColdObject()
-    //{
-    //    listHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(hot));     //Put all the hot objects in the list
-    //    listHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(cold));    //Put all the cold objects in the list
-
-    //    float nearestSqr = Mathf.Infinity;
-    //    Transform nearestTran = null;
-
-    //    foreach (GameObject aGO in listHotColdObjects)
-    //    {
-    //        float distanceSqr = (aGO.transform.position - myTransform.position).sqrMagnitude;
-    //        //print("Name: " + aGO.name + " Magnitude Squared: " + distanceSqr);
-
-    //        if (distanceSqr < nearestSqr && aGO.transform != currentHotColdTrans)
-    //        {
-    //            nearestSqr = distanceSqr;
-    //            nearestTran = aGO.transform;
-    //            //print(true);
-    //        }
-    //    }
-
-    //    return nearestTran;
-    //}
-
-    //bool GettingAPathToCharacter()
-    //{
-    //    if (calculatingPath)
-    //    {
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        return true;
-    //    }
-    //    else if (changedStates)                                                         // We might have a path left over from another state, so clear the path and get a new one, but look at the character while we are waiting on the path
-    //    {
-    //        myPath = null;
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        changedStates = false;
-    //        calculatingPath = true;
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        return true;
-    //    }
-    //    else if (myPath == null)
-    //    {
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        return true;
-    //    }
-    //    else if (currentWaypoint >= myPath.vectorPath.Count)                            //If we have reached the end of the path
-    //    {
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        return true;
-    //    }
-    //    else if (scriptBump.isBumping)
-    //    {
-    //        print("Bumped into obstacle while chasing.");
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        scriptBump.isBumping = false;
-    //        return true;
-    //    }
-    //    else if (WaypointPlayerAngle())
-    //    {
-    //        print("Path end no longer leads to player.");
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        return true;
-    //    }
-    //    return false;
-    //}
 
 }

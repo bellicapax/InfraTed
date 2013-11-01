@@ -111,8 +111,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400018}
   - 135: {fileID: 13500004}
-  - 114: {fileID: 11400014}
   - 54: {fileID: 5400004}
+  - 114: {fileID: 11400012}
   m_Layer: 2
   m_Name: Vision
   m_TagString: Guard
@@ -128,9 +128,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400016}
-  - 114: {fileID: 11400012}
   - 135: {fileID: 13500002}
   - 54: {fileID: 5400002}
+  - 114: {fileID: 11400010}
   m_Layer: 2
   m_Name: StateControlAndFiringCollider
   m_TagString: Guard
@@ -146,7 +146,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400020}
-  - 114: {fileID: 11400020}
+  - 114: {fileID: 11400008}
   - 114: {fileID: 11400018}
   - 114: {fileID: 11400016}
   - 143: {fileID: 14300000}
@@ -256,7 +256,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100020}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.231595, y: .921981514, z: -16.2718067}
+  m_LocalPosition: {x: -.833408117, y: .921981514, z: -37.666729}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400006}
@@ -411,7 +411,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   freezeDecrement: 100
---- !u!114 &11400012
+--- !u!114 &11400008
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad7aad5bf6f624b42a4b6dc6e67ccd12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  changedStates: 0
+  newPatrolPath: 0
+  decimalRounding: 3
+  secondsAllowedStationary: .5
+  secondsBetweenSlowerUpdate: .200000003
+  normalSpeed: 1
+  alertedSpeed: 2
+  normalRotateSpeed: 1
+  fastRotateSpeed: 4
+  searchLookSpeed: 50
+  nextWaypointDistance: 1
+  percentOfFOVToContinuePath: .300000012
+  nameTouch: 
+  listTransPatrol:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  goSharedVariables: {fileID: 0}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 512
+--- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -419,14 +452,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 100016}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad3dc1f243c25434d86ae7c7e4fb7e51, type: 3}
+  m_Script: {fileID: 11500000, guid: 12fb2693778dbf5449d15a54efd4cb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   nmeCurrentState: 0
   justLostEm: 0
   sensingRobotsSearch: 0
   inTrigger: 0
---- !u!114 &11400014
+--- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -434,12 +467,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 100012}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fecb48828d15cb4a927f90e45a4af43, type: 3}
+  m_Script: {fileID: 11500000, guid: f752d5451c8b815438af198ba3f9ec3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fieldOfViewAngle: 110
-  useSphericalHeatSensor: 1
-  useFieldOfVision: 0
   angle: 0
   playerInSight: 0
   playerIsTouching: 0
@@ -447,6 +478,9 @@ MonoBehaviour:
   personalLastSighting: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
   goRoomThermostat: {fileID: 0}
+  xWallMask:
+    serializedVersion: 2
+    m_Bits: 6144
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -496,39 +530,6 @@ MonoBehaviour:
     tagsChange: -1
     tagsSet: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
---- !u!114 &11400020
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba9b7e3b1d996ad49812cb5f05e5f7ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  changedStates: 0
-  newPatrolPath: 0
-  decimalRounding: 1
-  secondsAllowedStationary: 1
-  secondsBetweenSlowerUpdate: .200000003
-  normalSpeed: 50
-  alertedSpeed: 75
-  normalRotateSpeed: 2
-  fastRotateSpeed: 4
-  searchLookSpeed: 50
-  nextWaypointDistance: 1
-  percentOfFOVToContinuePath: .300000012
-  nameTouch: 
-  listTransPatrol:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  goSharedVariables: {fileID: 0}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 3072
 --- !u!135 &13500002
 SphereCollider:
   m_ObjectHideFlags: 1

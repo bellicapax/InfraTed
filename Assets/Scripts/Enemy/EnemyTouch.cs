@@ -5,13 +5,13 @@ public class EnemyTouch : MonoBehaviour {
 
     private GameObject lastGO = null;
     private EnemySight scriptSight;
-    private EnemyMovement scriptMovement;
+    private SensorBotMovement scriptMovement;
 
 	// Use this for initialization
 	void Start () 
     {
         scriptSight = transform.parent.GetComponentInChildren<EnemySight>();
-        scriptMovement = transform.parent.GetComponent<EnemyMovement>();
+        scriptMovement = transform.parent.GetComponent<SensorBotMovement>();
 	}
 
     void OnTriggerEnter(Collider other)

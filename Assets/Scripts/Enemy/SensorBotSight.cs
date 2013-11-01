@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HeatSensingSight : MonoBehaviour {
-
+public class SensorBotSight : MonoBehaviour {
+	
 	public float fieldOfViewAngle = 110.0f;
     public float angle;
     public bool playerInSight;
@@ -12,7 +12,9 @@ public class HeatSensingSight : MonoBehaviour {
     public Vector3 personalLastSighting;
     public Vector3 direction;
     public GameObject goRoomThermostat;
-
+	public LayerMask xWallMask;
+	
+	private string playerTag = "Player";
     private Vector3 previousSighting;
     private GameObject goCharacter;
     private GameObject goEnemySharedVars;
@@ -21,12 +23,14 @@ public class HeatSensingSight : MonoBehaviour {
     private EnemyShared scriptShared;
     private Transform myTransform;
     private Transform transCharacter;
+	private SphereCollider myCollider;
 
 
 	// Use this for initialization
 	void Start () 
     {
         myTransform = this.transform;
+		myCollider = GetComponent<SphereCollider>();
 
         if (goRoomThermostat)
         {
@@ -73,10 +77,21 @@ public class HeatSensingSight : MonoBehaviour {
             {
                 if (other.tag == "Player")
                 {
-                    if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))	// ADD A CHECK FOR RAYCAST SO WE CAN'T GO THROUGH WALLS
-                    {
-                        playerInSight = true;
-                        personalLastSighting = transCharacter.position;  // Sensing robots don't share locations
+                    if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))	
+					{
+						RaycastHit hit;
+						direction = (other.transform.position - myTransform.position);
+						if(Physics.Raycast(myTransform.position, direction, out hit, myCollider.radius, xWallMask))		// This layermask doesn't allow it to go through the Walls layer or the player
+						{
+							if(hit.transform.tag == playerTag)
+		                    	playerInSight = true;
+							else 
+								playerInSight = false;
+						}
+						else 
+						{
+							playerInSight = false;
+						}
                     }
                     else if (!playerIsTouching)
                     {
