@@ -101,56 +101,63 @@ public class EnemyMovement : MonoBehaviour {
 	void FixedUpdate () 
     {
 		HeatToSpeed();
-		
-        CodeProfiler.Begin("EnemyMovement:FixedUpdate");
-        if (lastState != scriptState.nmeCurrentState)
+
+        if (!iAmFrozen)
         {
-            if (!((lastState == EnemyState.CurrentState.Chasing && scriptState.nmeCurrentState == EnemyState.CurrentState.Firing) || (lastState == EnemyState.CurrentState.Firing && scriptState.nmeCurrentState == EnemyState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
+            CodeProfiler.Begin("EnemyMovement:FixedUpdate");
+            if (lastState != scriptState.nmeCurrentState)
             {
-                changedStates = true;
-                print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
+                if (!((lastState == EnemyState.CurrentState.Chasing && scriptState.nmeCurrentState == EnemyState.CurrentState.Firing) || (lastState == EnemyState.CurrentState.Firing && scriptState.nmeCurrentState == EnemyState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
+                {
+                    changedStates = true;
+                    print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
+                }
             }
+            else
+            {
+                changedStates = false;
+            }
+            switch (scriptState.nmeCurrentState)
+            {
+                case EnemyState.CurrentState.Patroling:
+                    StopCoolant();
+                    Patrol();
+                    break;
+
+                case EnemyState.CurrentState.Chasing:
+                    StopCoolant();
+                    Chasing(alertedSpeed);
+                    break;
+
+                case EnemyState.CurrentState.Firing:
+                    Chasing(normalSpeed);
+                    SprayCoolant();
+                    break;
+
+                case EnemyState.CurrentState.Turning:
+                    StopCoolant();
+                    FaceTarget(transCharacter.position, fastRotateSpeed, true);
+                    break;
+
+                case EnemyState.CurrentState.Padding:
+
+                    break;
+
+                case EnemyState.CurrentState.Searching:
+                    StopCoolant();
+                    Searching();
+                    break;
+
+                case EnemyState.CurrentState.Stationary:
+                    StopCoolant();
+                    break;
+            }
+            lastState = scriptState.nmeCurrentState;
         }
         else
         {
-            changedStates = false;
+            StopCoolant();
         }
-        switch (scriptState.nmeCurrentState)
-        {
-            case EnemyState.CurrentState.Patroling:
-                StopCoolant();
-                Patrol();
-                break;
-
-            case EnemyState.CurrentState.Chasing:
-                StopCoolant();
-                Chasing(alertedSpeed);
-                break;
-
-            case EnemyState.CurrentState.Firing:
-                Chasing(normalSpeed);
-                SprayCoolant();
-                break;
-
-            case EnemyState.CurrentState.Turning:
-                StopCoolant();
-                FaceTarget(transCharacter.position, fastRotateSpeed, true);
-                break;
-
-            case EnemyState.CurrentState.Padding:
-
-                break;
-
-            case EnemyState.CurrentState.Searching:
-                StopCoolant();
-                Searching();
-                break;
-
-            case EnemyState.CurrentState.Stationary:
-                StopCoolant();
-                break;
-        }
-        lastState = scriptState.nmeCurrentState;
         CodeProfiler.End("EnemyMovement:FixedUpdate");
 	}
 	
@@ -347,7 +354,6 @@ public class EnemyMovement : MonoBehaviour {
     //    else
     //        return false;
     //}
-
 
     void GetAPath(Vector3 getPathTarget, bool onPatrol)
     {

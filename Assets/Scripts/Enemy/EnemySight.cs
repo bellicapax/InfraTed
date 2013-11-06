@@ -12,6 +12,7 @@ public class EnemySight : MonoBehaviour {
     public Vector3 personalLastSighting;
     public GameObject goRoomThermostat;
 
+    private string strPlayer = "Player";
     private Vector3 direction;
     private Vector3 previousSighting;
     private GameObject goCharacter;
@@ -75,10 +76,11 @@ public class EnemySight : MonoBehaviour {
             if (angle < fieldOfViewAngle * 0.5f)
             {
                 RaycastHit hit;
-
+                //print("Angle checks out"); // DBGR
                 if (Physics.Raycast(myTransform.position, direction.normalized, out hit, Mathf.Infinity))
                 {
-                    if (hit.collider.gameObject == goCharacter)
+                    //print("Hit Something with my FOV Raycast"); // DBGR
+                    if (hit.collider.tag == strPlayer)
                     {
                         xPlayerInSight = true;
                         personalLastSighting = transCharacter.position;   //Update this so that one script has the position for all to reference

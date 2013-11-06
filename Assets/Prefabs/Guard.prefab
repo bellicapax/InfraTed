@@ -88,7 +88,7 @@ GameObject:
   - 114: {fileID: 11400016}
   - 114: {fileID: 11400014}
   m_Layer: 0
-  m_Name: Graphics
+  m_Name: MeshHeat&Touch
   m_TagString: Guard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145,7 +145,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: .864179969, z: 0, w: -.503182948}
-  m_LocalPosition: {x: -11.1642065, y: 0, z: -8.27576923}
+  m_LocalPosition: {x: -11.1642065, y: .0277500153, z: -8.27576923}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400012}
@@ -183,7 +183,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: -.600095689, z: 0, w: .799928308}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: .311489105, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400002}
@@ -307,14 +307,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldOfViewAngle: 110
-  useSphericalHeatSensor: 0
-  useFieldOfVision: 1
   angle: 0
-  playerInSight: 0
-  playerIsTouching: 0
-  playerHasTouched: 0
+  xPlayerInSight: 0
+  xPlayerIsTouching: 0
+  xPlayerHasTouched: 0
   personalLastSighting: {x: 0, y: 0, z: 0}
-  direction: {x: 0, y: 0, z: 0}
   goRoomThermostat: {fileID: 0}
 --- !u!114 &11400002
 MonoBehaviour:
@@ -452,8 +449,8 @@ MonoBehaviour:
   xInHeatSensorRange: 0
   xBeingTouched: 0
   xHeatEnergy: 0
-  xfrozenColor: {r: 0, g: 0, b: 0, a: 0}
-  xoriginalColor: {r: 0, g: 0, b: 0, a: 0}
+  xFrozenColor: {r: 0, g: .657381773, b: 1, a: 1}
+  xOriginalColor: {r: 0, g: 0, b: 0, a: 0}
   goRoomThermo: {fileID: 0}
 --- !u!114 &11400016
 MonoBehaviour:
