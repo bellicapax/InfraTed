@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class SensorBotTouch : MonoBehaviour {
-    private GameObject lastGO = null;
+
     private EnemySight scriptSight;
     private SensorBotMovement scriptMovement;
 
@@ -15,21 +15,15 @@ public class SensorBotTouch : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (scriptMovement.changedStates)
-        {
-            lastGO = null;
-        }
         if (other.tag == "Player")
         {
             scriptSight.xPlayerIsTouching = true;
             scriptSight.xPlayerInSight = true;
             scriptSight.xPlayerHasTouched = true;
         }
-        else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
+        else if (other.transform == scriptMovement.xCurrentHotColdTrans)
         {
             scriptMovement.newPatrolPath = true;
-            scriptMovement.nameTouch = other.name;
-            lastGO = other.gameObject;
         }
     }
 
@@ -38,10 +32,6 @@ public class SensorBotTouch : MonoBehaviour {
         if (other.gameObject.name == "Character")
         {
             scriptSight.xPlayerIsTouching = false;
-        }
-        else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
-        {
-            scriptMovement.nameTouch = "";
         }
     }
 

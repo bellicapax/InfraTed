@@ -3,7 +3,6 @@ using System.Collections;
 
 public class EnemyTouch : MonoBehaviour {
 
-    private GameObject lastGO = null;
     private EnemySight scriptSight;
     private EnemyMovement scriptMovement;
 
@@ -16,21 +15,15 @@ public class EnemyTouch : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (scriptMovement.changedStates)
-        {
-            lastGO = null;
-        }
         if (other.tag == "Player")
         {
             scriptSight.xPlayerIsTouching = true;
             scriptSight.xPlayerInSight = true;
             scriptSight.xPlayerHasTouched = true;
         }
-        else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
+        else if (other.transform == scriptMovement.xCurrentHotColdTrans)
         {
             scriptMovement.newPatrolPath = true;
-            scriptMovement.nameTouch = other.name;
-            lastGO = other.gameObject;
         }
     }
 
@@ -39,10 +32,6 @@ public class EnemyTouch : MonoBehaviour {
         if (other.gameObject.name == "Character")
         {
             scriptSight.xPlayerIsTouching = false;
-        }
-        else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
-        {
-            scriptMovement.nameTouch = "";
         }
     }
 

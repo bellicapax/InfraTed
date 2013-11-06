@@ -18,8 +18,8 @@ public bool changedStates = false;
     public float searchLookSpeed = 50.0f;
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
-    public string nameTouch;
     public List<Transform> listTransPatrol = new List<Transform>();
+    public Transform xCurrentHotColdTrans;
     public GameObject goSharedVariables;
     public LayerMask groundMask;
 
@@ -45,7 +45,6 @@ public bool changedStates = false;
     private List<GameObject> listHotColdObjects = new List<GameObject>();
     private CharacterController myCharContro;
     private Transform myTransform;
-    private Transform currentHotColdTrans;
     private Transform transCharacter;
     private ParticleSystem prtSystems = new ParticleSystem();
     private HeatControl scriptHeat;
@@ -304,7 +303,7 @@ public bool changedStates = false;
         //    print("Bumped into an obstacle.");
         //    if (parOnPatrol && nameBump != nameTouch)
         //    {
-        //        scriptSeeker.StartPath(myTransform.position, currentHotColdTrans.position, OnPathComplete);     // We don't want a new path based on the new, incremented patrol counter.  Just use the current objective.
+        //        scriptSeeker.StartPath(myTransform.position, xCurrentHotColdTrans.position, OnPathComplete);     // We don't want a new path based on the new, incremented patrol counter.  Just use the current objective.
         //        scriptBump.isBumping = false;
         //        return false;                                                                                   // So it doesn't hiccup when we change paths, don't return and don't set calculating path to true
         //    }
@@ -364,7 +363,7 @@ public bool changedStates = false;
 
     void GetANewPatrolPath()
     {
-        currentHotColdTrans = listTransPatrol[patrolCounter]; // Assign the current target to the item in the array equal to the patrolCounter
+        xCurrentHotColdTrans = listTransPatrol[patrolCounter]; // Assign the current target to the item in the array equal to the patrolCounter
 
         patrolCounter++;                                    // Increment the patrolCounter
 
@@ -372,9 +371,9 @@ public bool changedStates = false;
         {
             patrolCounter = 0;
         }
-        if (currentHotColdTrans != null)
+        if (xCurrentHotColdTrans != null)
         {
-            scriptSeeker.StartPath(myTransform.position, currentHotColdTrans.position, OnPathComplete);
+            scriptSeeker.StartPath(myTransform.position, xCurrentHotColdTrans.position, OnPathComplete);
         }
     }
 
@@ -404,7 +403,7 @@ public bool changedStates = false;
             scriptHeat = listTransPatrol[i].GetComponent<HeatControl>();
             if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.xInHeatSensorRange)
             {
-                if (listTransPatrol[i] == currentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
+                if (listTransPatrol[i] == xCurrentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
                 {
                     listTransPatrol.RemoveAt(i);
                     //print("Patrol counter: " + patrolCounter +  " List count: " + listTransPatrol.Count);

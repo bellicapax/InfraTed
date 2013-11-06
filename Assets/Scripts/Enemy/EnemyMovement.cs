@@ -18,8 +18,8 @@ public class EnemyMovement : MonoBehaviour {
     public float searchLookSpeed = 50.0f;
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
-    public string nameTouch;
     public List<Transform> listTransPatrol = new List<Transform>();
+    public Transform xCurrentHotColdTrans;
     public GameObject goSharedVariables;
     public LayerMask groundMask;
 
@@ -51,7 +51,6 @@ public class EnemyMovement : MonoBehaviour {
     private List<GameObject> listHotColdObjects = new List<GameObject>();
     private CharacterController myCharContro;
     private Transform myTransform;
-    private Transform currentHotColdTrans;
     private Transform transCharacter;
     private ParticleSystem prtSystems = new ParticleSystem();
     private HeatControl scriptHeat;
@@ -101,10 +100,9 @@ public class EnemyMovement : MonoBehaviour {
 	void FixedUpdate () 
     {
 		HeatToSpeed();
-
+        //CodeProfiler.Begin("EnemyMovement:FixedUpdate");
         if (!iAmFrozen)
         {
-            CodeProfiler.Begin("EnemyMovement:FixedUpdate");
             if (lastState != scriptState.nmeCurrentState)
             {
                 if (!((lastState == EnemyState.CurrentState.Chasing && scriptState.nmeCurrentState == EnemyState.CurrentState.Firing) || (lastState == EnemyState.CurrentState.Firing && scriptState.nmeCurrentState == EnemyState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
@@ -158,7 +156,7 @@ public class EnemyMovement : MonoBehaviour {
         {
             StopCoolant();
         }
-        CodeProfiler.End("EnemyMovement:FixedUpdate");
+        //CodeProfiler.End("EnemyMovement:FixedUpdate");
 	}
 	
 	private void HeatToSpeed()
@@ -178,7 +176,12 @@ public class EnemyMovement : MonoBehaviour {
 
     private void Patrol()
     {
-        if (WeNeedANewPath(myTransform.forward, true))
+        if (myPath == null)
+        {
+            GetANewPatrolPath();
+            calculatingPath = true;
+        }
+        if (WeNeedANewPath(xCurrentHotColdTrans.position, true))
         {
             return;
         }
@@ -324,14 +327,14 @@ public class EnemyMovement : MonoBehaviour {
             newPatrolPath = false;
             return true;
         }
-        //else if (WaypointTargetAngle(pathTarget))
-        //{
-        //    print("Path end no longer leads to player.");
-        //    FaceTarget(transCharacter.position, fastRotateSpeed, true);
-        //    scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-        //    calculatingPath = true;
-        //    return true;
-        //}
+        else if (WaypointTargetAngle(pathTarget))
+        {
+            print("Path end no longer leads to player.");
+            FaceTarget(transCharacter.position, fastRotateSpeed, true);
+            scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
+            calculatingPath = true;
+            return true;
+        }
         else if (iAmStuck)
         {
             print("I'm stuck!");
@@ -343,17 +346,17 @@ public class EnemyMovement : MonoBehaviour {
             return false;
     }
 
-    //bool WaypointTargetAngle(Vector3 wpaTarget)
-    //{
-    //    Vector3 pathDir = myPath.vectorPath[myPath.vectorPath.Count - 1] - myTransform.position;            // Get a vector direction between myself and the final point of the path
-    //    Vector3 targetDir = wpaTarget - myTransform.position;
-    //    float pathPlayerAngle = Vector3.Angle(pathDir, targetDir);
-    //    //print("Way X: " + pathDir.x + " Way Y: " + pathDir.y + " Way Z: " + pathDir.z + " Player X: " + playerDir.x + " Player Y: " + playerDir.y + " Player Z: " + playerDir.z + " Angle: " + pathPlayerAngle);
-    //    if (pathPlayerAngle > scriptSight.fieldOfViewAngle * percentOfFOVToContinuePath)
-    //        return true;
-    //    else
-    //        return false;
-    //}
+    bool WaypointTargetAngle(Vector3 wpaTarget)
+    {
+        Vector3 pathDir = myPath.vectorPath[myPath.vectorPath.Count - 1] - myTransform.position;            // Get a vector direction between myself and the final point of the path
+        Vector3 targetDir = wpaTarget - myTransform.position;
+        float pathPlayerAngle = Vector3.Angle(pathDir, targetDir);
+        //print("Way X: " + pathDir.x + " Way Y: " + pathDir.y + " Way Z: " + pathDir.z + " Player X: " + playerDir.x + " Player Y: " + playerDir.y + " Player Z: " + playerDir.z + " Angle: " + pathPlayerAngle);
+        if (pathPlayerAngle > scriptSight.fieldOfViewAngle * percentOfFOVToContinuePath)
+            return true;
+        else
+            return false;
+    }
 
     void GetAPath(Vector3 getPathTarget, bool onPatrol)
     {
@@ -371,7 +374,7 @@ public class EnemyMovement : MonoBehaviour {
 
     void GetANewPatrolPath()
     {
-        currentHotColdTrans = listTransPatrol[patrolCounter]; // Assign the current target to the item in the array equal to the patrolCounter
+        xCurrentHotColdTrans = listTransPatrol[patrolCounter]; // Assign the current target to the item in the array equal to the patrolCounter
 
         patrolCounter++;                                    // Increment the patrolCounter
 
@@ -379,9 +382,9 @@ public class EnemyMovement : MonoBehaviour {
         {
             patrolCounter = 0;
         }
-        if (currentHotColdTrans != null)
+        if (xCurrentHotColdTrans != null)
         {
-            scriptSeeker.StartPath(myTransform.position, currentHotColdTrans.position, OnPathComplete);
+            scriptSeeker.StartPath(myTransform.position, xCurrentHotColdTrans.position, OnPathComplete);
         }
     }
 
@@ -523,7 +526,6 @@ public class EnemyMovement : MonoBehaviour {
         else
             clearPath = true;
     }
-
 
     //bool GettingAPathToCharacter()
     //{

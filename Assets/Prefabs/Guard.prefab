@@ -326,8 +326,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   changedStates: 0
   newPatrolPath: 0
-  decimalRounding: 1
-  secondsAllowedStationary: 1
+  decimalRounding: 3
+  secondsAllowedStationary: .5
   secondsBetweenSlowerUpdate: .200000003
   normalSpeed: 50
   alertedSpeed: 75
@@ -336,12 +336,12 @@ MonoBehaviour:
   searchLookSpeed: 50
   nextWaypointDistance: 1
   percentOfFOVToContinuePath: .300000012
-  nameTouch: 
   listTransPatrol:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  xCurrentHotColdTrans: {fileID: 0}
   goSharedVariables: {fileID: 0}
   groundMask:
     serializedVersion: 2
