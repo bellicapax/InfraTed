@@ -14,7 +14,7 @@ public class HeatControl : MonoBehaviour {
     public bool xInHeatSensorRange = false;
     public bool xBeingTouched = false;
     public float xHeatEnergy;
-    public Color xfrozenColor;
+    public Color xFrozenColor;
 
     private bool hotObject;
     private float heatMultiplier;
@@ -59,7 +59,7 @@ public class HeatControl : MonoBehaviour {
         scriptCharInput = goCharacter.GetComponent<CharacterInput>();
         scriptMesh = GetComponent<MeshVolume>();
         scriptThermo = goRoomThermo.GetComponent<RoomHeatVariables>();
-        coldHSB = HSBColor.FromColor(scriptCharInput.coldColor);
+        coldHSB = HSBColor.FromColor(scriptCharInput.xColdColor);
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
         xHeatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
         StartCoroutine(AssignColor());
@@ -109,7 +109,7 @@ public class HeatControl : MonoBehaviour {
                 }
                 else
                 {
-                    myRenderer.material.color = scriptCharInput.coldColor;
+                    myRenderer.material.color = scriptCharInput.xColdColor;
                 }
             }
             else if (myTransform.tag == cold)
@@ -128,7 +128,7 @@ public class HeatControl : MonoBehaviour {
 
     private void RegainHeat()
     {
-        if (infraOn && canRegainTemp && !xBeingTouched)  // If the infrared vision is on and the object is one that regains or loses heat naturally and it's not currently being drained or deposited
+        if (canRegainTemp && !xBeingTouched)  // If the object is one that regains or loses heat naturally and it's not currently being drained or deposited
         {
             if (hotObject && HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h)
             {

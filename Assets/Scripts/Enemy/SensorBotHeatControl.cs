@@ -8,7 +8,7 @@ public class SensorBotHeatControl : MonoBehaviour {
     public float secondsTillThaw = 5.0f;
     public bool xBeingTouched = false;
     public float xHeatEnergy;
-    public Color xfrozenColor;
+    public Color xFrozenColor;
 
     private float heatMultiplier;
     private float heatHomeostasisRate = 4;
@@ -22,7 +22,7 @@ public class SensorBotHeatControl : MonoBehaviour {
     private MeshVolume scriptMesh;
     private RoomHeatVariables scriptThermo;
     private Transform myTransform;
-    public bool infraOn = false;
+    private bool infraOn = false;
     
     // Use this for initialization
 	void Start () 
@@ -37,7 +37,7 @@ public class SensorBotHeatControl : MonoBehaviour {
         scriptThermo = GameObject.FindGameObjectWithTag("Thermometer").GetComponent<RoomHeatVariables>();
 		heatColor = scriptThermo.roomInfraTemp;
 		
-        coldHSB = HSBColor.FromColor(scriptCharInput.coldColor);
+        coldHSB = HSBColor.FromColor(scriptCharInput.xColdColor);
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
         xHeatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
         StartCoroutine(AssignColor());

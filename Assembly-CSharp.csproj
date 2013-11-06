@@ -72,12 +72,6 @@
      <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\JsonConverters.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\JsonSerializer.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\astarclasses.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\AIFollow.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\DoorController.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\DynamicGridObstacle.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\MineBotAI.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\ObjectPlacer.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\TargetMover.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Generators\Base.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Generators\GridGenerator.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Generators\NavMeshGenerator.cs" />
@@ -106,7 +100,6 @@
      <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
      <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
      <Compile Include="Assets\Scripts\CodeProfiler.cs" />
-     <Compile Include="Assets\Scripts\ColorTest.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraSight.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyMovement.cs" />
@@ -119,6 +112,7 @@
      <Compile Include="Assets\Scripts\Enemy\SensorBotMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\SensorBotSight.cs" />
      <Compile Include="Assets\Scripts\Enemy\SensorBotState.cs" />
+     <Compile Include="Assets\Scripts\Enemy\SensorBotTouch.cs" />
      <Compile Include="Assets\Scripts\Enemy\SprayGun.cs" />
      <Compile Include="Assets\Scripts\GUIScript.cs" />
      <Compile Include="Assets\Scripts\HUDFPS.cs" />
@@ -136,13 +130,9 @@
      <None Include="Assets\Shaders\FlatColor.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\DiffuseAlwaysVisible.shader" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\_Example Scenes.txt" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Light.shader" />
      <None Include="Assets\AstarPathfindingProject\Readme.txt" />
      <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\License.txt" />
      <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\Readme.txt" />

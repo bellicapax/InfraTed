@@ -395,7 +395,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100006}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de273150c8b4a804c84106e732b7aba5, type: 3}
+  m_Script: {fileID: 11500000, guid: dec0606639f1692438303e59fac6f899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400002
@@ -413,7 +413,7 @@ MonoBehaviour:
   secondsTillThaw: 5
   xBeingTouched: 0
   xHeatEnergy: 0
-  xfrozenColor: {r: 0, g: 0, b: 0, a: 0}
+  xFrozenColor: {r: 0, g: 0, b: 0, a: 0}
   infraOn: 0
 --- !u!114 &11400004
 MonoBehaviour:

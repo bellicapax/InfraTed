@@ -29,12 +29,18 @@ public class EnemyMovement : MonoBehaviour {
     private bool setSearchRotation = false;
     private bool doneSearching = false;
     private bool iAmStuck = false;
+    private bool iAmFrozen = false;
     private bool clearPath = true;
     private bool sprayingCoolant = false;
     private int currentWaypoint = 0;
     private int patrolCounter = 0;
     private float stuckCounter;
     private float radiusOfCharControl;
+    private float originalNormalSpeed;
+    private float originalAlertedSpeed;
+    private float originalHeatHSubtracted;
+    private float coldH;
+    private float frozenH;
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
@@ -53,7 +59,6 @@ public class EnemyMovement : MonoBehaviour {
 	private SeeingBotHeatControl scriptMyHeat;
     private EnemyState scriptState;
     private EnemySight scriptSight;
-    //private EnemyBump scriptBump;
     private EnemyShared scriptShared;
     private Path myPath;
     private EnemyState.CurrentState lastState;
@@ -65,7 +70,9 @@ public class EnemyMovement : MonoBehaviour {
         stuckCounter = secondsAllowedStationary;
         myCharContro = this.GetComponent<CharacterController>();
         radiusOfCharControl = myCharContro.radius;
-        //groundMask = 1 << LayerMask.NameToLayer("Ground");
+        originalNormalSpeed = normalSpeed;
+        originalAlertedSpeed = alertedSpeed;
+
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
         transCharacter = goCharacter.transform;
@@ -77,13 +84,14 @@ public class EnemyMovement : MonoBehaviour {
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<EnemySight>();
-        //scriptBump = GetComponentInChildren<EnemyBump>();
         scriptShared = goSharedVariables.GetComponent<EnemyShared>();
 
         lastState = scriptState.nmeCurrentState;
         lastMyPosition = myTransform.position;
 
-
+        coldH = HSBColor.FromColor(goCharacter.GetComponent<CharacterInput>().xColdColor).h;
+        frozenH = coldH - HSBColor.FromColor(scriptMyHeat.xFrozenColor).h;                      // Subtract the frozen color from the coldest color to get the value that the enemy should stop moving at
+        originalHeatHSubtracted = coldH - HSBColor.FromColor(scriptMyHeat.xOriginalColor).h;    // Subtract the original color from the coldest color to get a value that decreases as the object cools
 
         print(myTransform.right);
 
@@ -148,19 +156,22 @@ public class EnemyMovement : MonoBehaviour {
 	
 	private void HeatToSpeed()
 	{
-		//scriptMyHeat.heatColor
+        if (scriptMyHeat.heatColor != scriptMyHeat.xOriginalColor)
+        {
+            if (coldH - HSBColor.FromColor(scriptMyHeat.heatColor).h > frozenH)
+            {
+                normalSpeed = ((originalNormalSpeed / originalHeatHSubtracted.Squared()) * (((coldH - HSBColor.FromColor(scriptMyHeat.heatColor).h) - frozenH).Squared()));
+                alertedSpeed = ((originalAlertedSpeed / originalHeatHSubtracted.Squared()) * (((coldH - HSBColor.FromColor(scriptMyHeat.heatColor).h) - frozenH).Squared()));
+                iAmFrozen = false;
+            }
+            else
+                iAmFrozen = true;
+        }
 	}
 
     private void Patrol()
     {
-        if (scriptSight.useSphericalHeatSensor) // If we are only patroling between objects that are currently out of the room temperature range, check to see if they are still in that range
-        {
-            if (RemoveLukewarmObjects())    // If removing the objects necessitates creating a new path, return
-            {
-                return;
-            }
-        }
-        if (WeNeedANewPath(myTransform.forward, true, false))
+        if (WeNeedANewPath(myTransform.forward, true))
         {
             return;
         }
@@ -186,7 +197,7 @@ public class EnemyMovement : MonoBehaviour {
             FaceTarget(transCharacter.position, fastRotateSpeed, true);
             MoveTowards(direction.normalized, parChaseSpeed);
         }
-        else if (WeNeedANewPath(transCharacter.position, false, true))
+        else if (WeNeedANewPath(transCharacter.position, false))
         {
             return;
         }
@@ -232,7 +243,7 @@ public class EnemyMovement : MonoBehaviour {
                 Vector3 direction = scriptShared.sharedLastKnownLocation - myTransform.position;
                 MoveTowards(direction.normalized, alertedSpeed);
             }
-            else if (WeNeedANewPath(scriptShared.sharedLastKnownLocation, false, false))
+            else if (WeNeedANewPath(scriptShared.sharedLastKnownLocation, false))
             {
                 print("Getting a new path while searching" + myTransform.name);
                 return;
@@ -252,16 +263,7 @@ public class EnemyMovement : MonoBehaviour {
             }
         }
         else
-        {
-            if (scriptSight.useFieldOfVision)
-            {
-                LookRightLeft();
-            }
-            else if (scriptSight.useSphericalHeatSensor)
-            {
-                scriptState.justLostEm = false;
-            }
-        }
+            LookRightLeft();
     }
     
     void FaceTarget(Vector3 parTarget, float parRotateSpeed, bool parConstrainXZAxes)
@@ -280,7 +282,7 @@ public class EnemyMovement : MonoBehaviour {
         myCharContro.SimpleMove(new Vector3(parTarget.x, 0.0f, parTarget.z) * Time.fixedDeltaTime * parMoveSpeed);
     }
 
-    bool WeNeedANewPath(Vector3 pathTarget, bool parOnPatrol, bool parChasing)
+    bool WeNeedANewPath(Vector3 pathTarget, bool parOnPatrol)
     {
         if (calculatingPath)
         {
@@ -315,32 +317,14 @@ public class EnemyMovement : MonoBehaviour {
             newPatrolPath = false;
             return true;
         }
-        //else if (scriptBump.isBumping)
+        //else if (WaypointTargetAngle(pathTarget))
         //{
-        //    print("Bumped into an obstacle.");
-        //    if (parOnPatrol && nameBump != nameTouch)
-        //    {
-        //        scriptSeeker.StartPath(myTransform.position, currentHotColdTrans.position, OnPathComplete);     // We don't want a new path based on the new, incremented patrol counter.  Just use the current objective.
-        //        scriptBump.isBumping = false;
-        //        return false;                                                                                   // So it doesn't hiccup when we change paths, don't return and don't set calculating path to true
-        //    }
-        //    else
-        //    {
-        //        Vector3 bumpTarget = pathTarget;
-        //        print("Bumping.");
-        //        FaceTarget(pathTarget, fastRotateSpeed, true);
-        //        scriptSeeker.StartPath(myTransform.position, bumpTarget, OnPathComplete);
-        //        return false;
-        //    }
+        //    print("Path end no longer leads to player.");
+        //    FaceTarget(transCharacter.position, fastRotateSpeed, true);
+        //    scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
+        //    calculatingPath = true;
+        //    return true;
         //}
-        else if (parChasing && WaypointPlayerAngle())
-        {
-            print("Path end no longer leads to player.");
-            FaceTarget(transCharacter.position, fastRotateSpeed, true);
-            scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-            calculatingPath = true;
-            return true;
-        }
         else if (iAmStuck)
         {
             print("I'm stuck!");
@@ -352,17 +336,18 @@ public class EnemyMovement : MonoBehaviour {
             return false;
     }
 
-    bool WaypointPlayerAngle()
-    {
-        Vector3 pathDir = myPath.vectorPath[myPath.vectorPath.Count - 1] - myTransform.position;            // Get a vector direction between myself and the final point of the path
-        Vector3 playerDir = transCharacter.position - myTransform.position;
-        float pathPlayerAngle = Vector3.Angle(pathDir, playerDir);
-        //print("Way X: " + pathDir.x + " Way Y: " + pathDir.y + " Way Z: " + pathDir.z + " Player X: " + playerDir.x + " Player Y: " + playerDir.y + " Player Z: " + playerDir.z + " Angle: " + pathPlayerAngle);
-        if (pathPlayerAngle > scriptSight.fieldOfViewAngle * percentOfFOVToContinuePath)
-            return true;
-        else
-            return false;
-    }
+    //bool WaypointTargetAngle(Vector3 wpaTarget)
+    //{
+    //    Vector3 pathDir = myPath.vectorPath[myPath.vectorPath.Count - 1] - myTransform.position;            // Get a vector direction between myself and the final point of the path
+    //    Vector3 targetDir = wpaTarget - myTransform.position;
+    //    float pathPlayerAngle = Vector3.Angle(pathDir, targetDir);
+    //    //print("Way X: " + pathDir.x + " Way Y: " + pathDir.y + " Way Z: " + pathDir.z + " Player X: " + playerDir.x + " Player Y: " + playerDir.y + " Player Z: " + playerDir.z + " Angle: " + pathPlayerAngle);
+    //    if (pathPlayerAngle > scriptSight.fieldOfViewAngle * percentOfFOVToContinuePath)
+    //        return true;
+    //    else
+    //        return false;
+    //}
+
 
     void GetAPath(Vector3 getPathTarget, bool onPatrol)
     {
@@ -411,39 +396,6 @@ public class EnemyMovement : MonoBehaviour {
             currentWaypoint = 0;
             calculatingPath = false;
         }
-    }
-
-    bool RemoveLukewarmObjects()
-    {
-        for (int i = 0; i < listTransPatrol.Count; i++)
-        {
-            scriptHeat = listTransPatrol[i].GetComponent<HeatControl>();
-            if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.xInHeatSensorRange)
-            {
-                if (listTransPatrol[i] == currentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
-                {
-                    listTransPatrol.RemoveAt(i);
-                    //print("Patrol counter: " + patrolCounter +  " List count: " + listTransPatrol.Count);
-                    if (patrolCounter != 0)                         // If it's not zero (e.g., if the last in the sequence got removed, so the counter would already be at zero)
-                    {
-                        patrolCounter--;                            // Decrement by one to get it to target the "next" transform
-                    }
-                    //print("Removed current target from list.  Patrol counter = " + patrolCounter);
-                    GetANewPatrolPath();
-                    calculatingPath = true;
-                    return true;                                    // !@#$ What happens here when two objects need removing and only one gets removed because we calculate a new path?  Would it be better or worse to do one at a time?
-                }
-                else
-                {
-                    listTransPatrol.RemoveAt(i);
-                    if (patrolCounter >= listTransPatrol.Count)
-                    {
-                        patrolCounter = 0;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     void LookRightLeft()
@@ -566,29 +518,6 @@ public class EnemyMovement : MonoBehaviour {
             clearPath = true;
     }
 
-    //Transform FindNearestHotOrColdObject()
-    //{
-    //    listHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(hot));     //Put all the hot objects in the list
-    //    listHotColdObjects.AddRange(GameObject.FindGameObjectsWithTag(cold));    //Put all the cold objects in the list
-
-    //    float nearestSqr = Mathf.Infinity;
-    //    Transform nearestTran = null;
-
-    //    foreach (GameObject aGO in listHotColdObjects)
-    //    {
-    //        float distanceSqr = (aGO.transform.position - myTransform.position).sqrMagnitude;
-    //        //print("Name: " + aGO.name + " Magnitude Squared: " + distanceSqr);
-
-    //        if (distanceSqr < nearestSqr && aGO.transform != currentHotColdTrans)
-    //        {
-    //            nearestSqr = distanceSqr;
-    //            nearestTran = aGO.transform;
-    //            //print(true);
-    //        }
-    //    }
-
-    //    return nearestTran;
-    //}
 
     //bool GettingAPathToCharacter()
     //{
@@ -629,7 +558,7 @@ public class EnemyMovement : MonoBehaviour {
     //        scriptBump.isBumping = false;
     //        return true;
     //    }
-    //    else if (WaypointPlayerAngle())
+    //    else if (WaypointTargetAngle())
     //    {
     //        print("Path end no longer leads to player.");
     //        FaceTarget(transCharacter.position, fastRotateSpeed, true);

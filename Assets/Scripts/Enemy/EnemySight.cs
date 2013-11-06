@@ -4,17 +4,15 @@ using System.Collections;
 public class EnemySight : MonoBehaviour {
 
     public float fieldOfViewAngle = 110.0f;
-    public bool useSphericalHeatSensor;
-    public bool useFieldOfVision;
     public float angle;
-    public bool playerInSight;
-    public bool playerIsTouching = false;
-    public bool playerHasTouched = false;
+    public bool xPlayerInSight;
+    public bool xPlayerIsTouching = false;
+    public bool xPlayerHasTouched = false;
     
     public Vector3 personalLastSighting;
-    public Vector3 direction;
     public GameObject goRoomThermostat;
 
+    private Vector3 direction;
     private Vector3 previousSighting;
     private GameObject goCharacter;
     private GameObject goEnemySharedVars;
@@ -50,67 +48,23 @@ public class EnemySight : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if (useFieldOfVision)
-        {
-            FieldOfView();
-        }
-        if (playerHasTouched)
+        FieldOfView();
+
+        if (xPlayerHasTouched)
         {
             if (FieldOfView())
             {
-                playerHasTouched = false;
+                xPlayerHasTouched = false;
             }
         }
 	}
 
-    void OnTriggerEnter(Collider other)
-    {
-        HeatControl itsHeat;
-        if (useSphericalHeatSensor && (itsHeat = other.GetComponent<HeatControl>()))
-        {
-            itsHeat.xInHeatSensorRange = true;
-        }
-
-    }
-
-    void OnTriggerStay(Collider other)
-    {
-        if (useSphericalHeatSensor)
-        {
-            if (scriptCharEnergy.currentEnergy >= 0)
-            {
-                if (other.name == "Character")
-                {
-                    if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))
-                    {
-                        playerInSight = true;
-                        personalLastSighting = transCharacter.position;  // Sensing robots don't share locations
-                    }
-                    else if (!playerIsTouching)
-                    {
-                        playerInSight = false;
-                    }
-                }
-            }
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        HeatControl itsHeat;
-        if (useSphericalHeatSensor && (itsHeat = other.GetComponent<HeatControl>()))
-        {
-            itsHeat.xInHeatSensorRange = false;
-        }
-    }
-
-
     public bool FieldOfView()
     {
-        if (!playerIsTouching)
+        if (!xPlayerIsTouching)
         {        
-            //if the other conditions are not met, playerInSight should be false
-            playerInSight = false;
+            //if the other conditions are not met, xPlayerInSight should be false
+            xPlayerInSight = false;
         }
 
         if (scriptCharEnergy.currentEnergy >= 0)
@@ -126,7 +80,7 @@ public class EnemySight : MonoBehaviour {
                 {
                     if (hit.collider.gameObject == goCharacter)
                     {
-                        playerInSight = true;
+                        xPlayerInSight = true;
                         personalLastSighting = transCharacter.position;   //Update this so that one script has the position for all to reference
                         scriptShared.sharedLastKnownLocation = transCharacter.position;
                         return true;

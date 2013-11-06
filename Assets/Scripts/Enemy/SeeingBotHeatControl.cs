@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using System.Collections.Generic;
+
 [RequireComponent(typeof (MeshVolume))]
 
 public class SeeingBotHeatControl : MonoBehaviour {
@@ -10,15 +12,16 @@ public class SeeingBotHeatControl : MonoBehaviour {
     public bool xInHeatSensorRange = false;
     public bool xBeingTouched = false;
     public float xHeatEnergy;
-    public Color xfrozenColor;
+    public Color xFrozenColor;
+    public Color xOriginalColor;
 
     private float heatMultiplier;
     private float heatHomeostasisRate = 4;
     private float thawCounter;
 	private string objectDrain = "ObjectDrain";
-    private Color originalColor;
+    private Color visibleLightColor;
     private HSBColor coldHSB;
-    private Renderer[] myRenderers = new Renderer[2];
+    private Renderer[] myRenderers;
     private GameObject goCharacter;
     public GameObject goRoomThermo;
     private CharacterInput scriptCharInput;
@@ -31,15 +34,17 @@ public class SeeingBotHeatControl : MonoBehaviour {
 	void Start () 
     {
         myTransform = this.transform;
+        myRenderers = new Renderer[myTransform.GetComponentsInChildren<Renderer>().Length];
         myRenderers = myTransform.GetComponentsInChildren<Renderer>();
-		originalColor = myRenderers[0].material.color;
+        visibleLightColor = myRenderers[0].material.color;
+		xOriginalColor = heatColor;
 
         goCharacter = GameObject.Find("Character");
         goRoomThermo = GameObject.FindGameObjectWithTag("Thermometer");
         scriptCharInput = goCharacter.GetComponent<CharacterInput>();
         scriptMesh = GetComponent<MeshVolume>();
         scriptThermo = goRoomThermo.GetComponent<RoomHeatVariables>();
-        coldHSB = HSBColor.FromColor(scriptCharInput.coldColor);
+        coldHSB = HSBColor.FromColor(scriptCharInput.xColdColor);
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
         xHeatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
         StartCoroutine(AssignColor());
@@ -81,7 +86,7 @@ public class SeeingBotHeatControl : MonoBehaviour {
 			{
 				foreach(Renderer r in myRenderers)
 				{
-                    r.material.color = scriptCharInput.coldColor;
+                    r.material.color = scriptCharInput.xColdColor;
                 }
             }
         }
@@ -89,29 +94,34 @@ public class SeeingBotHeatControl : MonoBehaviour {
 		{
 			foreach(Renderer r in myRenderers)
 			{
-				r.material.color = originalColor;
+				r.material.color = visibleLightColor;
 			}
 		}
     }
 
     private void RegainHeat()
     {
-        if (infraOn && !xBeingTouched)  // If the infrared vision is on and the object is one that regains or loses heat naturally and it's not currently being drained or deposited
+        if (!xBeingTouched)  // If it's not currently being drained
         {
-            if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(originalColor).h && !xBeingTouched)
+            if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(xOriginalColor).h) // If the guard's heat is colder than the original color
             {
-                if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(xfrozenColor).h)  // If the guard is actually frozen and not just colder
+                if (HSBColor.FromColor(heatColor).h > HSBColor.FromColor(xFrozenColor).h)  // If the guard is actually frozen and not just colder
                 {
                     if (thawCounter >= secondsTillThaw)
+                    {
                         heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
+                        print("Heating up but still frozen");
+                    }
                     else
                         thawCounter += Time.deltaTime;
                 }
-                else
+                else // Else we are colder than our original temperature, but not frozen, so heat back up and reset the thaw counter
+                {
+                    thawCounter = 0.0f;
                     heatColor.H(HSBColor.FromColor(heatColor).h - (1 / (xHeatEnergy * heatHomeostasisRate)) * Time.deltaTime, ref heatColor);
+                    //print("Heating up NOT frozen. Heat hue: " + HSBColor.FromColor(heatColor).h + " Original hue: " + HSBColor.FromColor(xOriginalColor).h);
+                }
             }
-            else
-                thawCounter = 0.0f;
         }
     }
 

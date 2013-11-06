@@ -5,13 +5,13 @@ public class EnemyTouch : MonoBehaviour {
 
     private GameObject lastGO = null;
     private EnemySight scriptSight;
-    private SensorBotMovement scriptMovement;
+    private EnemyMovement scriptMovement;
 
 	// Use this for initialization
 	void Start () 
     {
         scriptSight = transform.parent.GetComponentInChildren<EnemySight>();
-        scriptMovement = transform.parent.GetComponent<SensorBotMovement>();
+        scriptMovement = transform.parent.GetComponent<EnemyMovement>();
 	}
 
     void OnTriggerEnter(Collider other)
@@ -22,9 +22,9 @@ public class EnemyTouch : MonoBehaviour {
         }
         if (other.tag == "Player")
         {
-            scriptSight.playerIsTouching = true;
-            scriptSight.playerInSight = true;
-            scriptSight.playerHasTouched = true;
+            scriptSight.xPlayerIsTouching = true;
+            scriptSight.xPlayerInSight = true;
+            scriptSight.xPlayerHasTouched = true;
         }
         else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
         {
@@ -38,7 +38,7 @@ public class EnemyTouch : MonoBehaviour {
     {
         if (other.gameObject.name == "Character")
         {
-            scriptSight.playerIsTouching = false;
+            scriptSight.xPlayerIsTouching = false;
         }
         else if ((other.tag == "Hot" || other.tag == "Cold") && other.gameObject != lastGO)
         {

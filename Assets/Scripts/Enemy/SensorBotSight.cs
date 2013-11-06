@@ -5,16 +5,16 @@ public class SensorBotSight : MonoBehaviour {
 	
 	public float fieldOfViewAngle = 110.0f;
     public float angle;
-    public bool playerInSight;
-    public bool playerIsTouching = false;
-    public bool playerHasTouched = false;
+    public bool xPlayerInSight;
+    public bool xPlayerIsTouching = false;
+    public bool xPlayerHasTouched = false;
     
     public Vector3 personalLastSighting;
-    public Vector3 direction;
     public GameObject goRoomThermostat;
 	public LayerMask xWallMask;
 	
 	private string playerTag = "Player";
+    private Vector3 direction;
     private Vector3 previousSighting;
     private GameObject goCharacter;
     private GameObject goEnemySharedVars;
@@ -52,11 +52,11 @@ public class SensorBotSight : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        if (playerHasTouched)
+        if (xPlayerHasTouched)
         {
             if (FieldOfView())
             {
-                playerHasTouched = false;
+                xPlayerHasTouched = false;
             }
         }
 	}
@@ -84,18 +84,18 @@ public class SensorBotSight : MonoBehaviour {
 						if(Physics.Raycast(myTransform.position, direction, out hit, myCollider.radius, xWallMask))		// This layermask doesn't allow it to go through the Walls layer or the player
 						{
 							if(hit.transform.tag == playerTag)
-		                    	playerInSight = true;
+		                    	xPlayerInSight = true;
 							else 
-								playerInSight = false;
+								xPlayerInSight = false;
 						}
 						else 
 						{
-							playerInSight = false;
+							xPlayerInSight = false;
 						}
                     }
-                    else if (!playerIsTouching)
+                    else if (!xPlayerIsTouching)
                     {
-                        playerInSight = false;
+                        xPlayerInSight = false;
                     }
                 }
             }
@@ -113,10 +113,10 @@ public class SensorBotSight : MonoBehaviour {
 
     public bool FieldOfView()
     {
-        if (!playerIsTouching)
+        if (!xPlayerIsTouching)
         {        
-            //if the other conditions are not met, playerInSight should be false
-            playerInSight = false;
+            //if the other conditions are not met, xPlayerInSight should be false
+            xPlayerInSight = false;
         }
 
         if (scriptCharEnergy.currentEnergy >= 0)
@@ -132,7 +132,7 @@ public class SensorBotSight : MonoBehaviour {
                 {
                     if (hit.collider.gameObject == goCharacter)
                     {
-                        playerInSight = true;
+                        xPlayerInSight = true;
                         personalLastSighting = transCharacter.position;   //Update this so that one script has the position for all to reference
                         scriptShared.sharedLastKnownLocation = transCharacter.position;
                         return true;

@@ -8,7 +8,7 @@ public class CharacterInput : MonoBehaviour {
     public float energyIncrement = 10.0f;
     public bool infraOn = false;
     public bool newScene = true;
-    public Color coldColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
+    public Color xColdColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public Material matLukewarm;
     public float xTransferEnergy = 0.0f;
 
@@ -131,7 +131,7 @@ public class CharacterInput : MonoBehaviour {
 				}
                 else if((tempSeeingBotHeat = itsTransform.GetComponent<SeeingBotHeatControl>()) != null)	// If it's a guard
 				{
-					if (HSBColor.FromColor(tempHeatControl.heatColor).h < HSBColor.FromColor(coldColor).h) 	// If they aren't already as cold as can be
+					if (HSBColor.FromColor(tempSeeingBotHeat.heatColor).h < HSBColor.FromColor(xColdColor).h) 	// If they aren't already as cold as can be
 	                {
 	                    tempSeeingBotHeat.heatColor.H(HSBColor.FromColor(tempSeeingBotHeat.heatColor).h + (1 / tempSeeingBotHeat.xHeatEnergy) * Time.deltaTime, ref tempSeeingBotHeat.heatColor);
 	                    xTransferEnergy = energyIncrement * Time.deltaTime;
