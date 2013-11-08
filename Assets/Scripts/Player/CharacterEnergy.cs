@@ -70,9 +70,17 @@ public class CharacterEnergy : MonoBehaviour {
     private void HeatToSpeed()
     {
         if (sprinting)
+        {
             scriptCharMotor.movement.maxForwardSpeed = absoluteMaxSpeed;
+            scriptCharMotor.movement.maxSidewaysSpeed = absoluteMaxSpeed;
+            scriptCharMotor.movement.maxBackwardsSpeed = absoluteMaxSpeed;
+        }
         else
+        {
             scriptCharMotor.movement.maxForwardSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
+            scriptCharMotor.movement.maxSidewaysSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
+            scriptCharMotor.movement.maxBackwardsSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
+        }
     }
 
 

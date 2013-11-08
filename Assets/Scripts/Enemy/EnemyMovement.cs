@@ -52,7 +52,7 @@ public class EnemyMovement : MonoBehaviour {
     private CharacterController myCharContro;
     private Transform myTransform;
     private Transform transCharacter;
-    private ParticleSystem prtSystems = new ParticleSystem();
+    private ParticleSystem[] prtSystems;
     private HeatControl scriptHeat;
     private Seeker scriptSeeker;
 	private SeeingBotHeatControl scriptMyHeat;
@@ -78,7 +78,8 @@ public class EnemyMovement : MonoBehaviour {
         if (!goSharedVariables)
             Debug.Log("Please assign the Enemy Shared Variables game object to the Enemy Movement script.");
 
-        prtSystems = GetComponentInChildren<ParticleSystem>();
+        prtSystems = new ParticleSystem[GetComponentsInChildren<ParticleSystem>().Length];
+        prtSystems = GetComponentsInChildren<ParticleSystem>();
 		scriptMyHeat = GetComponentInChildren<SeeingBotHeatControl>();
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
@@ -229,7 +230,10 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (!sprayingCoolant)
         {
-            prtSystems.Play();
+            foreach (ParticleSystem p in prtSystems)
+            {
+                p.Play();
+            }
             sprayingCoolant = true;
         }
     }        
@@ -238,7 +242,10 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (sprayingCoolant)
         {
-            prtSystems.Stop();
+            foreach (ParticleSystem p in prtSystems)
+            {
+                p.Stop();
+            }
             sprayingCoolant = false;
         }
     }

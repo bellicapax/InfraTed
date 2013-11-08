@@ -3,12 +3,11 @@ using System.Collections;
 
 using System.Collections.Generic;
 
-[RequireComponent(typeof (MeshVolume))]
-
 public class SeeingBotHeatControl : MonoBehaviour {
 
     public Color heatColor;
     public float secondsTillThaw = 5.0f;
+    public float heatAmountMultiplier = 5.0f;
     public bool xInHeatSensorRange = false;
     public bool xBeingTouched = false;
     public float xHeatEnergy;
@@ -25,7 +24,6 @@ public class SeeingBotHeatControl : MonoBehaviour {
     private GameObject goCharacter;
     public GameObject goRoomThermo;
     private CharacterInput scriptCharInput;
-    private MeshVolume scriptMesh;
     private RoomHeatVariables scriptThermo;
     private Transform myTransform;
     private bool infraOn = false;
@@ -42,11 +40,10 @@ public class SeeingBotHeatControl : MonoBehaviour {
         goCharacter = GameObject.Find("Character");
         goRoomThermo = GameObject.FindGameObjectWithTag("Thermometer");
         scriptCharInput = goCharacter.GetComponent<CharacterInput>();
-        scriptMesh = GetComponent<MeshVolume>();
         scriptThermo = goRoomThermo.GetComponent<RoomHeatVariables>();
         coldHSB = HSBColor.FromColor(scriptCharInput.xColdColor);
         heatMultiplier = (10.0f / (coldHSB.h * coldHSB.h));         //This makes it so that an object with the highest temperature (100.0 degrees) and a volume of one cubed unit will take 10 seconds to be fully drained
-        xHeatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * scriptMesh.volume;
+        xHeatEnergy = heatMultiplier * Mathf.Abs(HSBColor.FromColor(heatColor).h - coldHSB.h) * heatAmountMultiplier;
         StartCoroutine(AssignColor());
 	}
 	

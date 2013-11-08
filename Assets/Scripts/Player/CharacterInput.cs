@@ -45,9 +45,6 @@ public class CharacterInput : MonoBehaviour {
         TouchDrain();
 	}
 
-
-
-
     private void GoInfrared()
     {
         if (Input.GetButtonDown("Infrared"))
