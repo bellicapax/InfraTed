@@ -9,6 +9,7 @@ public class EnemyMovement : MonoBehaviour {
     public bool changedStates = false;
     public bool newPatrolPath = false;
     public int decimalRounding = 3;
+    public int percentChancePlayerIsHit = 50;
     public float secondsAllowedStationary = 0.5f;
     public float secondsBetweenSlowerUpdate = 0.2f;
     public float normalSpeed = 50.0f;
@@ -18,6 +19,8 @@ public class EnemyMovement : MonoBehaviour {
     public float searchLookSpeed = 50.0f;
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
+    public float freezeDecrement = 10.0f;
+    public float xParticleAngle = 20.0f;
     public List<Transform> listTransPatrol = new List<Transform>();
     public Transform xCurrentHotColdTrans;
     public GameObject goSharedVariables;
@@ -32,6 +35,8 @@ public class EnemyMovement : MonoBehaviour {
     private bool iAmFrozen = false;
     private bool clearPath = true;
     private bool sprayingCoolant = false;
+    private bool inCoolantCone = false;
+    private bool playerBeingCooled = false;
     private int currentWaypoint = 0;
     private int patrolCounter = 0;
     private float stuckCounter;
@@ -41,6 +46,10 @@ public class EnemyMovement : MonoBehaviour {
     private float originalHeatHSubtracted;
     private float coldH;
     private float frozenH;
+    private float percentToHit;
+    private float minSecondsBetweenCoolantChecks = 0.2f;
+    private float maxSecondsBetweenCoolantChecks = 0.5f;
+    private float percentOfConeFovForCooling = 0.5f;
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
@@ -52,7 +61,9 @@ public class EnemyMovement : MonoBehaviour {
     private CharacterController myCharContro;
     private Transform myTransform;
     private Transform transCharacter;
+    private Transform prtTrans;
     private ParticleSystem[] prtSystems;
+    private CharacterInput scriptInput;
     private HeatControl scriptHeat;
     private Seeker scriptSeeker;
 	private SeeingBotHeatControl scriptMyHeat;
@@ -80,6 +91,8 @@ public class EnemyMovement : MonoBehaviour {
 
         prtSystems = new ParticleSystem[GetComponentsInChildren<ParticleSystem>().Length];
         prtSystems = GetComponentsInChildren<ParticleSystem>();
+        prtTrans = prtSystems[0].transform;
+        scriptInput = goCharacter.GetComponent<CharacterInput>();
 		scriptMyHeat = GetComponentInChildren<SeeingBotHeatControl>();
         scriptState = GetComponentInChildren<EnemyState>();
         scriptSeeker = GetComponent<Seeker>();
@@ -89,6 +102,7 @@ public class EnemyMovement : MonoBehaviour {
         lastState = scriptState.nmeCurrentState;
         lastMyPosition = myTransform.position;
 
+        percentToHit = percentChancePlayerIsHit / 100f;
         coldH = HSBColor.FromColor(goCharacter.GetComponent<CharacterInput>().xColdColor).h;
         frozenH = coldH - HSBColor.FromColor(scriptMyHeat.xFrozenColor).h;                      // Subtract the frozen color from the coldest color to get the value that the enemy should stop moving at
         originalHeatHSubtracted = coldH - HSBColor.FromColor(scriptMyHeat.xOriginalColor).h;    // Subtract the original color from the coldest color to get a value that decreases as the object cools
@@ -96,6 +110,7 @@ public class EnemyMovement : MonoBehaviour {
         print(myTransform.right);
 
         InvokeRepeating("LessFrequentUpdate", secondsBetweenSlowerUpdate, secondsBetweenSlowerUpdate);
+        StartCoroutine(ChanceToDrain());
 	}
 	
 	void FixedUpdate () 
@@ -131,6 +146,7 @@ public class EnemyMovement : MonoBehaviour {
                 case EnemyState.CurrentState.Firing:
                     Chasing(normalSpeed);
                     SprayCoolant();
+                    DrainPlayer();
                     break;
 
                 case EnemyState.CurrentState.Turning:
@@ -236,7 +252,45 @@ public class EnemyMovement : MonoBehaviour {
             }
             sprayingCoolant = true;
         }
-    }        
+
+
+    }
+
+    void DrainPlayer()
+    {
+        // Check if the player is in the cone spray area
+
+        Vector3 direction = transCharacter.position - prtTrans.position;
+        float angle = Vector3.Angle(direction, prtTrans.forward);
+        //print(angle); // DBGR
+        if (angle < xParticleAngle * percentOfConeFovForCooling)
+            inCoolantCone = true;
+        else
+            inCoolantCone = false;
+
+        if (playerBeingCooled)
+        {
+            scriptInput.xTransferEnergy -= freezeDecrement;
+        }
+    }
+
+    IEnumerator ChanceToDrain()
+    {
+        while (true)
+        {
+            if (inCoolantCone)
+            {
+                //print("Checking if coolant hits the player."); // DBGR
+                if (Random.Range(0.0f, 1.0f) >= percentToHit)
+                    playerBeingCooled = true;
+                else
+                    playerBeingCooled = false;
+
+                yield return new WaitForSeconds(Random.Range(minSecondsBetweenCoolantChecks, maxSecondsBetweenCoolantChecks));
+            }
+            yield return null;
+        }
+    }
     
     void StopCoolant()
     {
@@ -467,6 +521,7 @@ public class EnemyMovement : MonoBehaviour {
 
     void LessFrequentUpdate()
     {
+        print(myTransform.rotation);
         CodeProfiler.Begin("EnemyMovement:LessFrequentUpdate");
         switch (scriptState.nmeCurrentState)
         {

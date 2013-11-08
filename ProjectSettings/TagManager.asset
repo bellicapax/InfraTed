@@ -8,6 +8,7 @@ TagManager:
   - Guard
   - Lukewarm
   - Thermometer
+  - Head
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   User Layer 10: Obstacles
   User Layer 11: Character
   User Layer 12: Walls
-  User Layer 13: 
+  User Layer 13: Solo
   User Layer 14: 
   User Layer 15: 
   User Layer 16: 

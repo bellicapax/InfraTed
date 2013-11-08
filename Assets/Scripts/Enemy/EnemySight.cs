@@ -22,6 +22,7 @@ public class EnemySight : MonoBehaviour {
     private EnemyShared scriptShared;
     private Transform myTransform;
     private Transform transCharacter;
+    private Transform transHead;
 
 
 	// Use this for initialization
@@ -39,6 +40,7 @@ public class EnemySight : MonoBehaviour {
         }
         goCharacter = GameObject.Find("Character");
         transCharacter = goCharacter.transform;
+        transHead = GameObject.FindWithTag("Head").transform;
         goEnemySharedVars = GameObject.Find("EnemySharedVariables");
         scriptCharEnergy = goCharacter.GetComponent<CharacterEnergy>();
         scriptShared = goEnemySharedVars.GetComponent<EnemyShared>();
@@ -70,14 +72,14 @@ public class EnemySight : MonoBehaviour {
 
         if (scriptCharEnergy.currentEnergy >= 0)
         {
-            direction = transCharacter.position - myTransform.position;
-            angle = Vector3.Angle(direction, myTransform.forward);
+            direction = transCharacter.position - transHead.position;        // We want to apply both vertical and horizontal constraints on the angle, so use the position of the head and not just the gameObject
+            angle = Vector3.Angle(direction, transHead.forward);
 
             if (angle < fieldOfViewAngle * 0.5f)
             {
                 RaycastHit hit;
                 //print("Angle checks out"); // DBGR
-                if (Physics.Raycast(myTransform.position, direction.normalized, out hit, Mathf.Infinity))
+                if (Physics.Raycast(transHead.position, direction.normalized, out hit, Mathf.Infinity))
                 {
                     //print("Hit Something with my FOV Raycast"); // DBGR
                     if (hit.collider.tag == strPlayer)
