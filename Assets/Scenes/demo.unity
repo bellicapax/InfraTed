@@ -1632,7 +1632,6 @@ MonoBehaviour:
   - {fileID: 1856926143}
   - {fileID: 1143899539}
   xCurrentHotColdTrans: {fileID: 0}
-  goSharedVariables: {fileID: 1790472190}
   groundMask:
     serializedVersion: 2
     m_Bits: 512
@@ -4368,7 +4367,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canRegainTemp: 0
   heatColor: {r: 1, g: 0, b: 0, a: 1}
-  matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
   secondsTillThaw: 5
   xInHeatSensorRange: 0
@@ -5438,7 +5436,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canRegainTemp: 1
   heatColor: {r: .328690886, g: 1, b: 0, a: 1}
-  matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
   secondsTillThaw: 5
   xInHeatSensorRange: 0
@@ -7175,7 +7172,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canRegainTemp: 0
   heatColor: {r: 1, g: 0, b: 0, a: 1}
-  matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
   secondsTillThaw: 5
   xInHeatSensorRange: 0
@@ -7568,7 +7564,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canRegainTemp: 0
   heatColor: {r: 1, g: 0, b: 0, a: 1}
-  matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
   secondsTillThaw: 5
   xInHeatSensorRange: 0
@@ -11018,7 +11013,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canRegainTemp: 1
   heatColor: {r: 0, g: .239554405, b: 1, a: 1}
-  matNormal: {fileID: 2100000, guid: cf6899eb7c059f242a53783322ec3ca7, type: 2}
   matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
   secondsTillThaw: 5
   xInHeatSensorRange: 0

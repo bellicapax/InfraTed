@@ -8,7 +8,6 @@ public class HeatControl : MonoBehaviour {
 
     public bool canRegainTemp = false;
     public Color heatColor;
-    public Material matNormal;
     public Material matInfra;
     public float secondsTillThaw = 5.0f;
     public bool xInHeatSensorRange = false;
@@ -26,6 +25,7 @@ public class HeatControl : MonoBehaviour {
     private string cold = "Cold";
     private Color originalColor;
     private HSBColor coldHSB;
+    private Material matNormal;
     private Renderer myRenderer;
     private Renderer[] sensorRenderers = new Renderer[2];
     private GameObject goCharacter;
@@ -48,11 +48,10 @@ public class HeatControl : MonoBehaviour {
             hotObject = false;
 
         myRenderer = myTransform.renderer;
+        matNormal = myRenderer.material;
 
         if (!matInfra)
             Debug.LogError("Infrared material not assigned in the Inspector!");
-        if (!matNormal)
-            Debug.LogError("Normal material not assigned in the Inspector!");
 
         goCharacter = GameObject.Find("Character");
         goRoomThermo = GameObject.FindGameObjectWithTag("Thermometer");

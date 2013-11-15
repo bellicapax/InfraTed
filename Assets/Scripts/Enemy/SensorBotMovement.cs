@@ -75,7 +75,7 @@ public bool changedStates = false;
         lastState = scriptState.nmeCurrentState;
         lastMyPosition = myTransform.position;
 
-
+        listTransPatrol.TrimExcess();
 
         print(myTransform.right);
 
@@ -393,30 +393,33 @@ public bool changedStates = false;
 
     bool RemoveLukewarmObjects()
     {
-        for (int i = 0; i < listTransPatrol.Count; i++)
+        if (listTransPatrol.Count > 0)
         {
-            scriptHeat = listTransPatrol[i].GetComponent<HeatControl>();
-            if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.xInHeatSensorRange)
+            for (int i = 0; i < listTransPatrol.Count; i++)
             {
-                if (listTransPatrol[i] == xCurrentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
+                scriptHeat = listTransPatrol[i].GetComponent<HeatControl>();
+                if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.xInHeatSensorRange)
                 {
-                    listTransPatrol.RemoveAt(i);
-                    //print("Patrol counter: " + patrolCounter +  " List count: " + listTransPatrol.Count);
-                    if (patrolCounter != 0)                         // If it's not zero (e.g., if the last in the sequence got removed, so the counter would already be at zero)
+                    if (listTransPatrol[i] == xCurrentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
                     {
-                        patrolCounter--;                            // Decrement by one to get it to target the "next" transform
+                        listTransPatrol.RemoveAt(i);
+                        //print("Patrol counter: " + patrolCounter +  " List count: " + listTransPatrol.Count);
+                        if (patrolCounter != 0)                         // If it's not zero (e.g., if the last in the sequence got removed, so the counter would already be at zero)
+                        {
+                            patrolCounter--;                            // Decrement by one to get it to target the "next" transform
+                        }
+                        //print("Removed current target from list.  Patrol counter = " + patrolCounter);
+                        GetANewPatrolPath();
+                        calculatingPath = true;
+                        return true;                                    // !@#$ What happens here when two objects need removing and only one gets removed because we calculate a new path?  Would it be better or worse to do one at a time?
                     }
-                    //print("Removed current target from list.  Patrol counter = " + patrolCounter);
-                    GetANewPatrolPath();
-                    calculatingPath = true;
-                    return true;                                    // !@#$ What happens here when two objects need removing and only one gets removed because we calculate a new path?  Would it be better or worse to do one at a time?
-                }
-                else
-                {
-                    listTransPatrol.RemoveAt(i);
-                    if (patrolCounter >= listTransPatrol.Count)
+                    else
                     {
-                        patrolCounter = 0;
+                        listTransPatrol.RemoveAt(i);
+                        if (patrolCounter >= listTransPatrol.Count)
+                        {
+                            patrolCounter = 0;
+                        }
                     }
                 }
             }
