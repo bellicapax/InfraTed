@@ -20,7 +20,6 @@ public bool changedStates = false;
     public float percentOfFOVToContinuePath = 0.3f;
     public List<Transform> listTransPatrol = new List<Transform>();
     public Transform xCurrentHotColdTrans;
-    public GameObject goSharedVariables;
     public LayerMask groundMask;
 
 
@@ -52,7 +51,6 @@ public bool changedStates = false;
     private SensorBotState scriptState;
     private SensorBotSight scriptSight;
     //private EnemyBump scriptBump;
-    private EnemyShared scriptShared;
     private Path myPath;
     private SensorBotState.CurrentState lastState;
 
@@ -67,14 +65,11 @@ public bool changedStates = false;
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
         transCharacter = goCharacter.transform;
-        if (!goSharedVariables)
-            Debug.Log("Please assign the Enemy Shared Variables game object to the Enemy Movement script.");
 
         prtSystems = GetComponentInChildren<ParticleSystem>();
         scriptState = GetComponentInChildren<SensorBotState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<SensorBotSight>();
-        scriptShared = goSharedVariables.GetComponent<EnemyShared>();
 		
 
         lastState = scriptState.nmeCurrentState;
@@ -214,15 +209,15 @@ public bool changedStates = false;
 
     void Searching()
     {
-        if (Vector3.Distance(myTransform.position, new Vector3(scriptShared.sharedLastKnownLocation.x, myTransform.position.y, scriptShared.sharedLastKnownLocation.z)) > nextWaypointDistance)  // We don't want to check the difference in y's because the player might be above the enemy where it can't get.
+        if (Vector3.Distance(myTransform.position, new Vector3(scriptSight.personalLastSighting.x, myTransform.position.y, scriptSight.personalLastSighting.z)) > nextWaypointDistance)  // We don't want to check the difference in y's because the player might be above the enemy where it can't get.
         {
             if (clearPath)
             {
-                FaceTarget(scriptShared.sharedLastKnownLocation, fastRotateSpeed, true);
-                Vector3 direction = scriptShared.sharedLastKnownLocation - myTransform.position;
+                FaceTarget(scriptSight.personalLastSighting, fastRotateSpeed, true);
+                Vector3 direction = scriptSight.personalLastSighting - myTransform.position;
                 MoveTowards(direction.normalized, alertedSpeed);
             }
-            else if (WeNeedANewPath(scriptShared.sharedLastKnownLocation, false, false))
+            else if (WeNeedANewPath(scriptSight.personalLastSighting, false, false))
             {
                 print("Getting a new path while searching" + myTransform.name);
                 return;
@@ -230,7 +225,7 @@ public bool changedStates = false;
             else
             {
                 //print("Moving towards " + myPath.vectorPath[myPath.vectorPath.Count - 1]);
-                FaceTarget(scriptShared.sharedLastKnownLocation, fastRotateSpeed, true);
+                FaceTarget(scriptSight.personalLastSighting, fastRotateSpeed, true);
                 Vector3 direction = myPath.vectorPath[currentWaypoint] - myTransform.position;
                 MoveTowards(direction.normalized, alertedSpeed);
 

@@ -17,10 +17,8 @@ public class SensorBotSight : MonoBehaviour {
     private Vector3 direction;
     private Vector3 previousSighting;
     private GameObject goCharacter;
-    private GameObject goEnemySharedVars;
     private CharacterEnergy scriptCharEnergy;
     private RoomHeatVariables scriptRoomHeat;
-    private EnemyShared scriptShared;
     private Transform myTransform;
     private Transform transCharacter;
 	private SphereCollider myCollider;
@@ -42,11 +40,7 @@ public class SensorBotSight : MonoBehaviour {
         }
         goCharacter = GameObject.Find("Character");
         transCharacter = goCharacter.transform;
-        goEnemySharedVars = GameObject.Find("EnemySharedVariables");
         scriptCharEnergy = goCharacter.GetComponent<CharacterEnergy>();
-        scriptShared = goEnemySharedVars.GetComponent<EnemyShared>();
-        if (!scriptShared)
-            Debug.Log("Unable to access EnemyShared script from EnemySight script");
 	}
 	
 	// Update is called once per frame
@@ -134,7 +128,6 @@ public class SensorBotSight : MonoBehaviour {
                     {
                         xPlayerInSight = true;
                         personalLastSighting = transCharacter.position;   //Update this so that one script has the position for all to reference
-                        scriptShared.sharedLastKnownLocation = transCharacter.position;
                         return true;
                     }
                 }
