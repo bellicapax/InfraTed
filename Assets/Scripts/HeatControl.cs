@@ -23,6 +23,7 @@ public class HeatControl : MonoBehaviour {
     private string lukewarm = "Lukewarm";
     private string hot = "Hot";
     private string cold = "Cold";
+    private string drained = "Drained";
     private Color originalColor;
     private HSBColor coldHSB;
     private Material matNormal;
@@ -156,7 +157,7 @@ public class HeatControl : MonoBehaviour {
 
         else if (tempHSB.h <= scriptThermo.maxStealthHue && tempHSB.h >= scriptThermo.minStealthHue)
         {
-            this.tag = lukewarm;
+            this.tag = drained;
         }
     }
 

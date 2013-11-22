@@ -73,10 +73,16 @@ public class EnemyMovement : MonoBehaviour {
     private Path myPath;
     private EnemyState.CurrentState lastState;
 
+    void Awake()
+    {
+        listTransPatrol.RemoveAll(t => t == null);
+
+    }
 
 	// Use this for initialization
 	void Start () 
     {
+
         stuckCounter = secondsAllowedStationary;
         myCharContro = this.GetComponent<CharacterController>();
         radiusOfCharControl = myCharContro.radius;
@@ -521,7 +527,7 @@ public class EnemyMovement : MonoBehaviour {
 
     void LessFrequentUpdate()
     {
-        print(myTransform.rotation);
+        //print(myTransform.rotation);
         CodeProfiler.Begin("EnemyMovement:LessFrequentUpdate");
         switch (scriptState.nmeCurrentState)
         {
