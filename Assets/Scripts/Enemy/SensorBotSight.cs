@@ -127,7 +127,7 @@ public class SensorBotSight : MonoBehaviour {
                     if (hit.collider.gameObject == goCharacter)
                     {
                         xPlayerInSight = true;
-                        personalLastSighting = transCharacter.position;   //Update this so that one script has the position for all to reference
+                        personalLastSighting = transCharacter.position; 
                         return true;
                     }
                 }

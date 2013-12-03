@@ -10,6 +10,7 @@ public class EnemyMovement : MonoBehaviour {
     public bool newPatrolPath = false;
     public int decimalRounding = 3;
     public int percentChancePlayerIsHit = 50;
+    public float distanceFromPlayerToStopWhenChasing = 1.5f;
     public float secondsAllowedStationary = 0.5f;
     public float secondsBetweenSlowerUpdate = 0.2f;
     public float normalSpeed = 50.0f;
@@ -25,6 +26,8 @@ public class EnemyMovement : MonoBehaviour {
     public Transform xCurrentHotColdTrans;
     public GameObject goSharedVariables;
     public LayerMask groundMask;
+    public Animator botAnim;
+
 
 
     private bool saidIt = false;
@@ -40,6 +43,8 @@ public class EnemyMovement : MonoBehaviour {
     private int currentWaypoint = 0;
     private int patrolCounter = 0;
     private float stuckCounter;
+    private float drainDelay;
+    private float drainTime;
     private float radiusOfCharControl;
     private float originalNormalSpeed;
     private float originalAlertedSpeed;
@@ -116,7 +121,7 @@ public class EnemyMovement : MonoBehaviour {
         print(myTransform.right);
 
         InvokeRepeating("LessFrequentUpdate", secondsBetweenSlowerUpdate, secondsBetweenSlowerUpdate);
-        StartCoroutine(ChanceToDrain());
+        //StartCoroutine(ChanceToDrain());
 	}
 	
 	void FixedUpdate () 
@@ -141,22 +146,26 @@ public class EnemyMovement : MonoBehaviour {
             {
                 case EnemyState.CurrentState.Patroling:
                     StopCoolant();
+                    botAnim.SetBool("Moving", true);
                     Patrol();
                     break;
 
                 case EnemyState.CurrentState.Chasing:
                     StopCoolant();
+                    botAnim.SetBool("Moving", true);
                     Chasing(alertedSpeed);
                     break;
 
                 case EnemyState.CurrentState.Firing:
                     Chasing(normalSpeed);
+                    //DrainPlayer();
+                    botAnim.SetBool("Moving", true);
                     SprayCoolant();
-                    DrainPlayer();
                     break;
 
                 case EnemyState.CurrentState.Turning:
                     StopCoolant();
+                    botAnim.SetBool("Moving", false);
                     FaceTarget(transCharacter.position, fastRotateSpeed, true);
                     break;
 
@@ -171,6 +180,7 @@ public class EnemyMovement : MonoBehaviour {
 
                 case EnemyState.CurrentState.Stationary:
                     StopCoolant();
+                    botAnim.SetBool("Moving", false);
                     break;
             }
             lastState = scriptState.nmeCurrentState;
@@ -223,12 +233,19 @@ public class EnemyMovement : MonoBehaviour {
 
     private void Chasing(float parChaseSpeed)
     {
+        float distance = Vector2.Distance(new Vector2(myTransform.position.x, myTransform.position.z), new Vector2(transCharacter.position.x, transCharacter.position.z));
         if (clearPath)
         {
-            //print("Clear!");
-            Vector3 direction = transCharacter.position - myTransform.position;
-            FaceTarget(transCharacter.position, fastRotateSpeed, true);
-            MoveTowards(direction.normalized, parChaseSpeed);
+            if (distance > distanceFromPlayerToStopWhenChasing)
+            {
+                Vector3 direction = transCharacter.position - myTransform.position;
+                FaceTarget(transCharacter.position, fastRotateSpeed, true);
+                MoveTowards(direction.normalized, parChaseSpeed);
+            }
+            else
+            {
+                
+            }
         }
         else if (WeNeedANewPath(transCharacter.position, false))
         {
@@ -236,10 +253,11 @@ public class EnemyMovement : MonoBehaviour {
         }
         else
         {
-            if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance && ((currentWaypoint + 1) < myPath.vectorPath.Count))  // If we are close enough to the current waypoint and there is another waypoint left, start moving towards the next waypoint.
-            {                                                                                                       // I decided to put this before moving so that we don't move towards a waypoint unnecessarily 
+            // If we are close enough to the current waypoint and there is another waypoint left, start moving towards the next waypoint.
+            // I decided to put this before moving so that we don't move towards a waypoint unnecessarily 
+            if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance && ((currentWaypoint + 1) < myPath.vectorPath.Count))  
+            {                                                                                                       
                 currentWaypoint++;
-                //print("New Waypoint: " + currentWaypoint);
             }
             FaceTarget(transCharacter.position, fastRotateSpeed, true);
             Vector3 dir = (myPath.vectorPath[currentWaypoint] - myTransform.position).normalized;
@@ -268,35 +286,55 @@ public class EnemyMovement : MonoBehaviour {
 
         Vector3 direction = transCharacter.position - prtTrans.position;
         float angle = Vector3.Angle(direction, prtTrans.forward);
-        //print(angle); // DBGR
+
+        
         if (angle < xParticleAngle * percentOfConeFovForCooling)
-            inCoolantCone = true;
-        else
-            inCoolantCone = false;
-
-        if (playerBeingCooled)
         {
-            scriptInput.xTransferEnergy -= freezeDecrement;
-        }
-    }
+            //inCoolantCone = true;
 
-    IEnumerator ChanceToDrain()
-    {
-        while (true)
-        {
-            if (inCoolantCone)
+            // if the Particle system hasn't fired yet, find out how long it will take it to get to the player
+            if (prtSystems[0].isStopped)
             {
-                //print("Checking if coolant hits the player."); // DBGR
-                if (Random.Range(0.0f, 1.0f) >= percentToHit)
-                    playerBeingCooled = true;
-                else
-                    playerBeingCooled = false;
-
-                yield return new WaitForSeconds(Random.Range(minSecondsBetweenCoolantChecks, maxSecondsBetweenCoolantChecks));
+                float distance = Vector3.Distance(myTransform.position, transCharacter.position);
+                drainTime = prtSystems[0].startSpeed / distance;
+                print(drainTime);
+                drainDelay = 0;
             }
-            yield return null;
+            else
+            {
+                // Wait till the particles reach the player
+                if (drainDelay >= drainTime)
+                    scriptInput.xTransferEnergy -= freezeDecrement;
+                else
+                    drainDelay += Time.deltaTime;
+            }
         }
+        //else
+        //    inCoolantCone = false;
+
+        //if (playerBeingCooled)
+        //{
+        //    scriptInput.xTransferEnergy -= freezeDecrement;
+        //}
     }
+
+    //IEnumerator ChanceToDrain()
+    //{
+    //    while (true)
+    //    {
+    //        if (inCoolantCone)
+    //        {
+    //            //print("Checking if coolant hits the player."); // DBGR
+    //            if (Random.Range(0.0f, 1.0f) >= percentToHit)
+    //                playerBeingCooled = true;
+    //            else
+    //                playerBeingCooled = false;
+
+    //            yield return new WaitForSeconds(Random.Range(minSecondsBetweenCoolantChecks, maxSecondsBetweenCoolantChecks));
+    //        }
+    //        yield return null;
+    //    }
+    //}
     
     void StopCoolant()
     {
@@ -314,6 +352,7 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (Vector3.Distance(myTransform.position, new Vector3(scriptShared.sharedLastKnownLocation.x, myTransform.position.y, scriptShared.sharedLastKnownLocation.z)) > nextWaypointDistance)  // We don't want to check the difference in y's because the player might be above the enemy where it can't get.
         {
+            botAnim.SetBool("Moving", true);
             if (clearPath)
             {
                 FaceTarget(scriptShared.sharedLastKnownLocation, fastRotateSpeed, true);
@@ -340,7 +379,10 @@ public class EnemyMovement : MonoBehaviour {
             }
         }
         else
+        {
+            botAnim.SetBool("Moving", false);
             LookRightLeft();
+        }
     }
     
     void FaceTarget(Vector3 parTarget, float parRotateSpeed, bool parConstrainXZAxes)

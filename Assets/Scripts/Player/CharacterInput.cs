@@ -11,6 +11,8 @@ public class CharacterInput : MonoBehaviour {
     public Color xColdColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public Material matLukewarm;
     public Transform characterPalm;
+    public ParticleSystem suckPart;
+    public ParticleSystem blowPart;
     public float xTransferEnergy = 0.0f;
     public static int idleState = Animator.StringToHash("Base Layer.Idle");
     public static int extendState = Animator.StringToHash("Base Layer.Extend");
@@ -24,7 +26,6 @@ public class CharacterInput : MonoBehaviour {
     private Transform transMainCam;
     private Animator myAnim;
     private AnimatorStateInfo currentState;
-    private ParticleSystem myPartSys;
     private CharacterEnergy scriptCharEnergy;
     private RoomHeatVariables scriptThermometer;
     private Light[] aryLights;
@@ -33,7 +34,6 @@ public class CharacterInput : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-        myPartSys = GetComponentInChildren<ParticleSystem>();
         myAnim = GetComponentInChildren<Animator>();
         currentState = myAnim.GetCurrentAnimatorStateInfo(0);           // Get the current state for the base layer
         transMainCam = Camera.main.transform;
@@ -130,15 +130,13 @@ public class CharacterInput : MonoBehaviour {
                     {
                         if ((itsTransform.tag == "Hot") && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
                         {
-                            LoseGainHeat(tempHeatControl, hit, (1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, energyIncrement * Time.deltaTime);
+                            LoseGainHeat(tempHeatControl, hit, true);
+                            return;
                         }
                         else if (itsTransform.tag == "Cold" && scriptCharEnergy.currentEnergy > 0.0f) // else if it is a cold object and we are not already at min temperature
                         {
-                            LoseGainHeat(tempHeatControl, hit, -(1 / tempHeatControl.xHeatEnergy) * Time.deltaTime, -energyIncrement * Time.deltaTime);
-                        }
-                        else
-                        {
-                            myPartSys.Stop();
+                            LoseGainHeat(tempHeatControl, hit, false);
+                            return;
                         }
                     }
                     else if ((tempSeeingBotHeat = itsTransform.GetComponent<SeeingBotHeatControl>()) != null)	// If it's a guard
@@ -147,48 +145,62 @@ public class CharacterInput : MonoBehaviour {
                         {
                             tempSeeingBotHeat.heatColor.H(HSBColor.FromColor(tempSeeingBotHeat.heatColor).h + (1 / tempSeeingBotHeat.xHeatEnergy) * Time.deltaTime, ref tempSeeingBotHeat.heatColor);
                             xTransferEnergy = energyIncrement * Time.deltaTime;
-                        }
-                        else
-                        {
-                            myPartSys.Stop();
+                            return;
                         }
                     }
-                    else
-                    {
-                        myPartSys.Stop();
-                    }
-                }
-                else
-                {
-                    myPartSys.Stop();
                 }
             }
         }
+        // If we are not holding down the Input button
         else
         {
             myAnim.SetBool("Draining", false);
-            myPartSys.Stop();
         }
+        suckPart.Stop();
+        blowPart.Stop();
     }
 
-    void LoseGainHeat(HeatControl loseGainHeatControl, RaycastHit losegainHit, float changeColorBy, float increaseHeatBy)
+    void LoseGainHeat(HeatControl loseGainHeatControl, RaycastHit losegainHit, bool isHot)
     {
-        loseGainHeatControl.heatColor.H(HSBColor.FromColor(loseGainHeatControl.heatColor).h + changeColorBy, ref loseGainHeatControl.heatColor);
+
+        if (isHot)
+        {
+            loseGainHeatControl.heatColor.H(HSBColor.FromColor(loseGainHeatControl.heatColor).h + (1 / loseGainHeatControl.xHeatEnergy) * Time.deltaTime, ref loseGainHeatControl.heatColor);
+            xTransferEnergy = energyIncrement * Time.deltaTime;
+            TurnOnSuctionParticle(losegainHit, suckPart);
+        }
+        else
+        {
+            loseGainHeatControl.heatColor.H(HSBColor.FromColor(loseGainHeatControl.heatColor).h - (1 / loseGainHeatControl.xHeatEnergy) * Time.deltaTime, ref loseGainHeatControl.heatColor);
+            xTransferEnergy = -energyIncrement * Time.deltaTime;
+            TurnOnSuctionParticle(losegainHit, blowPart);
+        }
         loseGainHeatControl.xBeingTouched = true;
-        xTransferEnergy = increaseHeatBy;
-        TurnOnSuctionParticle(losegainHit);
+        
     }
 
-    void TurnOnSuctionParticle(RaycastHit prtHit)
+    void TurnOnSuctionParticle(RaycastHit prtHit, ParticleSystem prt)
     {
-        myPartSys.transform.position = prtHit.point;                                // Move the position of the particle system to the point the ray hit
-        print(prtHit.point);                                                        
-        myPartSys.transform.LookAt(characterPalm);                                  // Orient the system towards the palm of the character
-        float distance = Vector3.Distance(prtHit.point, characterPalm.position);    // Find the distance between the point and the character palm
-        float lifetime = distance / myPartSys.startSpeed;                           // How long it should live is the distance divided by the speed it's moving at
-        myPartSys.startLifetime = lifetime * 0.95f;                                 // Set the lifetime to 95% of what we calculated so that it doesn't actually go through the hand
-        //myPartSys.startLifetime = 
-        if(myPartSys.isStopped)
-            myPartSys.Play();
+        if (prt == suckPart)
+        {
+            prt.transform.position = prtHit.point;                                // Move the position of the particle system to the point the ray hit
+            //print(prtHit.point);                                                        
+            prt.transform.LookAt(characterPalm);                                  // Orient the system towards the palm of the character
+            float distance = Vector3.Distance(prtHit.point, characterPalm.position);    // Find the distance between the point and the character palm
+            float lifetime = distance / prt.startSpeed;                           // How long it should live is the distance divided by the speed it's moving at
+            prt.startLifetime = lifetime * 0.95f;                                 // Set the lifetime to 95% of what we calculated so that it doesn't actually go through the hand
+            if (prt.isStopped)
+                prt.Play();
+        }
+        else
+        {
+            prt.transform.position = characterPalm.position;
+            prt.transform.LookAt(prtHit.point);
+            float distance = Vector3.Distance(prtHit.point, characterPalm.position);    // Find the distance between the point and the character palm
+            float lifetime = distance / prt.startSpeed;                                 // How long it should live is the distance divided by the speed it's moving at
+            prt.startLifetime = lifetime;                                               // Set the lifetime to what we calculated so that it goes to the object and stops         
+            if (prt.isStopped)
+                prt.Play();
+        }
     }
 }

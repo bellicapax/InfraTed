@@ -3,6 +3,9 @@ using System.Collections;
 
 public class SeeingBotArmPoint : MonoBehaviour {
 
+    public float rotateSpeedWithAnimation = 15.0f;
+    public float rotateSpeed = 10.0f;
+
     private string seeGuard = "Seeing Guard";
     private Quaternion originalRotation;
     private Transform myTransform;
@@ -23,10 +26,17 @@ public class SeeingBotArmPoint : MonoBehaviour {
     {
         if (scriptState.nmeCurrentState == EnemyState.CurrentState.Firing)
         {
-            myTransform.LookAt(charTrans);
-            myTransform.rotation *= SeeingBotGunRotation.gunOffset;
+            //myTransform.LookAt(charTrans);
+            Quaternion rot = Quaternion.LookRotation(charTrans.position - myTransform.position);
+            //myTransform.rotation = rot * SeeingBotGunRotation.gunOffset;
+            myTransform.rotation = Quaternion.Lerp(myTransform.rotation, rot * SeeingBotGunRotation.gunOffset, rotateSpeedWithAnimation * Time.deltaTime);
+            //myTransform.rotation *= SeeingBotGunRotation.gunOffset;
         }
         else
-            myTransform.localRotation = originalRotation;
+        {
+            //myTransform.localRotation = originalRotation;
+            myTransform.localRotation = Quaternion.Lerp(myTransform.localRotation, originalRotation, rotateSpeed * Time.deltaTime);
+        }
+
 	}
 }

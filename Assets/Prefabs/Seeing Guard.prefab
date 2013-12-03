@@ -925,7 +925,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400112}
   - 114: {fileID: 11400012}
-  - 111: {fileID: 11100000}
+  - 95: {fileID: 9500000}
   m_Layer: 0
   m_Name: SeeingBotMesh&Heat
   m_TagString: Untagged
@@ -1870,9 +1870,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400112}
-  - {fileID: 400086}
   - {fileID: 400024}
   - {fileID: 400118}
+  - {fileID: 400086}
   m_Father: {fileID: 0}
 --- !u!4 &400128
 Transform:
@@ -2923,21 +2923,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!111 &11100000
-Animation:
+--- !u!95 &9500000
+Animator:
+  serializedVersion: 2
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100112}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: ad89723036b5fac459a50ad75b6471fd, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: ad89723036b5fac459a50ad75b6471fd, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_Avatar: {fileID: 9000000, guid: 67281688750478c4a9e4067de38dc37b, type: 3}
+  m_Controller: {fileID: 9100000, guid: aa3f02e30ef8a624bafc5c5f4d136c58, type: 2}
+  m_CullingMode: 0
+  m_ApplyRootMotion: 1
   m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_HasTransformHierarchy: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2962,7 +2961,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nmeCurrentState: 0
   justLostEm: 0
-  sensingRobotsSearch: 0
   inTrigger: 0
 --- !u!114 &11400004
 MonoBehaviour:
@@ -2987,6 +2985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b891e512420bee4fbd82594de1a7ffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotateSpeed: 5
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3112,6 +3111,7 @@ MonoBehaviour:
   newPatrolPath: 0
   decimalRounding: 3
   percentChancePlayerIsHit: 50
+  distanceFromPlayerToStopWhenChasing: 1.5
   secondsAllowedStationary: .5
   secondsBetweenSlowerUpdate: .200000003
   normalSpeed: 50
@@ -3133,6 +3133,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 3072
+  botAnim: {fileID: 9500000}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -3445,7 +3446,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 60
+      scalar: 100
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4487,7 +4488,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 60
+      scalar: 100
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5289,7 +5290,7 @@ ParticleSystemRenderer:
   m_SortingOrder: 0
   m_SortingLayerID: 0
   m_RenderMode: 1
-  m_MaxParticleSize: 50
+  m_MaxParticleSize: .300000012
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
@@ -5322,7 +5323,7 @@ ParticleSystemRenderer:
   m_SortingOrder: 0
   m_SortingLayerID: 0
   m_RenderMode: 0
-  m_MaxParticleSize: 50
+  m_MaxParticleSize: .300000012
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2

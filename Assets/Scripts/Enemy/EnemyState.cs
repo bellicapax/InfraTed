@@ -15,9 +15,9 @@ public class EnemyState : MonoBehaviour {
         Searching = 6
     }
     public bool justLostEm;
-    public bool sensingRobotsSearch;
-
     public bool inTrigger;
+
+    private bool sensingRobotsSearch;
     private Transform myTransform;
     private EnemySight scriptSight;
     private EnemyMovement scriptMovement;
