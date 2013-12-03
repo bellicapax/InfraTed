@@ -152,14 +152,12 @@ public class EnemyMovement : MonoBehaviour {
 
                 case EnemyState.CurrentState.Chasing:
                     StopCoolant();
-                    botAnim.SetBool("Moving", true);
                     Chasing(alertedSpeed);
                     break;
 
                 case EnemyState.CurrentState.Firing:
                     Chasing(normalSpeed);
                     //DrainPlayer();
-                    botAnim.SetBool("Moving", true);
                     SprayCoolant();
                     break;
 
@@ -238,23 +236,27 @@ public class EnemyMovement : MonoBehaviour {
         {
             if (distance > distanceFromPlayerToStopWhenChasing)
             {
+                botAnim.SetBool("Moving", true);
+
                 Vector3 direction = transCharacter.position - myTransform.position;
                 FaceTarget(transCharacter.position, fastRotateSpeed, true);
                 MoveTowards(direction.normalized, parChaseSpeed);
             }
             else
             {
-                
+                botAnim.SetBool("Moving", false);
             }
         }
         else if (WeNeedANewPath(transCharacter.position, false))
         {
+            botAnim.SetBool("Moving", false);
             return;
         }
         else
         {
+            botAnim.SetBool("Moving", true);
+
             // If we are close enough to the current waypoint and there is another waypoint left, start moving towards the next waypoint.
-            // I decided to put this before moving so that we don't move towards a waypoint unnecessarily 
             if (Vector3.Distance(myPath.vectorPath[currentWaypoint], myTransform.position) < nextWaypointDistance && ((currentWaypoint + 1) < myPath.vectorPath.Count))  
             {                                                                                                       
                 currentWaypoint++;
