@@ -113,7 +113,6 @@ public class CharacterInput : MonoBehaviour {
 
     private void TouchDrain()
     {
-        xTransferEnergy = 0.0f;                  // Reset xTransferEnergy
         if (Input.GetButton(objectDrain))       // If we're trying to drain energy
         {
             myAnim.SetBool("Draining", true);

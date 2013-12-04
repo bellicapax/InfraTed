@@ -52,6 +52,7 @@ public class CharacterEnergy : MonoBehaviour {
     private void GainHeat()
     {
         currentEnergy += scriptCharInput.xTransferEnergy;        //Add the energy to ours
+        scriptCharInput.xTransferEnergy = 0;
     }
 
     private void AssessHealth()
@@ -80,6 +81,12 @@ public class CharacterEnergy : MonoBehaviour {
             scriptCharMotor.movement.maxForwardSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
             scriptCharMotor.movement.maxSidewaysSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
             scriptCharMotor.movement.maxBackwardsSpeed = ((absoluteMaxSpeed * 3 / 4 * currentEnergy) / (0.5f * currentEnergy + 25.0f));
+        }
+        if (Input.GetButton("ObjectDrain"))
+        {
+            scriptCharMotor.movement.maxForwardSpeed *= 0.5f;
+            scriptCharMotor.movement.maxSidewaysSpeed *= 0.5f;
+            scriptCharMotor.movement.maxBackwardsSpeed *= 0.5f;
         }
     }
 

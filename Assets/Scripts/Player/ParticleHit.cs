@@ -10,7 +10,8 @@ public class ParticleHit : MonoBehaviour
 	
 	void Start()
 	{
-		scriptCharInput = this.transform.parent.GetComponent<CharacterInput>();
+        //scriptCharInput = this.transform.parent.GetComponent<CharacterInput>();
+        scriptCharInput = GetComponent<CharacterInput>();
 	}
 	
 	void OnParticleCollision(GameObject other)
@@ -25,7 +26,7 @@ public class ParticleHit : MonoBehaviour
 		for(int i = 0; i < numCollisionEvents; i++)
 		{
 			scriptCharInput.xTransferEnergy -= freezeDecrement * Time.deltaTime;
-            print("BOOM");
+            //print("BOOM");
 		}
 	}
 }
