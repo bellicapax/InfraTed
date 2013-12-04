@@ -400,7 +400,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .0422123112, y: 0, z: .20941326}
+  m_LocalPosition: {x: 0, y: .157993793, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400040}
@@ -411,8 +411,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
-  m_LocalRotation: {x: 0, y: -.468784273, z: 0, w: -.883312762}
-  m_LocalPosition: {x: -12.8031597, y: 0, z: -12.4938822}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12.8031597, y: .209723473, z: -14.0450201}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400002}
@@ -676,7 +676,7 @@ Camera:
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 3
+  m_ClearFlags: 1
   m_BackGroundColor: {r: .19166474, g: .301966369, b: .474509805, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -1009,12 +1009,12 @@ CharacterController:
   m_GameObject: {fileID: 100004}
   serializedVersion: 2
   m_Height: .589999974
-  m_Radius: .159999996
+  m_Radius: .25
   m_SlopeLimit: 45
   m_StepOffset: .400000006
-  m_SkinWidth: .170000002
+  m_SkinWidth: .100000001
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: .150000006}
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1
