@@ -121,6 +121,7 @@
      <Compile Include="Assets\Scripts\GUIScript.cs" />
      <Compile Include="Assets\Scripts\HUDFPS.cs" />
      <Compile Include="Assets\Scripts\HeatControl.cs" />
+     <Compile Include="Assets\Scripts\LightFlicker.cs" />
      <Compile Include="Assets\Scripts\MeshVolume.cs" />
      <Compile Include="Assets\Scripts\Player\CharacterEnergy.cs" />
      <Compile Include="Assets\Scripts\Player\CharacterInput.cs" />
