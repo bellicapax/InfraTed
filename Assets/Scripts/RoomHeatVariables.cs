@@ -31,7 +31,7 @@ public class RoomHeatVariables : MonoBehaviour {
                 minStealthHue = (hueCold * (temperatureMultiplier - maxStealthTemp)) / temperatureMultiplier;           // Since the hues go up as temperature goes down, we must subtract from the temp multiplier to be on the same scale and we must use the opposite min/max
                 maxStealthHue = (hueCold * (temperatureMultiplier - minStealthTemp)) / temperatureMultiplier;
 
-                print("Max: " + maxStealthTemp + " Min: " + minStealthTemp + " HueMax: " + maxStealthHue + " HueMin: " + minStealthHue);
+                //print("Max: " + maxStealthTemp + " Min: " + minStealthTemp + " HueMax: " + maxStealthHue + " HueMin: " + minStealthHue);
             }
             else
                 Debug.LogError("Need to assign the allowed temperature variance for the room in the Room Heat Variables script of the Room Thermometer.");

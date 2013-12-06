@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CharacterInput : MonoBehaviour {
 
     public float touchDistance = 5.0f;
     public float offsetDeltaTime = 100.0f;
     public float energyIncrement = 10.0f;
-    public bool infraOn = false;
+    public static bool infraOn = false;
     public bool newScene = true;
-    public Color xColdColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public Material matLukewarm;
     public Transform characterPalm;
     public ParticleSystem suckPart;
     public ParticleSystem blowPart;
+    public AudioClip[] characterSounds;
+    public Color xColdColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public float xTransferEnergy = 0.0f;
     public static int idleState = Animator.StringToHash("Base Layer.Idle");
     public static int extendState = Animator.StringToHash("Base Layer.Extend");
@@ -21,6 +23,7 @@ public class CharacterInput : MonoBehaviour {
 
 
     private string objectDrain = "ObjectDrain";
+    private Dictionary<string, AudioClip> audioDict = new Dictionary<string, AudioClip>();
     private Material[] aryOriginalMaterial;
     private GameObject[] aryLukewarmGO;
     private Transform transMainCam;
@@ -113,6 +116,11 @@ public class CharacterInput : MonoBehaviour {
 
     private void TouchDrain()
     {
+        if(Input.GetButtonDown(objectDrain))
+        {
+
+        }
+
         if (Input.GetButton(objectDrain))       // If we're trying to drain energy
         {
             myAnim.SetBool("Draining", true);

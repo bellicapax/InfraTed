@@ -31,32 +31,35 @@ public class LightFlicker : MonoBehaviour {
     {
         while (true)
         {
-            if(offTime == 0)
+            if (!CharacterInput.infraOn)
             {
-                
-                if (Random.Range(0.0f, 1.0f) >= 0.99f)
+                if (offTime == 0)
                 {
-                    offTime = Random.Range(minTimeOff, maxTimeOff);
+
+                    if (Random.Range(0.0f, 1.0f) >= 0.99f)
+                    {
+                        offTime = Random.Range(minTimeOff, maxTimeOff);
+                    }
                 }
-            }
-            else
-            {
-                // Turn all the lights off
-                foreach (Light l in aryLights)
+                else
                 {
-                    l.enabled = false;
-                }
+                    // Turn all the lights off
+                    foreach (Light l in aryLights)
+                    {
+                        l.enabled = false;
+                    }
 
-                // Wait for the specified time
-                yield return new WaitForSeconds(offTime);
+                    // Wait for the specified time
+                    yield return new WaitForSeconds(offTime);
 
-                // Set the offTime back to 0
-                offTime = 0;
+                    // Set the offTime back to 0
+                    offTime = 0;
 
-                // Turn all the lights back on
-                foreach (Light l in aryLights)
-                {
-                    l.enabled = true;
+                    // Turn all the lights back on
+                    foreach (Light l in aryLights)
+                    {
+                        l.enabled = true;
+                    }
                 }
             }
 
