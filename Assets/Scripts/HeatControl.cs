@@ -97,11 +97,11 @@ public class HeatControl : MonoBehaviour {
     {
         if (infraOn)
         {
-            if (myTransform.tag == lukewarm)  // If the tag changed to lukewarm or it is a guard, we don't need to check if it's in range of our heat spectrum
+            if (myTransform.tag == drained)  // If the tag changed to drained, we don't need to check if it's in range of our heat spectrum
             {
                 myRenderer.material.color = heatColor;
             }
-            else if (myTransform.tag == hot)
+            else if (myTransform.tag == cold)
             {
                 if (HSBColor.FromColor(heatColor).h <= coldHSB.h)
                 {
@@ -112,7 +112,7 @@ public class HeatControl : MonoBehaviour {
                     myRenderer.material.color = scriptCharInput.xColdColor;
                 }
             }
-            else if (myTransform.tag == cold)
+            else if (myTransform.tag == hot)
             {
                 if (HSBColor.FromColor(heatColor).h > 0.0f)
                 {
@@ -120,6 +120,7 @@ public class HeatControl : MonoBehaviour {
                 }
                 else
                 {
+                    print("I got here.");
                     myRenderer.material.color = Color.red;
                 }
             }

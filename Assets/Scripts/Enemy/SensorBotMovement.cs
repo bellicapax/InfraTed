@@ -53,7 +53,11 @@ public bool changedStates = false;
     //private EnemyBump scriptBump;
     private Path myPath;
     private SensorBotState.CurrentState lastState;
-
+	
+	void Awake()
+    {
+        listTransPatrol.RemoveAll(t => t == null);
+    }
 
 	// Use this for initialization
 	void Start () 
@@ -77,21 +81,18 @@ public bool changedStates = false;
 
         listTransPatrol.TrimExcess();
 
-        print(myTransform.right);
-
         InvokeRepeating("LessFrequentUpdate", secondsBetweenSlowerUpdate, secondsBetweenSlowerUpdate);
 	}
 	
 	void FixedUpdate () 
     {
 		
-        CodeProfiler.Begin("EnemyMovement:FixedUpdate");
         if (lastState != scriptState.nmeCurrentState)
         {
             if (!((lastState == SensorBotState.CurrentState.Chasing && scriptState.nmeCurrentState == SensorBotState.CurrentState.Firing) || (lastState == SensorBotState.CurrentState.Firing && scriptState.nmeCurrentState == SensorBotState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
             {
                 changedStates = true;
-                print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
+                //print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
             }
         }
         else
@@ -134,7 +135,6 @@ public bool changedStates = false;
                 break;
         }
         lastState = scriptState.nmeCurrentState;
-        CodeProfiler.End("EnemyMovement:FixedUpdate");
 	}
 
     void Patrol()
@@ -219,7 +219,7 @@ public bool changedStates = false;
             }
             else if (WeNeedANewPath(scriptSight.personalLastSighting, false, false))
             {
-                print("Getting a new path while searching" + myTransform.name);
+                //print("Getting a new path while searching" + myTransform.name);
                 return;
             }
             else
@@ -262,13 +262,13 @@ public bool changedStates = false;
     {
         if (calculatingPath)
         {
-            print("Calculating path.");
+            //print("Calculating path.");
             FaceTarget(pathTarget, fastRotateSpeed, true);
             return true;
         }
         else if (changedStates)
         {
-            print("New path because changed states.");
+            //print("New path because changed states.");
             myPath = null;
             GetAPath(pathTarget, parOnPatrol);
             changedStates = false;
@@ -276,19 +276,19 @@ public bool changedStates = false;
         }
         else if (myPath == null)             // If we have no path, get one
         {
-            print("Path is null.");
+            //print("Path is null.");
             GetAPath(pathTarget, parOnPatrol);
             return true;
         }
         else if (currentWaypoint >= myPath.vectorPath.Count)                            //If we have reached the end of the path
         {
-            print("Finished path.");
+            //print("Finished path.");
             GetAPath(pathTarget, parOnPatrol);
             return true;
         }
         else if (parOnPatrol && newPatrolPath)                                           //If we have touched the object we are trying to reach (but can't get close enough to the waypoint to have reached the end of the path)
         {
-            print("Touched the objective.");
+            //print("Touched the objective.");
             GetAPath(pathTarget, parOnPatrol);
             newPatrolPath = false;
             return true;
@@ -313,7 +313,7 @@ public bool changedStates = false;
         //}
         else if (parChasing && WaypointPlayerAngle())
         {
-            print("Path end no longer leads to player.");
+            //print("Path end no longer leads to player.");
             FaceTarget(transCharacter.position, fastRotateSpeed, true);
             scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
             calculatingPath = true;
@@ -321,7 +321,7 @@ public bool changedStates = false;
         }
         else if (iAmStuck)
         {
-            print("I'm stuck!");
+            //print("I'm stuck!");
             GetAPath(pathTarget, parOnPatrol);
             iAmStuck = false;
             return true;
@@ -349,7 +349,7 @@ public bool changedStates = false;
         else
         {
             Vector3 _target = getPathTarget;
-            print("The path target is:" + _target);
+            //print("The path target is:" + _target);
             FaceTarget(_target, fastRotateSpeed, true);
             scriptSeeker.StartPath(myTransform.position, getPathTarget, OnPathComplete);
         }
@@ -431,7 +431,7 @@ public bool changedStates = false;
     {
         if (!saidIt)
         {
-            print("Looking left and right.");
+            //print("Looking left and right.");
             saidIt = true;
         }
         if (!setSearchRotation)
@@ -452,7 +452,6 @@ public bool changedStates = false;
             endSecondDirection = Quaternion.LookRotation(secondDirection);
             targetSearchRotation = endFirstDirection;
             setSearchRotation = true;
-            print(firstDirection + "  " + secondDirection);
         }
         if (myTransform.rotation == endFirstDirection && targetSearchRotation == endFirstDirection)
         {
@@ -480,7 +479,6 @@ public bool changedStates = false;
 
     void LessFrequentUpdate()
     {
-        CodeProfiler.Begin("EnemyMovement:LessFrequentUpdate");
         switch (scriptState.nmeCurrentState)
         {
             case SensorBotState.CurrentState.Stationary:
@@ -496,7 +494,6 @@ public bool changedStates = false;
                 PathIsClear(transCharacter.position, true, false);
                 break;
         }
-        CodeProfiler.End("EnemyMovement:LessFrequentUpdate");
     }
 
     void IHaveBeenStuck()

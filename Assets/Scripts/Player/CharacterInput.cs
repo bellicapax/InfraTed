@@ -26,6 +26,7 @@ public class CharacterInput : MonoBehaviour {
     private Dictionary<string, AudioClip> audioDict = new Dictionary<string, AudioClip>();
     private Material[] aryOriginalMaterial;
     private GameObject[] aryLukewarmGO;
+    private List<Material[]> lisOriginalMaterial = new List<Material[]>();
     private Transform transMainCam;
     private Animator myAnim;
     private AnimatorStateInfo currentState;
@@ -66,21 +67,33 @@ public class CharacterInput : MonoBehaviour {
         {
             if (infraOn)
             {
+                // If the infrared vision was on when we entered a new scene (for whatever reason), load the arrays and lists
                 if (newScene)
                 {
                     aryLukewarmGO =  GameObject.FindGameObjectsWithTag("Lukewarm");
                     aryOriginalMaterial = new Material[aryLukewarmGO.Length];
                     for (int i = 0; i < aryLukewarmGO.Length; i++)
                     {
-                        aryOriginalMaterial[i] = aryLukewarmGO[i].transform.renderer.material;
+                        lisOriginalMaterial[i] = new Material[aryLukewarmGO[i].transform.renderer.materials.Length];
+                        lisOriginalMaterial[i] = (aryLukewarmGO[i].transform.renderer.materials);
+                        //aryOriginalMaterial[i] = aryLukewarmGO[i].transform.renderer.material;
                     }
+
+                    print("Number of objects in lukewarm GameObject array: " + aryLukewarmGO.Length + "  Number of objects in List of original Materials: " + lisOriginalMaterial.Count);
                     aryLights = FindObjectsOfType(typeof(Light)) as Light[];
                     newScene = false;
                 }
+
+
+                // Put the original materials back on the objects
                 for (int i = 0; i < aryLukewarmGO.Length; i++)
                 {
-                    aryLukewarmGO[i].renderer.material = aryOriginalMaterial[i];
+                    //aryLukewarmGO[i].renderer.material = aryOriginalMaterial[i];
+                    aryLukewarmGO[i].renderer.materials = lisOriginalMaterial[i];
                 }
+
+
+                // Turn the lights back on
                 foreach (Light aLight in aryLights)
                 {
                     aLight.enabled = true;
@@ -95,16 +108,29 @@ public class CharacterInput : MonoBehaviour {
                     aryOriginalMaterial = new Material[aryLukewarmGO.Length];
                     for (int i = 0; i < aryLukewarmGO.Length; i++)
                     {
-                        aryOriginalMaterial[i] = aryLukewarmGO[i].transform.renderer.material;
+                        //lisOriginalMaterial[i] = new Material[aryLukewarmGO[i].transform.renderer.materials.Length];
+                        lisOriginalMaterial.Add(aryLukewarmGO[i].transform.renderer.materials);
+                        //aryOriginalMaterial[i] = aryLukewarmGO[i].transform.renderer.material;
                     }
                     aryLights = FindObjectsOfType(typeof(Light)) as Light[];
                     newScene = false;
                 }
+
+
+                // Switch each material in each object out with the lukewarm material
                 foreach (GameObject aGO in aryLukewarmGO)
                 {
+                    Material[] mats = aGO.renderer.materials;
+                    for (int i = 0; i < mats.Length; i++)
+                    {
+                        mats[i] = matLukewarm;
+                    }
 
-                    aGO.renderer.material = matLukewarm;
+                    aGO.renderer.materials = mats;
+                    //aGO.renderer.material = matLukewarm;
                 }
+
+                // Turn off all the lights in the scene
                 foreach (Light aLight in aryLights)
                 {
                     aLight.enabled = false;

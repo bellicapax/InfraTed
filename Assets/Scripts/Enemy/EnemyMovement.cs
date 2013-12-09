@@ -81,7 +81,6 @@ public class EnemyMovement : MonoBehaviour {
     void Awake()
     {
         listTransPatrol.RemoveAll(t => t == null);
-
     }
 
 	// Use this for initialization
@@ -118,8 +117,6 @@ public class EnemyMovement : MonoBehaviour {
         frozenH = coldH - HSBColor.FromColor(scriptMyHeat.xFrozenColor).h;                      // Subtract the frozen color from the coldest color to get the value that the enemy should stop moving at
         originalHeatHSubtracted = coldH - HSBColor.FromColor(scriptMyHeat.xOriginalColor).h;    // Subtract the original color from the coldest color to get a value that decreases as the object cools
 
-        print(myTransform.right);
-
         InvokeRepeating("LessFrequentUpdate", secondsBetweenSlowerUpdate, secondsBetweenSlowerUpdate);
         //StartCoroutine(ChanceToDrain());
 	}
@@ -127,7 +124,6 @@ public class EnemyMovement : MonoBehaviour {
 	void FixedUpdate () 
     {
 		HeatToSpeed();
-        //CodeProfiler.Begin("EnemyMovement:FixedUpdate");
         if (!iAmFrozen)
         {
             if (lastState != scriptState.nmeCurrentState)
@@ -135,7 +131,7 @@ public class EnemyMovement : MonoBehaviour {
                 if (!((lastState == EnemyState.CurrentState.Chasing && scriptState.nmeCurrentState == EnemyState.CurrentState.Firing) || (lastState == EnemyState.CurrentState.Firing && scriptState.nmeCurrentState == EnemyState.CurrentState.Chasing))) // If we're not just changing between chasing and firing
                 {
                     changedStates = true;
-                    print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
+                    //print("Last state: " + lastState + "  Current state: " + scriptState.nmeCurrentState);
                 }
             }
             else
@@ -187,7 +183,6 @@ public class EnemyMovement : MonoBehaviour {
         {
             StopCoolant();
         }
-        //CodeProfiler.End("EnemyMovement:FixedUpdate");
 	}
 	
 	private void HeatToSpeed()
@@ -299,7 +294,6 @@ public class EnemyMovement : MonoBehaviour {
             {
                 float distance = Vector3.Distance(myTransform.position, transCharacter.position);
                 drainTime = prtSystems[0].startSpeed / distance;
-                print(drainTime);
                 drainDelay = 0;
             }
             else
@@ -363,7 +357,7 @@ public class EnemyMovement : MonoBehaviour {
             }
             else if (WeNeedANewPath(scriptShared.sharedLastKnownLocation, false))
             {
-                print("Getting a new path while searching" + myTransform.name);
+                //print("Getting a new path while searching" + myTransform.name);
                 return;
             }
             else
@@ -407,13 +401,13 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (calculatingPath)
         {
-            print("Calculating path.");
+            //print("Calculating path.");
             FaceTarget(pathTarget, fastRotateSpeed, true);
             return true;
         }
         else if (changedStates)
         {
-            print("New path because changed states.");
+            //print("New path because changed states.");
             myPath = null;
             GetAPath(pathTarget, parOnPatrol);
             changedStates = false;
@@ -421,26 +415,26 @@ public class EnemyMovement : MonoBehaviour {
         }
         else if (myPath == null)             // If we have no path, get one
         {
-            print("Path is null.");
+            //print("Path is null.");
             GetAPath(pathTarget, parOnPatrol);
             return true;
         }
         else if (currentWaypoint >= myPath.vectorPath.Count)                            //If we have reached the end of the path
         {
-            print("Finished path.");
+            //print("Finished path.");
             GetAPath(pathTarget, parOnPatrol);
             return true;
         }
         else if (parOnPatrol && newPatrolPath)                                           //If we have touched the object we are trying to reach (but can't get close enough to the waypoint to have reached the end of the path)
         {
-            print("Touched the objective.");
+            //print("Touched the objective.");
             GetAPath(pathTarget, parOnPatrol);
             newPatrolPath = false;
             return true;
         }
         else if (WaypointTargetAngle(pathTarget))
         {
-            print("Path end no longer leads to player.");
+            //print("Path end no longer leads to player.");
             FaceTarget(transCharacter.position, fastRotateSpeed, true);
             scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
             calculatingPath = true;
@@ -448,7 +442,7 @@ public class EnemyMovement : MonoBehaviour {
         }
         else if (iAmStuck)
         {
-            print("I'm stuck!");
+            //print("I'm stuck!");
             GetAPath(pathTarget, parOnPatrol);
             iAmStuck = false;
             return true;
@@ -522,7 +516,7 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (!saidIt)
         {
-            print("Looking left and right.");
+            //print("Looking left and right.");
             saidIt = true;
         }
         if (!setSearchRotation)
@@ -572,7 +566,6 @@ public class EnemyMovement : MonoBehaviour {
     void LessFrequentUpdate()
     {
         //print(myTransform.rotation);
-        CodeProfiler.Begin("EnemyMovement:LessFrequentUpdate");
         switch (scriptState.nmeCurrentState)
         {
             case EnemyState.CurrentState.Stationary:
@@ -588,7 +581,6 @@ public class EnemyMovement : MonoBehaviour {
                 PathIsClear(transCharacter.position, true, false);
                 break;
         }
-        CodeProfiler.End("EnemyMovement:LessFrequentUpdate");
     }
 
     void IHaveBeenStuck()
