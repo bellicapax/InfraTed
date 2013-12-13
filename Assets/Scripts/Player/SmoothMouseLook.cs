@@ -101,8 +101,8 @@ public class SmoothMouseLook : MonoBehaviour
     void Update()
     {
 
-        if (Screen.lockCursor)
-        {
+        //if (Screen.lockCursor)
+        //{
 
             //Mouse/Camera Movement Smoothing:   
 
@@ -192,7 +192,7 @@ public class SmoothMouseLook : MonoBehaviour
 
             transform.localRotation = originalRotation * xQuaternion * yQuaternion;
 
-        }
+        //}
 
     }
 

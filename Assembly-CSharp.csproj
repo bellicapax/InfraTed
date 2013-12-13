@@ -101,6 +101,7 @@
      <Compile Include="Assets\AstarPathfindingProject\Utilities\SizeProfiler.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
      <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
+     <Compile Include="Assets\Scripts\AlarmRotation.cs" />
      <Compile Include="Assets\Scripts\CodeProfiler.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\Enemy\CameraSight.cs" />
@@ -123,6 +124,7 @@
      <Compile Include="Assets\Scripts\HeatControl.cs" />
      <Compile Include="Assets\Scripts\LightFlicker.cs" />
      <Compile Include="Assets\Scripts\MeshVolume.cs" />
+     <Compile Include="Assets\Scripts\OrganismDelayAndSpeed.cs" />
      <Compile Include="Assets\Scripts\Player\CharacterEnergy.cs" />
      <Compile Include="Assets\Scripts\Player\CharacterInput.cs" />
      <Compile Include="Assets\Scripts\Player\CharacterMotor.cs" />
@@ -132,6 +134,8 @@
      <Compile Include="Assets\Scripts\Player\PlatformInputController.cs" />
      <Compile Include="Assets\Scripts\Player\SmoothMouseLook.cs" />
      <Compile Include="Assets\Scripts\RoomHeatVariables.cs" />
+     <Compile Include="Assets\Scripts\SensorRangeRotation.cs" />
+     <Compile Include="Assets\TestPitchLength.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
      <None Include="Assets\Shaders\FlatColor.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />

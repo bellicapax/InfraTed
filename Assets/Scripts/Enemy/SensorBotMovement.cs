@@ -6,8 +6,7 @@ using System.Collections.Generic;
 
 public class SensorBotMovement : MonoBehaviour {
 
-public bool changedStates = false;
-    public bool newPatrolPath = false;
+    public bool checkingTempForPatrol = false;
     public int decimalRounding = 3;
     public float secondsAllowedStationary = 0.5f;
     public float secondsBetweenSlowerUpdate = 0.2f;
@@ -18,9 +17,15 @@ public bool changedStates = false;
     public float searchLookSpeed = 50.0f;
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
+    public AudioSource sourceExtinguisher;
+    public AudioClip clipMove;
+    public AudioClip clipExtinguishLoop;
+    public AudioClip clipExtinguishStart;
     public List<Transform> listTransPatrol = new List<Transform>();
     public Transform xCurrentHotColdTrans;
     public LayerMask groundMask;
+    public bool changedStates = false;
+    public bool newPatrolPath = false;
 
 
     private bool saidIt = false;
@@ -34,6 +39,8 @@ public bool changedStates = false;
     private int patrolCounter = 0;
     private float stuckCounter;
     private float radiusOfCharControl;
+    private float volumeExtinguisher;
+    private float volumeMove;
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
@@ -45,7 +52,9 @@ public bool changedStates = false;
     private CharacterController myCharContro;
     private Transform myTransform;
     private Transform transCharacter;
+    private AudioSource sourceMove;
     private ParticleSystem prtSystems = new ParticleSystem();
+    private ParticleSystem[] aryPrtSys;
     private HeatControl scriptHeat;
     private Seeker scriptSeeker;
     private SensorBotState scriptState;
@@ -63,14 +72,28 @@ public bool changedStates = false;
 	void Start () 
     {
         stuckCounter = secondsAllowedStationary;
+
+        // Audio setup
+        sourceMove = GetComponent<AudioSource>();
+        
+        sourceMove.volume = volumeMove;
+        sourceExtinguisher.volume = volumeExtinguisher;
+
+        sourceMove.clip = clipMove;
+
+        sourceMove.loop = true;
+
+        // Character Controller Setup
         myCharContro = this.GetComponent<CharacterController>();
         radiusOfCharControl = myCharContro.radius;
-        //groundMask = 1 << LayerMask.NameToLayer("Ground");
+
+        // Transforms Setup
         myTransform = this.transform;
         goCharacter = GameObject.Find("Character");
         transCharacter = goCharacter.transform;
 
         prtSystems = GetComponentInChildren<ParticleSystem>();
+        aryPrtSys = GetComponentsInChildren<ParticleSystem>();
         scriptState = GetComponentInChildren<SensorBotState>();
         scriptSeeker = GetComponent<Seeker>();
         scriptSight = GetComponentInChildren<SensorBotSight>();
@@ -139,10 +162,12 @@ public bool changedStates = false;
 
     void Patrol()
     {
-
-        if (RemoveLukewarmObjects())    // Since we are only patroling between objects that are currently out of the room temperature range, check to see if they are still in that range
+        if (checkingTempForPatrol)
         {
-            return;						// If removing the objects necessitates creating a new path, return
+            if (RemoveLukewarmObjects())    // Since we are only patroling between objects that are currently out of the room temperature range, check to see if they are still in that range
+            {
+                return;						// If removing the objects necessitates creating a new path, return
+            }
         }
 		
         if (WeNeedANewPath(myTransform.forward, true, false))
@@ -193,8 +218,13 @@ public bool changedStates = false;
     {
         if (!sprayingCoolant)
         {
-            prtSystems.Play();
+            //prtSystems.Play();
             sprayingCoolant = true;
+            foreach (ParticleSystem p in aryPrtSys)
+            {
+                p.Play();
+            }
+            sourceExtinguisher.Play();
         }
     }        
     
@@ -202,8 +232,12 @@ public bool changedStates = false;
     {
         if (sprayingCoolant)
         {
-            prtSystems.Stop();
+            //prtSystems.Stop();
             sprayingCoolant = false;
+            foreach (ParticleSystem p in aryPrtSys)
+            {
+                p.Stop();
+            }
         }
     }
 
@@ -293,24 +327,6 @@ public bool changedStates = false;
             newPatrolPath = false;
             return true;
         }
-        //else if (scriptBump.isBumping)
-        //{
-        //    print("Bumped into an obstacle.");
-        //    if (parOnPatrol && nameBump != nameTouch)
-        //    {
-        //        scriptSeeker.StartPath(myTransform.position, xCurrentHotColdTrans.position, OnPathComplete);     // We don't want a new path based on the new, incremented patrol counter.  Just use the current objective.
-        //        scriptBump.isBumping = false;
-        //        return false;                                                                                   // So it doesn't hiccup when we change paths, don't return and don't set calculating path to true
-        //    }
-        //    else
-        //    {
-        //        Vector3 bumpTarget = pathTarget;
-        //        print("Bumping.");
-        //        FaceTarget(pathTarget, fastRotateSpeed, true);
-        //        scriptSeeker.StartPath(myTransform.position, bumpTarget, OnPathComplete);
-        //        return false;
-        //    }
-        //}
         else if (parChasing && WaypointPlayerAngle())
         {
             //print("Path end no longer leads to player.");
@@ -400,7 +416,7 @@ public bool changedStates = false;
                 scriptHeat = listTransPatrol[i].GetComponent<HeatControl>();
                 if (listTransPatrol[i].tag != hot && listTransPatrol[i].tag != cold && scriptHeat.xInHeatSensorRange)
                 {
-                    if (listTransPatrol[i] == xCurrentHotColdTrans)      // If the item in the list is no longer hot or cold, we need to remove it from the list
+                    if (listTransPatrol[i] == xCurrentHotColdTrans)      // If the item in the list is no longer hot or cold and it is in our sensor range, we need to remove it from the list
                     {
                         listTransPatrol.RemoveAt(i);
                         //print("Patrol counter: " + patrolCounter +  " List count: " + listTransPatrol.Count);
@@ -542,6 +558,11 @@ public bool changedStates = false;
         }
         else
             clearPath = true;
+    }
+
+    IEnumerator PlayExtinguisher()
+    {
+
     }
 
 }

@@ -5,15 +5,20 @@ using System.Collections.Generic;
 public class CharacterInput : MonoBehaviour {
 
     public float touchDistance = 5.0f;
+    public float seeingBotDrain = 2.0f;
     public float offsetDeltaTime = 100.0f;
     public float energyIncrement = 10.0f;
+    public float fadeOutRate = 1.0f;
+    public float drainVolume = 0.75f;
     public static bool infraOn = false;
     public bool newScene = true;
+    public AudioSource sourceDrain;
     public Material matLukewarm;
     public Transform characterPalm;
     public ParticleSystem suckPart;
     public ParticleSystem blowPart;
-    public AudioClip[] characterSounds;
+    public AudioClip clipFootstep;
+    public AudioClip clipDrain;
     public Color xColdColor = new Color(0.2627450980392157f, 0.0f, 1.0f);
     public float xTransferEnergy = 0.0f;
     public static int idleState = Animator.StringToHash("Base Layer.Idle");
@@ -21,9 +26,13 @@ public class CharacterInput : MonoBehaviour {
     public static int drainState = Animator.StringToHash("Base Layer.Drain");
     public static int retractState = Animator.StringToHash("Base Layer.Retract");
 
-
+    private bool playingDrain = false;
+    private bool stoppingSteps = false;
     private string objectDrain = "ObjectDrain";
-    private Dictionary<string, AudioClip> audioDict = new Dictionary<string, AudioClip>();
+    private string strHorz = "Horizontal";
+    private string strVert = "Vertical";
+    private float originalSpeedByHeat = 3.374859f;
+    private AudioSource sourceFoot;
     private Material[] aryOriginalMaterial;
     private GameObject[] aryLukewarmGO;
     private List<Material[]> lisOriginalMaterial = new List<Material[]>();
@@ -32,16 +41,19 @@ public class CharacterInput : MonoBehaviour {
     private AnimatorStateInfo currentState;
     private CharacterEnergy scriptCharEnergy;
     private RoomHeatVariables scriptThermometer;
+    private CharacterMotor scriptCharMotor;
     private Light[] aryLights;
 
 
 	// Use this for initialization
 	void Start () 
     {
+        sourceFoot = GetComponent<AudioSource>();
         myAnim = GetComponentInChildren<Animator>();
         currentState = myAnim.GetCurrentAnimatorStateInfo(0);           // Get the current state for the base layer
         transMainCam = Camera.main.transform;
         scriptCharEnergy = GetComponent<CharacterEnergy>();
+        scriptCharMotor = GetComponent<CharacterMotor>();
         scriptThermometer = GameObject.FindGameObjectWithTag("Thermometer").GetComponent<RoomHeatVariables>();
         if (!matLukewarm)
         {
@@ -57,6 +69,7 @@ public class CharacterInput : MonoBehaviour {
 	void Update () 
     {
         currentState = myAnim.GetCurrentAnimatorStateInfo(0);           // Get the current state for the base layer
+        HandleSounds();
         GoInfrared();
         TouchDrain();
 	}
@@ -140,17 +153,33 @@ public class CharacterInput : MonoBehaviour {
         }
     }
 
-    private void TouchDrain()
+    private void HandleSounds()
     {
-        if(Input.GetButtonDown(objectDrain))
+        // If we are moving AND pressing a move button
+        if (((Input.GetAxis(strHorz) < -0.1f) || (Input.GetAxis(strHorz) > 0.1f) || (Input.GetAxis(strVert) < -0.1f) || (Input.GetAxis(strVert) > 0.1f)) && (Input.GetButton(strHorz) || Input.GetButton(strVert)))
         {
-
+            //  If we're not already playing the foot loop, play it
+            if (!sourceFoot.isPlaying)
+                PlaySound(clipFootstep, sourceFoot, true, scriptCharMotor.movement.maxForwardSpeed / originalSpeedByHeat);
+            else
+                sourceFoot.pitch = scriptCharMotor.movement.maxForwardSpeed / originalSpeedByHeat;
         }
 
+        // If we've released the horizontal and we're not holding vertical or vice versa
+        if (((Input.GetButtonUp(strHorz) && !Input.GetButton(strVert)) || (Input.GetButtonUp(strVert) && !Input.GetButton(strHorz))) || (!stoppingSteps && sourceFoot.isPlaying && !Input.GetButton(strHorz) && !Input.GetButton(strVert)))
+        {
+            stoppingSteps = true;
+            StartCoroutine(StopFootsteps());
+        }
+
+    }
+
+    private void TouchDrain()
+    {
         if (Input.GetButton(objectDrain))       // If we're trying to drain energy
         {
             myAnim.SetBool("Draining", true);
-            if (currentState.nameHash == drainState)
+            if (currentState.nameHash == drainState)    // And the hand is already out
             {
                 Ray ray = new Ray(transMainCam.position, transMainCam.forward);
                 RaycastHit hit;
@@ -164,7 +193,7 @@ public class CharacterInput : MonoBehaviour {
                         if ((itsTransform.tag == "Hot") && scriptCharEnergy.currentEnergy < 100.0f)  // and if it is a hot object and we are not already at max temperature
                         {
                             LoseGainHeat(tempHeatControl, hit, true);
-                            return;
+                                return;
                         }
                         else if (itsTransform.tag == "Cold" && scriptCharEnergy.currentEnergy > 0.0f) // else if it is a cold object and we are not already at min temperature
                         {
@@ -172,12 +201,19 @@ public class CharacterInput : MonoBehaviour {
                             return;
                         }
                     }
-                    else if ((tempSeeingBotHeat = itsTransform.GetComponent<SeeingBotHeatControl>()) != null)	// If it's a guard
+                    else if ((tempSeeingBotHeat = itsTransform.GetComponentInChildren<SeeingBotHeatControl>()) != null)	// If it's a guard
                     {
                         if (HSBColor.FromColor(tempSeeingBotHeat.heatColor).h < HSBColor.FromColor(xColdColor).h) 	// If they aren't already as cold as can be
                         {
-                            tempSeeingBotHeat.heatColor.H(HSBColor.FromColor(tempSeeingBotHeat.heatColor).h + (1 / tempSeeingBotHeat.xHeatEnergy) * Time.deltaTime, ref tempSeeingBotHeat.heatColor);
-                            xTransferEnergy = energyIncrement * Time.deltaTime;
+                            // Reduce the Seeing Bot's heat
+                            tempSeeingBotHeat.heatColor.H(HSBColor.FromColor(tempSeeingBotHeat.heatColor).h + (seeingBotDrain / tempSeeingBotHeat.xHeatEnergy) * Time.deltaTime, ref tempSeeingBotHeat.heatColor);
+
+                            // If we aren't already as hot as can be, heat us up
+                            if(scriptCharEnergy.currentEnergy < 100.0f)
+                                xTransferEnergy = energyIncrement * Time.deltaTime;
+                            
+                            // Play the Suction particle effect
+                            TurnOnSuctionParticle(hit, suckPart);
                             return;
                         }
                     }
@@ -188,7 +224,18 @@ public class CharacterInput : MonoBehaviour {
         else
         {
             myAnim.SetBool("Draining", false);
+            if (Input.GetButtonUp(objectDrain))
+            {
+                StartCoroutine(StopDrain());
+            }
         }
+
+        if (playingDrain)
+        {
+            StartCoroutine(StopDrain());
+            playingDrain = false;
+        }
+
         suckPart.Stop();
         blowPart.Stop();
     }
@@ -209,6 +256,11 @@ public class CharacterInput : MonoBehaviour {
             TurnOnSuctionParticle(losegainHit, blowPart);
         }
         loseGainHeatControl.xBeingTouched = true;
+        if (!playingDrain)
+        {
+            PlaySound(clipDrain, sourceDrain, true, 1.0f, drainVolume);
+            playingDrain = true;
+        }
         
     }
 
@@ -234,6 +286,47 @@ public class CharacterInput : MonoBehaviour {
             prt.startLifetime = lifetime;                                               // Set the lifetime to what we calculated so that it goes to the object and stops         
             if (prt.isStopped)
                 prt.Play();
+            
         }
+    }
+
+    void PlaySound(AudioClip clip, AudioSource source, bool loop, float pitch = 1.0f, float volume = 1.0f)
+    {
+        source.clip = clip;
+
+        source.pitch = pitch;
+
+        source.volume = volume;
+
+        if (loop)
+            source.loop = true;
+
+        source.Play();
+    }
+
+    IEnumerator StopDrain()
+    {
+        while (sourceDrain.volume > 0)
+        {
+            sourceDrain.volume -= Time.deltaTime * fadeOutRate;
+            yield return null;
+        }
+
+            sourceDrain.Stop();
+            sourceDrain.volume = 1.0f;
+            playingDrain = false;
+    }
+
+    IEnumerator StopFootsteps()
+    {
+        // If it's between steps or at the end of the second step, stop
+        while (!(((sourceFoot.time > 0.23f) && (sourceFoot.time < 0.255f)) || (sourceFoot.time > 0.485f)))
+        {
+            //print("Clip length: " + sourceFoot.clip.length +  " Time = " + sourceFoot.time + " Desired time between: " + (0.23f * 1 / sourceFoot.pitch) + " & " + (0.26f * 1 / sourceFoot.pitch) + "  Or Greater than " + (0.485f * 1 / sourceFoot.pitch));
+            yield return null;
+        }
+        
+        stoppingSteps = false;
+        sourceFoot.Stop();
     }
 }

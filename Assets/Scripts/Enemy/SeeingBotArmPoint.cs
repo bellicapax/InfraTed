@@ -11,6 +11,7 @@ public class SeeingBotArmPoint : MonoBehaviour {
     private Transform myTransform;
     private Transform charTrans;
     private EnemyState scriptState;
+    private EnemyMovement scriptMovement;
 
 	// Use this for initialization
 	void Start () 
@@ -18,23 +19,24 @@ public class SeeingBotArmPoint : MonoBehaviour {
         myTransform = this.transform;
         originalRotation = myTransform.localRotation;
         scriptState = GameObject.Find(seeGuard).GetComponentInChildren<EnemyState>();
+        scriptMovement = GameObject.Find(seeGuard).GetComponentInChildren<EnemyMovement>();
         charTrans = GameObject.Find("Character").transform;
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        if (scriptState.nmeCurrentState == EnemyState.CurrentState.Firing)
+        if (scriptState.nmeCurrentState == EnemyState.CurrentState.Firing && !scriptMovement.xIAmFrozen)
         {
-            //myTransform.LookAt(charTrans);
+            // Get the rotation for looking at the player
             Quaternion rot = Quaternion.LookRotation(charTrans.position - myTransform.position);
-            //myTransform.rotation = rot * SeeingBotGunRotation.gunOffset;
+
+            // Smoothly transition to that rotation
             myTransform.rotation = Quaternion.Lerp(myTransform.rotation, rot * SeeingBotGunRotation.gunOffset, rotateSpeedWithAnimation * Time.deltaTime);
-            //myTransform.rotation *= SeeingBotGunRotation.gunOffset;
         }
         else
         {
-            //myTransform.localRotation = originalRotation;
+            // Smoothly transition back to the original rotation
             myTransform.localRotation = Quaternion.Lerp(myTransform.localRotation, originalRotation, rotateSpeed * Time.deltaTime);
         }
 

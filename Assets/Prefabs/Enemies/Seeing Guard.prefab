@@ -478,8 +478,8 @@ GameObject:
   - 33: {fileID: 3300028}
   - 23: {fileID: 2300028}
   m_Layer: 0
-  m_Name: pSphere31
-  m_TagString: Untagged
+  m_Name: Eye
+  m_TagString: Eye
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -529,7 +529,7 @@ GameObject:
   - 114: {fileID: 11400004}
   m_Layer: 0
   m_Name: Stretched
-  m_TagString: Untagged
+  m_TagString: Extinguisher
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -726,7 +726,7 @@ GameObject:
   - 114: {fileID: 11400010}
   m_Layer: 0
   m_Name: Billboard
-  m_TagString: Untagged
+  m_TagString: Extinguisher
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -976,7 +976,7 @@ GameObject:
   - 135: {fileID: 13500004}
   - 54: {fileID: 5400004}
   - 114: {fileID: 11400014}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Touch
   m_TagString: Guard
   m_Icon: {fileID: 0}
@@ -1784,7 +1784,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100112}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -.576719761}
+  m_LocalPosition: {x: 0, y: 0, z: -.519357443}
   m_LocalScale: {x: 15, y: 15, z: 15}
   m_Children:
   - {fileID: 400060}
@@ -1865,8 +1865,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100126}
-  m_LocalRotation: {x: 0, y: .864179969, z: 0, w: -.503182948}
-  m_LocalPosition: {x: 3.51708603, y: .5, z: -.281256676}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 37.6285896, y: -.285242558, z: -6.50945663}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400112}
@@ -3028,13 +3028,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063bb8e4f049d654ebe854b3f2261839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heatColor: {r: 0, g: 0, b: 0, a: 0}
-  secondsTillThaw: 5
-  heatAmountMultiplier: 5
+  heatColor: {r: 0, g: 1, b: .122562647, a: 1}
+  matInfra: {fileID: 2100000, guid: 2a114dfddc44c0345aa39412300facf5, type: 2}
+  secondsTillThaw: 2
+  heatHomeostasisRate: 2
   xInHeatSensorRange: 0
   xBeingTouched: 0
+  xHeatAmountMultiplier: 5
   xHeatEnergy: 0
-  xFrozenColor: {r: 0, g: 0, b: 0, a: 0}
   xOriginalColor: {r: 0, g: 0, b: 0, a: 0}
   goRoomThermo: {fileID: 0}
 --- !u!114 &11400014
@@ -3115,22 +3116,25 @@ MonoBehaviour:
   distanceFromPlayerToStopWhenChasing: 1.5
   secondsAllowedStationary: .5
   secondsBetweenSlowerUpdate: .200000003
-  normalSpeed: 50
-  alertedSpeed: 75
+  normalSpeed: 75
+  alertedSpeed: 102
+  normalAnimationSpeed: 1
+  alertedAnimationSpeed: 1.5
   normalRotateSpeed: 2
   fastRotateSpeed: 4
   searchLookSpeed: 50
   nextWaypointDistance: 1
   percentOfFOVToContinuePath: .300000012
   freezeDecrement: .00999999978
-  xParticleAngle: 20
+  goSharedVariables: {fileID: 0}
   listTransPatrol:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  xParticleAngle: 20
   xCurrentHotColdTrans: {fileID: 0}
-  goSharedVariables: {fileID: 0}
+  xIAmFrozen: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 3072

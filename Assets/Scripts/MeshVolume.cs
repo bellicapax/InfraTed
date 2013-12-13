@@ -2,7 +2,9 @@
 
 public class MeshVolume : MonoBehaviour
 {
+    public Transform scaledParent;
     public float volume;
+
     void Awake()
     {
         MeshFilter[] filters;
@@ -44,7 +46,12 @@ public class MeshVolume : MonoBehaviour
             Vector3 p3 = vertices[triangles[i + 2]];
             volume += SignedVolumeOfTriangle(p1, p2, p3);
         }
+        //print("Volume before scale: " + transform.name + volume);
         volume *= this.transform.localScale.x * this.transform.localScale.y * this.transform.localScale.z;
+        if (scaledParent != null)
+        {
+            volume *= scaledParent.localScale.x * scaledParent.localScale.y * scaledParent.localScale.z;
+        }
         return Mathf.Abs(volume);
     }
 }

@@ -15,16 +15,19 @@ public class EnemyMovement : MonoBehaviour {
     public float secondsBetweenSlowerUpdate = 0.2f;
     public float normalSpeed = 50.0f;
     public float alertedSpeed = 75.0f;
+    public float normalAnimationSpeed = 1.0f;
+    public float alertedAnimationSpeed = 1.5f;
     public float normalRotateSpeed = 1.0f;
     public float fastRotateSpeed = 4.0f;
     public float searchLookSpeed = 50.0f;
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
     public float freezeDecrement = 10.0f;
-    public float xParticleAngle = 20.0f;
-    public List<Transform> listTransPatrol = new List<Transform>();
-    public Transform xCurrentHotColdTrans;
     public GameObject goSharedVariables;
+    public List<Transform> listTransPatrol = new List<Transform>();
+    public float xParticleAngle = 20.0f;
+    public Transform xCurrentHotColdTrans;
+    public bool xIAmFrozen = false;
     public LayerMask groundMask;
     public Animator botAnim;
 
@@ -35,7 +38,6 @@ public class EnemyMovement : MonoBehaviour {
     private bool setSearchRotation = false;
     private bool doneSearching = false;
     private bool iAmStuck = false;
-    private bool iAmFrozen = false;
     private bool clearPath = true;
     private bool sprayingCoolant = false;
     private bool inCoolantCone = false;
@@ -114,7 +116,7 @@ public class EnemyMovement : MonoBehaviour {
 
         percentToHit = percentChancePlayerIsHit / 100f;
         coldH = HSBColor.FromColor(goCharacter.GetComponent<CharacterInput>().xColdColor).h;
-        frozenH = coldH - HSBColor.FromColor(scriptMyHeat.xFrozenColor).h;                      // Subtract the frozen color from the coldest color to get the value that the enemy should stop moving at
+        frozenH = coldH - HSBColor.FromColor(EnemyShared.xFrozenColor).h;                      // Subtract the frozen color from the coldest color to get the value that the enemy should stop moving at
         originalHeatHSubtracted = coldH - HSBColor.FromColor(scriptMyHeat.xOriginalColor).h;    // Subtract the original color from the coldest color to get a value that decreases as the object cools
 
         InvokeRepeating("LessFrequentUpdate", secondsBetweenSlowerUpdate, secondsBetweenSlowerUpdate);
@@ -124,7 +126,7 @@ public class EnemyMovement : MonoBehaviour {
 	void FixedUpdate () 
     {
 		HeatToSpeed();
-        if (!iAmFrozen)
+        if (!xIAmFrozen)
         {
             if (lastState != scriptState.nmeCurrentState)
             {
@@ -142,7 +144,7 @@ public class EnemyMovement : MonoBehaviour {
             {
                 case EnemyState.CurrentState.Patroling:
                     StopCoolant();
-                    botAnim.SetBool("Moving", true);
+                    HandleAnimator(true);
                     Patrol();
                     break;
 
@@ -159,7 +161,7 @@ public class EnemyMovement : MonoBehaviour {
 
                 case EnemyState.CurrentState.Turning:
                     StopCoolant();
-                    botAnim.SetBool("Moving", false);
+                    HandleAnimator(false);
                     FaceTarget(transCharacter.position, fastRotateSpeed, true);
                     break;
 
@@ -174,13 +176,14 @@ public class EnemyMovement : MonoBehaviour {
 
                 case EnemyState.CurrentState.Stationary:
                     StopCoolant();
-                    botAnim.SetBool("Moving", false);
+                    HandleAnimator(false);
                     break;
             }
             lastState = scriptState.nmeCurrentState;
         }
         else
         {
+            HandleAnimator(false);
             StopCoolant();
         }
 	}
@@ -193,21 +196,16 @@ public class EnemyMovement : MonoBehaviour {
             {
                 normalSpeed = ((originalNormalSpeed / originalHeatHSubtracted.Squared()) * (((coldH - HSBColor.FromColor(scriptMyHeat.heatColor).h) - frozenH).Squared()));
                 alertedSpeed = ((originalAlertedSpeed / originalHeatHSubtracted.Squared()) * (((coldH - HSBColor.FromColor(scriptMyHeat.heatColor).h) - frozenH).Squared()));
-                iAmFrozen = false;
+                xIAmFrozen = false;
             }
             else
-                iAmFrozen = true;
+                xIAmFrozen = true;
         }
 	}
 
     private void Patrol()
     {
-        if (myPath == null)
-        {
-            GetANewPatrolPath();
-            calculatingPath = true;
-        }
-        if (WeNeedANewPath(xCurrentHotColdTrans.position, true))
+        if (WeNeedANewPath(myTransform.forward, true))
         {
             return;
         }
@@ -231,8 +229,7 @@ public class EnemyMovement : MonoBehaviour {
         {
             if (distance > distanceFromPlayerToStopWhenChasing)
             {
-                botAnim.SetBool("Moving", true);
-
+                HandleAnimator(true, alertedAnimationSpeed);
                 Vector3 direction = transCharacter.position - myTransform.position;
                 FaceTarget(transCharacter.position, fastRotateSpeed, true);
                 MoveTowards(direction.normalized, parChaseSpeed);
@@ -242,7 +239,7 @@ public class EnemyMovement : MonoBehaviour {
                 botAnim.SetBool("Moving", false);
             }
         }
-        else if (WeNeedANewPath(transCharacter.position, false))
+        else if (WeNeedANewPath(transCharacter.position, false, true))
         {
             botAnim.SetBool("Moving", false);
             return;
@@ -348,7 +345,7 @@ public class EnemyMovement : MonoBehaviour {
     {
         if (Vector3.Distance(myTransform.position, new Vector3(scriptShared.sharedLastKnownLocation.x, myTransform.position.y, scriptShared.sharedLastKnownLocation.z)) > nextWaypointDistance)  // We don't want to check the difference in y's because the player might be above the enemy where it can't get.
         {
-            botAnim.SetBool("Moving", true);
+            HandleAnimator(true, alertedAnimationSpeed);
             if (clearPath)
             {
                 FaceTarget(scriptShared.sharedLastKnownLocation, fastRotateSpeed, true);
@@ -376,7 +373,7 @@ public class EnemyMovement : MonoBehaviour {
         }
         else
         {
-            botAnim.SetBool("Moving", false);
+            HandleAnimator(false);
             LookRightLeft();
         }
     }
@@ -397,17 +394,17 @@ public class EnemyMovement : MonoBehaviour {
         myCharContro.SimpleMove(new Vector3(parTarget.x, 0.0f, parTarget.z) * Time.fixedDeltaTime * parMoveSpeed);
     }
 
-    bool WeNeedANewPath(Vector3 pathTarget, bool parOnPatrol)
+    bool WeNeedANewPath(Vector3 pathTarget, bool parOnPatrol, bool parChasing = false)
     {
         if (calculatingPath)
         {
-            //print("Calculating path.");
+            print("Calculating path.");
             FaceTarget(pathTarget, fastRotateSpeed, true);
             return true;
         }
         else if (changedStates)
         {
-            //print("New path because changed states.");
+            print("New path because changed states.");
             myPath = null;
             GetAPath(pathTarget, parOnPatrol);
             changedStates = false;
@@ -415,26 +412,26 @@ public class EnemyMovement : MonoBehaviour {
         }
         else if (myPath == null)             // If we have no path, get one
         {
-            //print("Path is null.");
+            print("Path is null.");
             GetAPath(pathTarget, parOnPatrol);
             return true;
         }
         else if (currentWaypoint >= myPath.vectorPath.Count)                            //If we have reached the end of the path
         {
-            //print("Finished path.");
+            print("Finished path.");
             GetAPath(pathTarget, parOnPatrol);
             return true;
         }
         else if (parOnPatrol && newPatrolPath)                                           //If we have touched the object we are trying to reach (but can't get close enough to the waypoint to have reached the end of the path)
         {
-            //print("Touched the objective.");
+            print("Touched the objective.");
             GetAPath(pathTarget, parOnPatrol);
             newPatrolPath = false;
             return true;
         }
-        else if (WaypointTargetAngle(pathTarget))
+        else if (parChasing && WaypointTargetAngle(pathTarget))
         {
-            //print("Path end no longer leads to player.");
+            print("Path end no longer leads to player.");
             FaceTarget(transCharacter.position, fastRotateSpeed, true);
             scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
             calculatingPath = true;
@@ -442,7 +439,7 @@ public class EnemyMovement : MonoBehaviour {
         }
         else if (iAmStuck)
         {
-            //print("I'm stuck!");
+            print("I'm stuck!");
             GetAPath(pathTarget, parOnPatrol);
             iAmStuck = false;
             return true;
@@ -631,54 +628,14 @@ public class EnemyMovement : MonoBehaviour {
             clearPath = true;
     }
 
-    //bool GettingAPathToCharacter()
-    //{
-    //    if (calculatingPath)
-    //    {
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        return true;
-    //    }
-    //    else if (changedStates)                                                         // We might have a path left over from another state, so clear the path and get a new one, but look at the character while we are waiting on the path
-    //    {
-    //        myPath = null;
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        changedStates = false;
-    //        calculatingPath = true;
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        return true;
-    //    }
-    //    else if (myPath == null)
-    //    {
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        return true;
-    //    }
-    //    else if (currentWaypoint >= myPath.vectorPath.Count)                            //If we have reached the end of the path
-    //    {
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        return true;
-    //    }
-    //    else if (scriptBump.isBumping)
-    //    {
-    //        print("Bumped into obstacle while chasing.");
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        scriptBump.isBumping = false;
-    //        return true;
-    //    }
-    //    else if (WaypointTargetAngle())
-    //    {
-    //        print("Path end no longer leads to player.");
-    //        FaceTarget(transCharacter.position, fastRotateSpeed, true);
-    //        scriptSeeker.StartPath(myTransform.position, transCharacter.position, OnPathComplete);
-    //        calculatingPath = true;
-    //        return true;
-    //    }
-    //    return false;
-    //}
+    void HandleAnimator(bool isMoving, float animationSpeed = 0.0f)
+    {
+        if (animationSpeed != 0.0f)
+            botAnim.speed = animationSpeed;
 
+        else
+            botAnim.speed = normalAnimationSpeed;
+
+        botAnim.SetBool("Moving", isMoving);
+    }
 }
