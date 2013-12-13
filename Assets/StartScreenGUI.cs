@@ -27,7 +27,13 @@ public class StartScreenGUI : MonoBehaviour {
         startExitStyle.fontSize = 64;
         startExitStyle.normal.textColor = Color.white;
 
+        infraRect.x = (Screen.width / 2) - infraRect.width/2;
 
+        startRect.x = Screen.width / 3 - startRect.width/2;
+        startRect.y = Screen.height / 3 + startRect.height/2;
+
+        exitRect.x = Screen.width / 3 - exitRect.width/2;
+        exitRect.y = Screen.height * (2.0f/3.0f) + exitRect.height/2;
 
         StartCoroutine(ChangeColors());
     }
@@ -36,6 +42,10 @@ public class StartScreenGUI : MonoBehaviour {
     {
         //startHW = GUILayoutUtility.GetRect(new GUIContent("Start"), startExitStyle);
         //exitHW = GUILayoutUtility.GetRect(new GUIContent("Exit"), startExitStyle);
+        //startHW = GUILayoutUtility.GetRect(new GUIContent("Infra-Ted"), infraStyle);
+       
+        //infraRect.width = startHW.width;
+        //infraRect.height = startHW.height;
 
         //startRect.height = startHW.height;
         //startRect.width = startHW.width;

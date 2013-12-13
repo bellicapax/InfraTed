@@ -48,10 +48,8 @@ public class SensorBotSight : MonoBehaviour {
     {
         if (xPlayerHasTouched)
         {
-            if (FieldOfView())
-            {
-                xPlayerHasTouched = false;
-            }
+            xPlayerInSight = true;
+            xPlayerHasTouched = false;
         }
 	}
 
@@ -73,30 +71,39 @@ public class SensorBotSight : MonoBehaviour {
                 {
                     //if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))	
                     //{
+                        //print("Player is in the trigger and has energy.");
 						RaycastHit hit;
 						direction = (other.transform.position - myTransform.position);
 						if(Physics.Raycast(myTransform.position, direction, out hit, myCollider.radius, xWallMask))		// This layermask doesn't allow it to go through the Walls layer or the player
 						{
-							if(hit.transform.tag == playerTag)
-		                    	xPlayerInSight = true;
-							else 
-								xPlayerInSight = false;
+                            print("Hit  " + hit.transform.root.name + " Tran name " + transCharacter.name);
+                            if (hit.transform.root.name == transCharacter.name)
+                            {
+                                xPlayerInSight = true;
+                                print("They match");
+                            }
+                            else
+                                xPlayerInSight = false;
 						}
 						else 
 						{
 							xPlayerInSight = false;
 						}
                     }
-                    else if (!xPlayerIsTouching)
-                    {
-                        xPlayerInSight = false;
-                    }
+                    //else if (!xPlayerIsTouching)
+                    //{
+                    //    xPlayerInSight = false;
+                    //}
                 //}
             }
     }
 
     void OnTriggerExit(Collider other)
     {
+        if (other.tag == playerTag)
+        {
+            xPlayerInSight = false;
+        }
         HeatControl itsHeat;
         if (itsHeat = other.GetComponent<HeatControl>())
         {
@@ -105,36 +112,36 @@ public class SensorBotSight : MonoBehaviour {
     }
 
 
-    public bool FieldOfView()
-    {
-        if (!xPlayerIsTouching)
-        {        
-            //if the other conditions are not met, xPlayerInSight should be false
-            xPlayerInSight = false;
-        }
+    //public bool FieldOfView()
+    //{
+    //    if (!xPlayerIsTouching)
+    //    {        
+    //        //if the other conditions are not met, xPlayerInSight should be false
+    //        xPlayerInSight = false;
+    //    }
 
-        if (scriptCharEnergy.currentEnergy >= 0)
-        {
-            direction = transCharacter.position - myTransform.position;
-            angle = Vector3.Angle(direction, myTransform.forward);
+    //    if (scriptCharEnergy.currentEnergy >= 0)
+    //    {
+    //        direction = transCharacter.position - myTransform.position;
+    //        angle = Vector3.Angle(direction, myTransform.forward);
 
-            if (angle < fieldOfViewAngle * 0.5f)
-            {
-                RaycastHit hit;
+    //        if (angle < fieldOfViewAngle * 0.5f)
+    //        {
+    //            RaycastHit hit;
 
-                if (Physics.Raycast(myTransform.position, direction.normalized, out hit, Mathf.Infinity))
-                {
-                    if (hit.collider.gameObject == goCharacter)
-                    {
-                        xPlayerInSight = true;
-                        personalLastSighting = transCharacter.position; 
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+    //            if (Physics.Raycast(myTransform.position, direction.normalized, out hit, Mathf.Infinity))
+    //            {
+    //                if (hit.collider.gameObject == goCharacter)
+    //                {
+    //                    xPlayerInSight = true;
+    //                    personalLastSighting = transCharacter.position; 
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
 
     bool IsOutOfTemperatureThreshold(float temp)
     {

@@ -28,6 +28,7 @@ GameObject:
   - 124: {fileID: 12400000}
   - 81: {fileID: 8100000}
   - 114: {fileID: 11400008}
+  - 114: {fileID: 11400014}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -397,8 +398,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
-  m_LocalRotation: {x: 0, y: -.874601424, z: 0, w: .484842718}
-  m_LocalPosition: {x: .340010405, y: 3.49065495, z: -.429651618}
+  m_LocalRotation: {x: 0, y: .784893215, z: 0, w: -.619631112}
+  m_LocalPosition: {x: 1.58552933, y: 3.49065495, z: -.371091843}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400002}
@@ -883,7 +884,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentEnergy: 21
   energyDecrement: .100000001
-  normalDecrement: .200000003
+  normalDecrement: .300000012
   sprintDecrement: 2
   absoluteMaxSpeed: 6
 --- !u!114 &11400008
@@ -920,8 +921,8 @@ MonoBehaviour:
   seeingBotDrain: 5
   offsetDeltaTime: 100
   energyIncrement: 10
-  fadeOutRate: 5
-  drainVolume: .75
+  fadeOutRate: 2
+  drainVolume: .200000003
   newScene: 1
   sourceDrain: {fileID: 8200000}
   matLukewarm: {fileID: 2100000, guid: d9282adcc67596b40b42af7ee308f8f1, type: 2}
@@ -985,6 +986,19 @@ MonoBehaviour:
     slidingSpeed: 15
     sidewaysControl: 1
     speedControl: .400000006
+--- !u!114 &11400014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e42deecdba967489537cc8f3b4664a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CurrentScreenOverlayColor: {r: 0, g: 0, b: 0, a: 1}
+  fadeInSpeed: .100000001
 --- !u!124 &12400000
 Behaviour:
   m_ObjectHideFlags: 1

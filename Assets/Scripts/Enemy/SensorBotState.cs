@@ -46,23 +46,12 @@ public class SensorBotState : MonoBehaviour {
             justLostEm = false;                             // If we can see the player, we don't need to search anymore.
             if (inTrigger)
             {
-                if (scriptSight.JustFOVAngle())
-                {
-                    nmeCurrentState = CurrentState.Firing;
-                }
-                else if(scriptSight.xPlayerHasTouched)
-                {
-                    nmeCurrentState = CurrentState.Turning;
-                }
+                nmeCurrentState = CurrentState.Firing;
             }
             else
             {
                 nmeCurrentState = CurrentState.Chasing;
             }
-        }
-        else if (scriptSight.xPlayerHasTouched)
-        {
-            nmeCurrentState = CurrentState.Turning;
         }
         else if (justLostEm)
         {

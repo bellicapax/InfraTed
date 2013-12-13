@@ -1311,10 +1311,10 @@ MonoBehaviour:
   nextWaypointDistance: 1
   percentOfFOVToContinuePath: .300000012
   fadeOutRate: 2
-  sourceExtinguisher: {fileID: 8200000}
   clipMove: {fileID: 8300000, guid: 1614f212467a34d42be4bb81f0e93722, type: 3}
   clipExtinguishLoop: {fileID: 8300000, guid: 782d02421d98fc64ba31012f86081812, type: 3}
   clipExtinguishStart: {fileID: 8300000, guid: 710b53c2d8becc14294df4ae7dc873d0, type: 3}
+  sourceExtinguisher: {fileID: 8200000}
   listTransPatrol:
   - {fileID: 0}
   - {fileID: 0}

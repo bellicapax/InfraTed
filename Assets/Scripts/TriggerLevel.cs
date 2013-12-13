@@ -7,6 +7,7 @@ public class TriggerLevel : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        print(collider.tag);
         if (other.tag == "Player")
             Application.LoadLevel(levelToLoad);
     }

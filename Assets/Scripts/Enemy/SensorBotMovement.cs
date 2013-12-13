@@ -579,6 +579,7 @@ public class SensorBotMovement : MonoBehaviour {
         while (sourceExtinguisher.volume > 0)
         {
             sourceExtinguisher.volume -= Time.deltaTime * fadeOutRate;
+            print("Volume" + sourceExtinguisher.volume);
             yield return null;
         }
 
