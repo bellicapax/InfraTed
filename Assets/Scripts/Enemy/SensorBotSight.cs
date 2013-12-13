@@ -71,8 +71,8 @@ public class SensorBotSight : MonoBehaviour {
             {
                 if (other.tag == playerTag)
                 {
-                    if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))	
-					{
+                    //if (IsOutOfTemperatureThreshold(scriptCharEnergy.currentEnergy))	
+                    //{
 						RaycastHit hit;
 						direction = (other.transform.position - myTransform.position);
 						if(Physics.Raycast(myTransform.position, direction, out hit, myCollider.radius, xWallMask))		// This layermask doesn't allow it to go through the Walls layer or the player
@@ -91,7 +91,7 @@ public class SensorBotSight : MonoBehaviour {
                     {
                         xPlayerInSight = false;
                     }
-                }
+                //}
             }
     }
 

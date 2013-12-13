@@ -17,10 +17,11 @@ public class SensorBotMovement : MonoBehaviour {
     public float searchLookSpeed = 50.0f;
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
-    public AudioSource sourceExtinguisher;
+    public float fadeOutRate = 2.0f;
     public AudioClip clipMove;
     public AudioClip clipExtinguishLoop;
     public AudioClip clipExtinguishStart;
+    public AudioSource sourceExtinguisher;
     public List<Transform> listTransPatrol = new List<Transform>();
     public Transform xCurrentHotColdTrans;
     public LayerMask groundMask;
@@ -39,8 +40,8 @@ public class SensorBotMovement : MonoBehaviour {
     private int patrolCounter = 0;
     private float stuckCounter;
     private float radiusOfCharControl;
-    private float volumeExtinguisher;
-    private float volumeMove;
+    private float volumeExtinguisher = 1.0f;
+    private float volumeMove = 1.0f;
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
@@ -224,7 +225,7 @@ public class SensorBotMovement : MonoBehaviour {
             {
                 p.Play();
             }
-            sourceExtinguisher.Play();
+            StartCoroutine(PlayExtinguisher());
         }
     }        
     
@@ -238,6 +239,7 @@ public class SensorBotMovement : MonoBehaviour {
             {
                 p.Stop();
             }
+            StartCoroutine(StopExtinguisher());
         }
     }
 
@@ -562,7 +564,26 @@ public class SensorBotMovement : MonoBehaviour {
 
     IEnumerator PlayExtinguisher()
     {
+        sourceExtinguisher.loop = false;
+        sourceExtinguisher.clip = clipExtinguishStart;
+        sourceExtinguisher.Play();
+        yield return new WaitForSeconds(clipExtinguishStart.length);
 
+        sourceExtinguisher.loop = true;
+        sourceExtinguisher.clip = clipExtinguishLoop;
+        sourceExtinguisher.Play();
+    }
+
+    IEnumerator StopExtinguisher()
+    {
+        while (sourceExtinguisher.volume > 0)
+        {
+            sourceExtinguisher.volume -= Time.deltaTime * fadeOutRate;
+            yield return null;
+        }
+
+        sourceExtinguisher.Stop();
+        sourceExtinguisher.volume = volumeExtinguisher;
     }
 
 }

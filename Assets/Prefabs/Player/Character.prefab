@@ -883,7 +883,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentEnergy: 21
   energyDecrement: .100000001
-  normalDecrement: 0
+  normalDecrement: .200000003
   sprintDecrement: 2
   absoluteMaxSpeed: 6
 --- !u!114 &11400008
@@ -920,7 +920,8 @@ MonoBehaviour:
   seeingBotDrain: 5
   offsetDeltaTime: 100
   energyIncrement: 10
-  fadeOutRate: 1
+  fadeOutRate: 5
+  drainVolume: .75
   newScene: 1
   sourceDrain: {fileID: 8200000}
   matLukewarm: {fileID: 2100000, guid: d9282adcc67596b40b42af7ee308f8f1, type: 2}

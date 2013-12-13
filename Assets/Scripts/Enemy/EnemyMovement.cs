@@ -23,6 +23,10 @@ public class EnemyMovement : MonoBehaviour {
     public float nextWaypointDistance = 1.0f;
     public float percentOfFOVToContinuePath = 0.3f;
     public float freezeDecrement = 10.0f;
+    public float fadeOutRate = 2.0f;
+    public AudioClip clipExtinguishLoop;
+    public AudioClip clipExtinguishStart;
+    public AudioSource sourceExtinguisher;
     public GameObject goSharedVariables;
     public List<Transform> listTransPatrol = new List<Transform>();
     public float xParticleAngle = 20.0f;
@@ -57,12 +61,15 @@ public class EnemyMovement : MonoBehaviour {
     private float minSecondsBetweenCoolantChecks = 0.2f;
     private float maxSecondsBetweenCoolantChecks = 0.5f;
     private float percentOfConeFovForCooling = 0.5f;
+    private float volumeExtinguisher = 1.0f;
+    private float volumeMove = 1.0f;
     private string hot = "Hot";
     private string cold = "Cold";
     private Vector3 lastMyPosition;
     private Quaternion endFirstDirection;
     private Quaternion endSecondDirection;
     private Quaternion targetSearchRotation;
+    private AudioSource sourceMove;
     private GameObject goCharacter;
     private List<GameObject> listHotColdObjects = new List<GameObject>();
     private CharacterController myCharContro;
@@ -88,7 +95,7 @@ public class EnemyMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-
+        sourceMove = GetComponent<AudioSource>();
         stuckCounter = secondsAllowedStationary;
         myCharContro = this.GetComponent<CharacterController>();
         radiusOfCharControl = myCharContro.radius;
@@ -268,9 +275,9 @@ public class EnemyMovement : MonoBehaviour {
             {
                 p.Play();
             }
+            StartCoroutine(PlayExtinguisher());
             sprayingCoolant = true;
         }
-
 
     }
 
@@ -337,6 +344,7 @@ public class EnemyMovement : MonoBehaviour {
             {
                 p.Stop();
             }
+            StartCoroutine(StopExtinguisher());
             sprayingCoolant = false;
         }
     }
@@ -637,5 +645,29 @@ public class EnemyMovement : MonoBehaviour {
             botAnim.speed = normalAnimationSpeed;
 
         botAnim.SetBool("Moving", isMoving);
+    }
+
+    IEnumerator PlayExtinguisher()
+    {
+        sourceExtinguisher.loop = false;
+        sourceExtinguisher.clip = clipExtinguishStart;
+        sourceExtinguisher.Play();
+        yield return new WaitForSeconds(clipExtinguishStart.length);
+
+        sourceExtinguisher.loop = true;
+        sourceExtinguisher.clip = clipExtinguishLoop;
+        sourceExtinguisher.Play();
+    }
+
+    IEnumerator StopExtinguisher()
+    {
+        while (sourceExtinguisher.volume > 0)
+        {
+            sourceExtinguisher.volume -= Time.deltaTime * fadeOutRate;
+            yield return null;
+        }
+
+        sourceExtinguisher.Stop();
+        sourceExtinguisher.volume = volumeExtinguisher;
     }
 }

@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2300000}
   m_Layer: 0
   m_Name: organism
-  m_TagString: Untagged
+  m_TagString: Lukewarm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,9 +27,10 @@ GameObject:
   - 4: {fileID: 400002}
   - 33: {fileID: 3300002}
   - 23: {fileID: 2300002}
+  - 64: {fileID: 6400004}
   m_Layer: 0
   m_Name: pCylinder3
-  m_TagString: Untagged
+  m_TagString: Lukewarm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,9 +45,10 @@ GameObject:
   - 4: {fileID: 400004}
   - 33: {fileID: 3300004}
   - 23: {fileID: 2300004}
+  - 64: {fileID: 6400002}
   m_Layer: 0
   m_Name: pCylinder2
-  m_TagString: Untagged
+  m_TagString: Lukewarm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -61,9 +63,10 @@ GameObject:
   - 4: {fileID: 400006}
   - 33: {fileID: 3300006}
   - 23: {fileID: 2300006}
+  - 64: {fileID: 6400000}
   m_Layer: 0
   m_Name: pCylinder1
-  m_TagString: Untagged
+  m_TagString: Lukewarm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92,6 +95,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400010}
   - 95: {fileID: 9500000}
+  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: Test tube
   m_TagString: Untagged
@@ -161,8 +165,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.7973995, y: .5, z: -5.55156136}
-  m_LocalScale: {x: 8.30516434, y: 8.30516434, z: 8.30516434}
+  m_LocalPosition: {x: 80.4291687, y: -.558096111, z: 12.4422197}
+  m_LocalScale: {x: 4.15258121, y: 4.15258217, z: 4.15258121}
   m_Children:
   - {fileID: 400008}
   - {fileID: 400006}
@@ -282,6 +286,45 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100006}
   m_Mesh: {fileID: 4300000, guid: 5bb7c94a8c9924e43ad7504eb3814c53, type: 3}
+--- !u!64 &6400000
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100006}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: 5bb7c94a8c9924e43ad7504eb3814c53, type: 3}
+--- !u!64 &6400002
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300002, guid: 5bb7c94a8c9924e43ad7504eb3814c53, type: 3}
+--- !u!64 &6400004
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300004, guid: 5bb7c94a8c9924e43ad7504eb3814c53, type: 3}
 --- !u!95 &9500000
 Animator:
   serializedVersion: 2
@@ -296,6 +339,18 @@ Animator:
   m_ApplyRootMotion: 1
   m_AnimatePhysics: 0
   m_HasTransformHierarchy: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b4f1766d5a9dd46ada396e75e8344f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 3
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
